@@ -18,7 +18,11 @@ const SideBar = () => {
       </div>
       <nav className="mt-10">
         {menuItems.map((item) => (
-          <Link key={item.name} href={item.path}>
+          <Link
+            key={item.name}
+            href={item.path}
+            className="block px-4 py-2 hover:bg-gray-700"
+          >
             {item.name}
           </Link>
         ))}

@@ -12,3 +12,167 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+enum City {
+  Tripoli
+  Benghazi
+  Misrata
+  Bayda
+  Zawiya
+  Khoms
+  Tobruk
+  Ajdabiya
+  Sebha
+  Sirte
+  Derna
+  Zliten
+  Sabratha
+  Ghat
+  Jalu
+}
+
+enum ContractType {
+  Subagent
+  Merchant
+  Both
+}
+
+enum BusinessType {
+  Retail
+  Wholesale
+  FoodService
+  Manufacturing
+  Technology
+  Healthcare
+  FinancialServices
+  RealEstate
+  Education
+  Transportation
+  Entertainment
+  NonProfit
+}
+
+enum TargetType {
+  Team
+  Salesman
+}
+
+enum Status {
+  Pending
+  Approved
+  Declined
+}
+
+enum ReportType {
+  Contract
+  Compensation
+}
+
+enum UserRole {
+  Admin
+  SalesManager
+  Salesman
+}
+
+model Team {
+  id                 Int                  @id @default(autoincrement())
+  name               String
+  location           City
+  salesmen           User[]
+  targets            Target[] // Targets related to the team as a whole
+  CompensationReport CompensationReport[]
+}
+
+model Target {
+  id                Int        @id @default(autoincrement())
+  targetOwnerId     Int // Generalizing the owner of the target
+  periodFrom        DateTime
+  periodTo          DateTime
+  targetType        TargetType // Enum to distinguish between 'Team' and 'Salesman'
+  numberOfContracts Int
+  totalAmountLYD    Float
+  team              Team?      @relation(fields: [targetOwnerId], references: [id], map: "TeamTarget")
+  individual        User?      @relation(fields: [targetOwnerId], references: [id], map: "SalesmanTarget")
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+}
+
+model Report {
+  id                  Int                  @id @default(autoincrement())
+  type                ReportType // Enum to distinguish report type
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  contractReports     ContractReport[]
+  compensationReports CompensationReport[]
+}
+
+model Contract {
+  id                        Int              @id @default(autoincrement())
+  salesmanId                Int
+  type                      ContractType
+  companyName               String
+  businessType              BusinessType
+  ownerName                 String
+  ownerMobileNumber         String
+  companyMobileNumber       String
+  contactPersonName         String
+  contactPersonMobileNumber String
+  bcdAccountNumber          String? // Optional
+  branches                  Branch[]
+  numberOfBranches          Int
+  documentPath              String
+  status                    Status           @default(Pending) // "Pending", "Approved", "Declined"
+  salesman                  User             @relation(fields: [salesmanId], references: [id])
+  contractReports           ContractReport[]
+  createdAt                 DateTime         @default(now())
+  updatedAt                 DateTime         @updatedAt
+}
+
+model ContractReport {
+  contractId Int
+  reportId   Int
+  contract   Contract @relation(fields: [contractId], references: [id])
+  report     Report   @relation(fields: [reportId], references: [id])
+
+  @@id([contractId, reportId])
+}
+
+model CompensationReport {
+  id          Int    @id @default(autoincrement())
+  reportId    Int // Reference to the report
+  teamId      Int? // Reference to the team, if applicable
+  salesmanId  Int? // Reference to the salesman, if applicable
+  amountPaid  Float // Amount paid to the salesman or team
+  bonusAmount Float // Bonus amount for the number 1 salesman
+  report      Report @relation(fields: [reportId], references: [id])
+  team        Team?  @relation(fields: [teamId], references: [id])
+  salesman    User?  @relation(fields: [salesmanId], references: [id])
+}
+
+model Branch {
+  id         Int      @id @default(autoincrement())
+  contractId Int
+  name       String
+  phone      String
+  city       City
+  locationX  Float
+  locationY  Float
+  contract   Contract @relation(fields: [contractId], references: [id])
+}
+
+model User {
+  id                 Int                  @id @default(autoincrement())
+  role               UserRole // "Admin", "SalesManager", "Salesman"
+  username           String
+  password           String
+  teamId             Int?
+  name               String
+  mobileNumber       String
+  bcdAccount         String?
+  evoAppId           String
+  nationalId         String
+  team               Team?                @relation(fields: [teamId], references: [id])
+  contracts          Contract[]
+  targets            Target[]
+  CompensationReport CompensationReport[]
+}
