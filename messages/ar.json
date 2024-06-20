@@ -1,5 +1,19 @@
 {
-  "Index": {
-    "title": "Hello ar!"
-  }
+  "sidebar": {
+    "title": "لوحة القيادة"
+  },
+  "menuItems":[
+    { "name": "الفرق", "path": "/teams" },
+    { "name": "الباعة", "path": "/users" },
+    { "name": "اتفاقيات", "path": "/contracts" },
+    { "name": "الفروع", "path": "/branches" },
+    { "name": "الأهداف", "path": "/targets" },
+    { "name": "التقارير", "path": "/reports" }
+  ],
+  "teamsColumns":[
+    { "header": "بطاقة تعريف", "accessor": "id" },
+    { "header": "الاسم", "accessor": "name" },
+    { "header": "الموقع", "accessor": "location" },
+    { "header": "عدد الباعة", "accessor": "salesmenCount" }
+  ]
 }

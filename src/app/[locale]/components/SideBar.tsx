@@ -1,23 +1,23 @@
 import React from "react";
 import { Link } from "../../../navigation";
+import { useTranslations } from "next-intl";
 
-const SideBar = () => {
-  const menuItems = [
-    { name: "Teams", path: "/teams" },
-    { name: "Salesmen", path: "/users" },
-    { name: "Contracts", path: "/contracts" },
-    { name: "Branches", path: "/branches" },
-    { name: "Targets", path: "/targets" },
-    { name: "Reports", path: "/reports" },
-  ];
+interface MenuItem {
+  name: string;
+  path: string;
+}
+
+const SideBar: React.FC = () => {
+  const t = useTranslations();
+  const menuItems: MenuItem[] = t.raw("menuItems");
 
   return (
     <div className="h-full w-64 bg-gray-800 text-white">
       <div className="p-4">
-        <h2 className="text-2xl font-semibold">Dashboard</h2>
+        <h2 className="text-2xl font-semibold">{t("sidebar.title")}</h2>
       </div>
       <nav className="mt-10">
-        {menuItems.map((item) => (
+        {menuItems.map((item: MenuItem) => (
           <Link
             key={item.name}
             href={item.path}

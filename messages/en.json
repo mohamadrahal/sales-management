@@ -1,5 +1,19 @@
 {
-  "Index": {
-    "title": "Hello en!"
-  }
+  "sidebar": {
+    "title": "Dashboard"
+  },
+  "menuItems":[
+    { "name": "Teams", "path": "/teams" },
+    { "name": "Salesmen", "path": "/users" },
+    { "name": "Contracts", "path": "/contracts" },
+    { "name": "Branches", "path": "/branches" },
+    { "name": "Targets", "path": "/targets" },
+    { "name": "Reports", "path": "/reports" }
+  ],
+  "teamsColumns":[
+    { "header": "ID", "accessor": "id" },
+    { "header": "Name", "accessor": "name" },
+    { "header": "Location", "accessor": "location" },
+    { "header": "Salesmen Count", "accessor": "salesmenCount" }
+  ]
 }
