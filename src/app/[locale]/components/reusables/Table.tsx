@@ -1,5 +1,4 @@
 import React from "react";
-import prisma from "../../../../prisma/client";
 
 interface Column {
   header: string;
@@ -12,8 +11,6 @@ interface TableProps {
 }
 
 const Table: React.FC<TableProps> = async ({ columns, data }) => {
-  const teams = await prisma.team.findMany();
-
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white border border-gray-200">

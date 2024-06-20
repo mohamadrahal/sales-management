@@ -4,7 +4,7 @@ import { Link } from "../../../navigation";
 const SideBar = () => {
   const menuItems = [
     { name: "Teams", path: "/teams" },
-    { name: "Salesmen", path: "/salesmen" },
+    { name: "Salesmen", path: "/users" },
     { name: "Contracts", path: "/contracts" },
     { name: "Branches", path: "/branches" },
     { name: "Targets", path: "/targets" },

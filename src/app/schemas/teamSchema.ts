@@ -1,4 +1,3 @@
-// lib/schemas.js
 import { z } from "zod";
 
 export const cityEnum = z.enum([
@@ -20,8 +19,8 @@ export const cityEnum = z.enum([
 ]);
 
 export const teamSchema = z.object({
-  name: z.string().min(1),
+  name: z.string().min(1, "Team name is required"),
   location: cityEnum,
 });
 
-export const teamUpdateSchema = teamSchema.partial();
+export type City = z.infer<typeof cityEnum>;

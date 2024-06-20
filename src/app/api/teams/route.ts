@@ -3,8 +3,29 @@ import { NextRequest, NextResponse } from "next/server";
 import { teamSchema } from "@/app/schemas/teamSchema";
 
 export async function GET() {
-  const teams = await prisma.team.findMany();
-  return NextResponse.json(teams, { status: 200 });
+  try {
+    const teams = await prisma.team.findMany({
+      include: {
+        _count: {
+          select: { salesmen: true },
+        },
+      },
+    });
+
+    // Map the response to include the count of salesmen
+    const teamsWithSalesmenCount = teams.map((team) => ({
+      ...team,
+      salesmenCount: team._count?.salesmen || 0,
+    }));
+
+    return NextResponse.json(teamsWithSalesmenCount, { status: 200 });
+  } catch (error) {
+    console.error("Failed to fetch teams:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch teams" },
+      { status: 500 }
+    );
+  }
 }
 
 export async function POST(request: NextRequest) {
