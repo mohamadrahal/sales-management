@@ -27,6 +27,7 @@ const NewTeam = () => {
       const response = await axios.post("/api/teams", teamData);
 
       if (response.status === 201) {
+        router.refresh();
         router.push(`/${locale}/teams`);
       } else {
         alert("Failed to add team");
