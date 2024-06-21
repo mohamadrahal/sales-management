@@ -2,6 +2,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import "../globals.css";
 import SideBar from "./components/SideBar";
+import { TeamsProvider } from "./context/TeamsContext";
 
 export default async function LocaleLayout({
   children,
@@ -22,9 +23,9 @@ export default async function LocaleLayout({
     >
       <body className="h-full flex">
         <SideBar />
-        <div className="flex-1">
+        <div className="flex-1 overflow-y-auto">
           <NextIntlClientProvider messages={messages}>
-            {children}
+            <TeamsProvider>{children}</TeamsProvider>
           </NextIntlClientProvider>
         </div>
       </body>

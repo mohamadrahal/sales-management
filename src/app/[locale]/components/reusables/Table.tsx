@@ -1,16 +1,28 @@
+"use client";
+
 import React from "react";
+import ActionButton from "./ActionButton";
+import { IconType } from "react-icons";
+import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
 
 interface Column {
   header: string;
   accessor: string;
 }
 
+interface Action {
+  icon: IconType;
+  onClick: (row: any) => void;
+  className?: string;
+}
+
 interface TableProps {
   columns: Column[];
   data: any[];
+  actions?: Action[];
 }
 
-const Table: React.FC<TableProps> = async ({ columns, data }) => {
+const Table: React.FC<TableProps> = ({ columns, data, actions }) => {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white border border-gray-200">
@@ -24,6 +36,11 @@ const Table: React.FC<TableProps> = async ({ columns, data }) => {
                 {column.header}
               </th>
             ))}
+            {actions && actions.length > 0 && (
+              <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
+                Actions
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -37,6 +54,20 @@ const Table: React.FC<TableProps> = async ({ columns, data }) => {
                   {row[column.accessor]}
                 </td>
               ))}
+              {actions && (
+                <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                  <div className="flex space-x-2">
+                    {actions.map((action, actionIndex) => (
+                      <ActionButton
+                        key={actionIndex}
+                        icon={action.icon}
+                        onClick={() => action.onClick(row)}
+                        className={action.className}
+                      />
+                    ))}
+                  </div>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

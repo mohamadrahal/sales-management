@@ -1,27 +1,17 @@
+"use client";
+
 import React from "react";
-import Table from "../components/reusables/Table";
-import AddButton from "../components/reusables/AddButton";
-import prisma from "../../../../prisma/client";
+import TeamsPageWrapper from "./components/TeamsPageWrapper";
+import { TeamsProvider } from "../context/TeamsContext";
 
-const teamsColumns = [
-  { header: "ID", accessor: "id" },
-  { header: "Name", accessor: "name" },
-  { header: "Location", accessor: "location" },
-  { header: "Salesmen Count", accessor: "salesmenCount" },
-];
-
-const TeamsPage = async () => {
-  const teams = await prisma.team.findMany();
-
+const HomePage: React.FC = () => {
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-semibold">Teams</h1>
-        <AddButton text="Add Team" link={`/teams/new-team`} />
+    <TeamsProvider>
+      <div>
+        <TeamsPageWrapper />
       </div>
-      <Table columns={teamsColumns} data={teams} />
-    </div>
+    </TeamsProvider>
   );
 };
 
-export default TeamsPage;
+export default HomePage;

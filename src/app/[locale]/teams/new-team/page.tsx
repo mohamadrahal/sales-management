@@ -4,13 +4,15 @@ import React, { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { teamSchema, cityEnum, City } from "@/app/schemas/teamSchema";
+import { useTeams } from "../../context/TeamsContext";
 
-const NewTeam = () => {
+const NewTeam: React.FC = () => {
   const [name, setName] = useState("");
   const [location, setLocation] = useState<City>(cityEnum.options[0]);
-  const router = useRouter(); // Ensure useRouter is called inside the component
+  const router = useRouter();
   const searchParams = useSearchParams();
   const locale = searchParams.get("locale") || "en";
+  const { addTeam } = useTeams();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +29,7 @@ const NewTeam = () => {
       const response = await axios.post("/api/teams", teamData);
 
       if (response.status === 201) {
-        router.refresh();
+        addTeam(response.data);
         router.push(`/${locale}/teams`);
       } else {
         alert("Failed to add team");
