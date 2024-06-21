@@ -19,7 +19,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       onClick={onClick}
       className={`px-3 py-1 text-sm font-semibold text-white rounded ${className}`}
     >
-      <Icon className="w-4 h-6" />
+      <Icon className="w-3 h-6" />
     </button>
   );
 };

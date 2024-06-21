@@ -7,6 +7,10 @@ body {
 }
 
 :root {
+  --color-primary: #050c9c;
+  --color-secondary: #3572ef;
+  --color-accent: #3abef9;
+  --color-light: #a7e6ff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -15,6 +19,8 @@ body {
 }
 
 body {
+  font-family: "Inter", sans-serif;
+  background-color: white;
 }
 
 @layer utilities {

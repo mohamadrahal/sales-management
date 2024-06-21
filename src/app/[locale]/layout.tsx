@@ -25,7 +25,7 @@ export default async function LocaleLayout({
         <SideBar />
         <div className="flex-1 overflow-y-auto">
           <NextIntlClientProvider messages={messages}>
-            <TeamsProvider>{children}</TeamsProvider>
+            {children}
           </NextIntlClientProvider>
         </div>
       </body>

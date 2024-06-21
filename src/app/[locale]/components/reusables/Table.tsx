@@ -3,7 +3,6 @@
 import React from "react";
 import ActionButton from "./ActionButton";
 import { IconType } from "react-icons";
-import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
 
 interface Column {
   header: string;
@@ -16,13 +15,13 @@ interface Action {
   className?: string;
 }
 
-interface TableProps {
+type TableProps = {
   columns: Column[];
   data: any[];
   actions?: Action[];
-}
+};
 
-const Table: React.FC<TableProps> = ({ columns, data, actions }) => {
+const Table = ({ columns, data, actions }: TableProps) => {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white border border-gray-200">
@@ -49,13 +48,13 @@ const Table: React.FC<TableProps> = ({ columns, data, actions }) => {
               {columns.map((column) => (
                 <td
                   key={column.accessor}
-                  className="px-6 py-4 whitespace-no-wrap border-b border-gray-200"
+                  className="px-6 py-2 whitespace-no-wrap border-b border-gray-200"
                 >
                   {row[column.accessor]}
                 </td>
               ))}
               {actions && (
-                <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                <td className="px-6 py-2 whitespace-no-wrap border-b border-gray-200">
                   <div className="flex space-x-2">
                     {actions.map((action, actionIndex) => (
                       <ActionButton

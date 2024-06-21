@@ -33,7 +33,7 @@ export const TeamsProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    fetchTeams();
+    fetchTeams(1, 10); // Ensure fetchTeams is called with default parameters
   }, []);
 
   const addTeam = (team: Team) => {

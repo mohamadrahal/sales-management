@@ -1,8 +1,8 @@
 {
   "sidebar": {
-    "title": "Dashboard"
+    "title": "Sales Management System"
   },
-  "menuItems":[
+  "menuItems": [
     { "name": "Teams", "path": "/teams" },
     { "name": "Salesmen", "path": "/users" },
     { "name": "Contracts", "path": "/contracts" },
@@ -10,7 +10,7 @@
     { "name": "Targets", "path": "/targets" },
     { "name": "Reports", "path": "/reports" }
   ],
-  "teamsColumns":[
+  "teamsColumns": [
     { "header": "ID", "accessor": "id" },
     { "header": "Name", "accessor": "name" },
     { "header": "Location", "accessor": "location" },

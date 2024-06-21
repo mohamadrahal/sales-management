@@ -3,19 +3,19 @@
 import React from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
-interface PaginationProps {
+type PaginationProps = {
   currentPage: number;
   totalCount: number;
   pageSize: number;
   onPageChange: (page: number) => void;
-}
+};
 
-const Pagination: React.FC<PaginationProps> = ({
+const Pagination = ({
   currentPage,
   totalCount,
   pageSize,
   onPageChange,
-}) => {
+}: PaginationProps) => {
   const totalPages = Math.ceil(totalCount / pageSize);
 
   return (
@@ -32,7 +32,9 @@ const Pagination: React.FC<PaginationProps> = ({
           key={index}
           onClick={() => onPageChange(index + 1)}
           className={`px-3 py-1 rounded ${
-            currentPage === index + 1 ? "bg-blue-500 text-white" : "bg-gray-200"
+            currentPage === index + 1
+              ? "bg-secondary text-white"
+              : "bg-gray-200"
           }`}
         >
           {index + 1}
