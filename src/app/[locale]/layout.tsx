@@ -2,7 +2,6 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import "../globals.css";
 import SideBar from "./components/SideBar";
-import { TeamsProvider } from "./context/TeamsContext";
 
 export default async function LocaleLayout({
   children,
