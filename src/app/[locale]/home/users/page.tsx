@@ -1,6 +1,6 @@
 import React from "react";
-import prisma from "../../../../prisma/client";
-import Table from "../components/reusables/Table";
+import prisma from "../../../../../prisma/client";
+import Table from "../../components/reusables/Table";
 
 const usersColumns = [
   { header: "ID", accessor: "id" },

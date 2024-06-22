@@ -163,11 +163,11 @@ model Branch {
 model User {
   id                 Int                  @id @default(autoincrement())
   role               UserRole // "Admin", "SalesManager", "Salesman"
-  username           String
+  username           String               @unique
   password           String
   teamId             Int?
   name               String
-  mobileNumber       String
+  mobileNumber       String               @unique
   bcdAccount         String?
   evoAppId           String
   nationalId         String

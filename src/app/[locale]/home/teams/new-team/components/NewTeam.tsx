@@ -43,7 +43,7 @@ const NewTeam: React.FC = () => {
         const response = await axios.put(`/api/teams/${teamId}`, teamData);
         if (response.status === 200) {
           fetchTeams(1, 10);
-          router.push(`/${locale}/teams`);
+          router.push(`/${locale}/home/teams`);
         } else {
           alert("Failed to update team");
         }
@@ -51,7 +51,7 @@ const NewTeam: React.FC = () => {
         const response = await axios.post("/api/teams", teamData);
         if (response.status === 201) {
           addTeam(response.data);
-          router.push(`/${locale}/teams`);
+          router.push(`/${locale}/home/teams`);
         } else {
           alert("Failed to add team");
         }

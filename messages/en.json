@@ -3,12 +3,12 @@
     "title": "Sales Management System"
   },
   "menuItems": [
-    { "name": "Teams", "path": "/teams" },
-    { "name": "Salesmen", "path": "/users" },
-    { "name": "Contracts", "path": "/contracts" },
-    { "name": "Branches", "path": "/branches" },
-    { "name": "Targets", "path": "/targets" },
-    { "name": "Reports", "path": "/reports" }
+    { "name": "Teams", "path": "/home/teams" },
+    { "name": "Salesmen", "path": "/home/users" },
+    { "name": "Contracts", "path": "/home/contracts" },
+    { "name": "Branches", "path": "/home/branches" },
+    { "name": "Targets", "path": "/home/targets" },
+    { "name": "Reports", "path": "/home/reports" }
   ],
   "teamsColumns": [
     { "header": "ID", "accessor": "id" },

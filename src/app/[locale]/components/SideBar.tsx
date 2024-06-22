@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "../../../navigation";
 import { useTranslations } from "next-intl";
+import LogoutButton from "./LogoutButton";
 
 interface MenuItem {
   name: string;
@@ -26,6 +27,7 @@ const SideBar: React.FC = () => {
             {item.name}
           </Link>
         ))}
+        <LogoutButton />
       </nav>
     </div>
   );

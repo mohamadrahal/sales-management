@@ -2,7 +2,7 @@
 
 import React from "react";
 import TeamsPage from "./TeamsPage";
-import { TeamsProvider, useTeams } from "../../context/TeamsContext";
+import { TeamsProvider, useTeams } from "../../../context/TeamsContext";
 
 const TeamsPageWrapper: React.FC = () => {
   return (

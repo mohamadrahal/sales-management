@@ -19,10 +19,11 @@ const Login = () => {
       const response = await axios.post("/api/login", {
         usernameOrMobile,
         password,
+        locale,
       });
 
       if (response.status === 200) {
-        router.push(`/${locale}/teams`);
+        router.push(`/${locale}/home/teams`);
       }
     } catch (error) {
       console.error("Failed to login:", error);

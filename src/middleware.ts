@@ -1,14 +1,14 @@
+// middleware.ts
 import createMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
+import { authMiddleware } from "./app/[locale]/middleware/auth"; // Adjust the import path
 
 const intlMiddleware = createMiddleware({
-  // A list of all locales that are supported
   locales: ["en", "ar"],
-  // Used when no locale matches
   defaultLocale: "en",
 });
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Redirect to the login page if the pathname is root
@@ -17,11 +17,23 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
   }
 
+  // Skip authentication and locale handling for API routes
+  if (pathname.startsWith("/api")) {
+    return NextResponse.next();
+  }
+
+  // Handle authentication for protected routes
+  if (pathname.startsWith(`/${req.nextUrl.locale}/home`)) {
+    const authResponse = await authMiddleware(req);
+    if (authResponse.status === 307) {
+      return authResponse;
+    }
+  }
+
   // Use the next-intl middleware for locale handling
   return intlMiddleware(req);
 }
 
 export const config = {
-  // Match only internationalized pathnames
-  matcher: ["/", "/(ar|en)/:path*"],
+  matcher: ["/", "/:locale/login", "/:locale/home/:path*"],
 };

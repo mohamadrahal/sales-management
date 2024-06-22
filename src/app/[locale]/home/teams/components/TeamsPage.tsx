@@ -2,14 +2,14 @@
 
 import React, { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Table from "../../components/reusables/Table";
-import AddButton from "../../components/reusables/AddButton";
-import { Team } from "../../../../../types/types";
+import Table from "../../../components/reusables/Table";
+import AddButton from "../../../components/reusables/AddButton";
+import { Team } from "../../../../../../types/types";
 import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
-import Pagination from "../../components/reusables/Pagination";
-import { useTeams } from "../../context/TeamsContext";
+import Pagination from "../../../components/reusables/Pagination";
+import { useTeams } from "../../../context/TeamsContext";
 import axios from "axios";
-import ConfirmationModal from "../../components/reusables/ConfirmationModal";
+import ConfirmationModal from "../../../components/reusables/ConfirmationModal";
 
 interface TeamsPageProps {
   teams: Team[];
