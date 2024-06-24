@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "@/navigation";
 import Table from "../../../components/reusables/Table";
 import AddButton from "../../../components/reusables/AddButton";
 import { Contract } from "../../../../../../types/types";
@@ -32,8 +32,6 @@ const ContractsPage = ({ contracts }: ContractPageProps) => {
     null
   );
   const [showModal, setShowModal] = useState(false);
-  const searchParams = useSearchParams();
-  const locale = searchParams.get("locale") || "en";
   const pageSize = 10;
 
   const handlePageChange = (page: number) => {
@@ -59,12 +57,12 @@ const ContractsPage = ({ contracts }: ContractPageProps) => {
     {
       icon: FaEdit,
       onClick: (row: Contract) =>
-        router.push(`/${locale}/contracts/new-contract?id=${row.id}`),
+        router.push(`/home/contracts/new-contract?id=${row.id}`),
       className: "bg-secondary hover:bg-primary",
     },
     {
       icon: FaEye,
-      onClick: (row: Contract) => router.push(`/${locale}/contracts/${row.id}`),
+      onClick: (row: Contract) => router.push(`/home/contracts/${row.id}`),
       className: "bg-gray-400 hover:bg-gray-600",
     },
     {
@@ -81,7 +79,7 @@ const ContractsPage = ({ contracts }: ContractPageProps) => {
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-semibold text-primary">Contracts</h1>
-        <AddButton text="Add Contract" link={`/contracts/new-contract`} />
+        <AddButton text="Add Contract" link={`/home/contracts/new-contract`} />
       </div>
       <Table columns={contractColumns} data={contracts} actions={actions} />
       <Pagination

@@ -4,7 +4,7 @@ import React from "react";
 import NewTeam from "./components/NewTeam";
 import { TeamsProvider } from "../../../context/TeamsContext";
 
-const NewTeamWrapper: React.FC = () => {
+const NewTeamWrapper = () => {
   return (
     <TeamsProvider>
       <NewTeamWithContext />
@@ -12,7 +12,7 @@ const NewTeamWrapper: React.FC = () => {
   );
 };
 
-const NewTeamWithContext: React.FC = () => {
+const NewTeamWithContext = () => {
   return <NewTeam />;
 };
 

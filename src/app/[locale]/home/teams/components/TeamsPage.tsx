@@ -29,8 +29,6 @@ const TeamsPage: React.FC<TeamsPageProps> = ({ teams }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const searchParams = useSearchParams();
-  const locale = searchParams.get("locale") || "en";
   const pageSize = 10;
 
   const handlePageChange = (page: number) => {

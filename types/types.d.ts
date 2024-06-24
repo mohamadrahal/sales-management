@@ -64,6 +64,14 @@ export interface Branch {
   locationY: number;
 }
 
+export interface BranchFormData {
+  name: string;
+  phone: string;
+  city: City;
+  locationX: number;
+  locationY: number;
+}
+
 export interface ContractReport {
   contractId: number;
   reportId: number;
@@ -80,6 +88,14 @@ export interface User {
   bcdAccount?: string;
   evoAppId: string;
   nationalId: string;
+}
+
+export interface Branch {
+  name: string;
+  phone: string;
+  city: City;
+  locationX: number;
+  locationY: number;
 }
 
 export enum UserRole {
