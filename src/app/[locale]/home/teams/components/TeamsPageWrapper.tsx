@@ -3,6 +3,7 @@
 import React from "react";
 import TeamsPage from "./TeamsPage";
 import { TeamsProvider, useTeams } from "../../../context/TeamsContext";
+import useRequireAuth from "@/app/[locale]/hooks/useRequireAuth";
 
 const TeamsPageWrapper: React.FC = () => {
   return (
@@ -13,6 +14,7 @@ const TeamsPageWrapper: React.FC = () => {
 };
 
 const TeamsPageWithContext: React.FC = () => {
+  useRequireAuth();
   const { teams } = useTeams();
 
   return <TeamsPage teams={teams} />;

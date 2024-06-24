@@ -3,8 +3,11 @@
 import React from "react";
 import TeamsPageWrapper from "./components/TeamsPageWrapper";
 import { TeamsProvider } from "../../context/TeamsContext";
+import useRequireAuth from "../../hooks/useRequireAuth";
 
-const HomePage: React.FC = () => {
+const HomePage = () => {
+  useRequireAuth();
+
   return (
     <TeamsProvider>
       <div>

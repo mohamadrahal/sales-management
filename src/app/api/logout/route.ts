@@ -1,3 +1,4 @@
+// pages/api/logout.ts
 import { NextRequest, NextResponse } from "next/server";
 import cookie from "cookie";
 
@@ -23,10 +24,12 @@ export async function POST(req: NextRequest) {
       })
     );
 
+    // Construct the absolute URL for redirection
+    const url = new URL(req.url);
+    const redirectUrl = `${url.protocol}//${url.host}/${locale}/login`;
+
     // Redirect to the locale-specific login page
-    const redirectResponse = NextResponse.redirect(
-      new URL(`/${locale}/login`, req.url)
-    );
+    const redirectResponse = NextResponse.redirect(redirectUrl);
     redirectResponse.headers.set(
       "Set-Cookie",
       cookie.serialize("token", "", {

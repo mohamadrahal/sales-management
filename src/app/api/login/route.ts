@@ -1,3 +1,4 @@
+// pages/api/login.ts
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../prisma/client";
 import bcrypt from "bcrypt";
@@ -37,7 +38,10 @@ export async function POST(req: NextRequest) {
       expiresIn: "1h",
     });
 
-    const response = NextResponse.json({ message: "Login successful" });
+    const response = NextResponse.json({
+      message: "Login successful",
+      user: { id: user.id, username: user.username, role: user.role },
+    });
     response.headers.set(
       "Set-Cookie",
       cookie.serialize("token", token, {
@@ -48,21 +52,7 @@ export async function POST(req: NextRequest) {
       })
     );
 
-    // Redirect to the locale-specific page
-    const redirectResponse = NextResponse.redirect(
-      new URL(`/${locale}/home/teams`, req.url)
-    );
-    redirectResponse.headers.set(
-      "Set-Cookie",
-      cookie.serialize("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 3600,
-        path: "/",
-      })
-    );
-
-    return redirectResponse;
+    return response;
   } catch (error) {
     console.error("Error during login:", error);
     return NextResponse.json(

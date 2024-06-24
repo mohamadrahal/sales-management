@@ -1,9 +1,10 @@
 // components/Login.tsx
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import InputField from "./InputField";
 import axios from "axios";
+import useAuthStore from "../../stores/authStore";
 
 const Login = () => {
   const [usernameOrMobile, setUsernameOrMobile] = useState("");
@@ -11,6 +12,14 @@ const Login = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const locale = searchParams.get("locale") || "en";
+  const { setUser, setLoading } = useAuthStore((state) => ({
+    setUser: state.setUser,
+    setLoading: state.setLoading,
+  }));
+
+  useEffect(() => {
+    setLoading(true);
+  }, [setLoading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,6 +32,8 @@ const Login = () => {
       });
 
       if (response.status === 200) {
+        const user = response.data.user;
+        setUser(user); // Set the user in the store
         router.push(`/${locale}/home/teams`);
       }
     } catch (error) {

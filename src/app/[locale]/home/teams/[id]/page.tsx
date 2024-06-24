@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import axios from "axios";
 import { Team } from "../../../../../../types/types";
 import Table from "../../../components/reusables/Table";
+import useRequireAuth from "@/app/[locale]/hooks/useRequireAuth";
 
 interface Salesman {
   id: number;
@@ -24,6 +25,8 @@ const TeamDetails: React.FC = () => {
   const { id } = useParams();
   const [team, setTeam] = useState<TeamWithSalesmen | null>(null);
   const [loading, setLoading] = useState(true);
+
+  useRequireAuth();
 
   useEffect(() => {
     const fetchTeamDetails = async () => {
