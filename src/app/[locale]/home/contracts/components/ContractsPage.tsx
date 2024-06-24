@@ -1,33 +1,36 @@
+// components/ContractPage.tsx
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "@/navigation";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Table from "../../../components/reusables/Table";
 import AddButton from "../../../components/reusables/AddButton";
-import { Team } from "../../../../../../types/types";
+import { Contract } from "../../../../../../types/types";
 import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
 import Pagination from "../../../components/reusables/Pagination";
-import { useTeams } from "../../../context/TeamsContext";
+import { useContracts } from "../../../context/ContractContext";
 import axios from "axios";
 import ConfirmationModal from "../../../components/reusables/ConfirmationModal";
 
-interface TeamsPageProps {
-  teams: Team[];
-}
+type ContractPageProps = {
+  contracts: Contract[];
+};
 
-const teamsColumns = [
+const contractColumns = [
   { header: "ID", accessor: "id" },
-  { header: "Name", accessor: "name" },
-  { header: "Location", accessor: "location" },
-  { header: "Salesmen Count", accessor: "salesmenCount" },
+  { header: "Company Name", accessor: "companyName" },
+  { header: "Owner Name", accessor: "ownerName" },
+  { header: "Status", accessor: "status" },
+  { header: "Number of Branches", accessor: "numberOfBranches" },
 ];
 
-const TeamsPage: React.FC<TeamsPageProps> = ({ teams }) => {
+const ContractsPage = ({ contracts }: ContractPageProps) => {
   const router = useRouter();
-  const { fetchTeams, totalCount } = useTeams();
+  const { fetchContracts, totalCount } = useContracts();
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+  const [selectedContract, setSelectedContract] = useState<Contract | null>(
+    null
+  );
   const [showModal, setShowModal] = useState(false);
   const searchParams = useSearchParams();
   const locale = searchParams.get("locale") || "en";
@@ -35,19 +38,19 @@ const TeamsPage: React.FC<TeamsPageProps> = ({ teams }) => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    fetchTeams(page, pageSize);
+    fetchContracts(page, pageSize);
   };
 
   const handleDelete = async () => {
-    if (selectedTeam) {
+    if (selectedContract) {
       try {
-        await axios.delete(`/api/teams/${selectedTeam.id}`);
-        fetchTeams(currentPage, pageSize);
+        await axios.delete(`/api/contracts/${selectedContract.id}`);
+        fetchContracts(currentPage, pageSize);
       } catch (error) {
-        console.error("Failed to delete team:", error);
+        console.error("Failed to delete contract:", error);
       } finally {
         setShowModal(false);
-        setSelectedTeam(null);
+        setSelectedContract(null);
       }
     }
   };
@@ -55,18 +58,19 @@ const TeamsPage: React.FC<TeamsPageProps> = ({ teams }) => {
   const actions = [
     {
       icon: FaEdit,
-      onClick: (row: Team) => router.push(`/home/teams/new-team?id=${row.id}`),
+      onClick: (row: Contract) =>
+        router.push(`/${locale}/contracts/new-contract?id=${row.id}`),
       className: "bg-secondary hover:bg-primary",
     },
     {
       icon: FaEye,
-      onClick: (row: Team) => router.push(`/home/teams/${row.id}`),
+      onClick: (row: Contract) => router.push(`/${locale}/contracts/${row.id}`),
       className: "bg-gray-400 hover:bg-gray-600",
     },
     {
       icon: FaTrash,
-      onClick: (row: Team) => {
-        setSelectedTeam(row);
+      onClick: (row: Contract) => {
+        setSelectedContract(row);
         setShowModal(true);
       },
       className: "bg-red-400 hover:bg-red-600",
@@ -76,20 +80,20 @@ const TeamsPage: React.FC<TeamsPageProps> = ({ teams }) => {
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-semibold text-primary">Teams</h1>
-        <AddButton text="Add Team" link={`/home/teams/new-team`} />
+        <h1 className="text-2xl font-semibold text-primary">Contracts</h1>
+        <AddButton text="Add Contract" link={`/contracts/new-contract`} />
       </div>
-      <Table columns={teamsColumns} data={teams} actions={actions} />
+      <Table columns={contractColumns} data={contracts} actions={actions} />
       <Pagination
         currentPage={currentPage}
         totalCount={totalCount}
         pageSize={pageSize}
         onPageChange={handlePageChange}
       />
-      {showModal && selectedTeam && (
+      {showModal && selectedContract && (
         <ConfirmationModal
           title="Confirm Deletion"
-          content={`Are you sure you want to delete the team "${selectedTeam.name}"?`}
+          content={`Are you sure you want to delete the contract for "${selectedContract.companyName}"?`}
           onConfirm={handleDelete}
           onCancel={() => setShowModal(false)}
         />
@@ -98,4 +102,4 @@ const TeamsPage: React.FC<TeamsPageProps> = ({ teams }) => {
   );
 };
 
-export default TeamsPage;
+export default ContractsPage;

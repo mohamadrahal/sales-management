@@ -2,15 +2,15 @@
   "sidebar": {
     "title": "لوحة القيادة"
   },
-  "menuItems":[
-    { "name": "الفرق", "path": "/teams" },
-    { "name": "الباعة", "path": "/users" },
-    { "name": "اتفاقيات", "path": "/contracts" },
-    { "name": "الفروع", "path": "/branches" },
-    { "name": "الأهداف", "path": "/targets" },
-    { "name": "التقارير", "path": "/reports" }
+  "menuItems": [
+    { "name": "الفرق", "path": "/home/teams" },
+    { "name": "الباعة", "path": "/home/users" },
+    { "name": "اتفاقيات", "path": "/home/contracts" },
+    { "name": "الفروع", "path": "/home/branches" },
+    { "name": "الأهداف", "path": "/home/targets" },
+    { "name": "التقارير", "path": "/home/reports" }
   ],
-  "teamsColumns":[
+  "teamsColumns": [
     { "header": "بطاقة تعريف", "accessor": "id" },
     { "header": "الاسم", "accessor": "name" },
     { "header": "الموقع", "accessor": "location" },
