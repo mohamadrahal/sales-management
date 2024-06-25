@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
-import { Team } from "../../../../types/types";
+import { Team } from "../../../types/types";
 
 interface TeamsContextProps {
   teams: Team[];

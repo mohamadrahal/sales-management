@@ -5,7 +5,7 @@ import { useRouter } from "@/navigation";
 import { useSearchParams } from "next/navigation";
 import Table from "../../../components/reusables/Table";
 import AddButton from "../../../components/reusables/AddButton";
-import { Team } from "../../../../../../types/types";
+import { Team } from "../../../../../types/types";
 import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
 import Pagination from "../../../components/reusables/Pagination";
 import { useTeams } from "../../../context/TeamsContext";

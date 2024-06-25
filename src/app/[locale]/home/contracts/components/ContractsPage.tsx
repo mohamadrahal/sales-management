@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { useRouter } from "@/navigation";
 import Table from "../../../components/reusables/Table";
 import AddButton from "../../../components/reusables/AddButton";
-import { Contract } from "../../../../../../types/types";
+import { Contract } from "../../../../../types/types";
 import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
 import Pagination from "../../../components/reusables/Pagination";
 import { useContracts } from "../../../context/ContractContext";

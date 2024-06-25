@@ -17,7 +17,6 @@ export interface Contract {
   contactPersonName: string;
   contactPersonMobileNumber: string;
   bcdAccountNumber?: string; // Optional
-  numberOfBranches: number;
   documentPath: string;
   status: Status; // "Pending", "Approved", "Declined"
   createdAt: Date;

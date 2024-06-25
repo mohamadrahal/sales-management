@@ -119,7 +119,6 @@ model Contract {
   contactPersonMobileNumber String
   bcdAccountNumber          String? // Optional
   branches                  Branch[]
-  numberOfBranches          Int
   documentPath              String
   status                    Status           @default(Pending) // "Pending", "Approved", "Declined"
   salesman                  User             @relation(fields: [salesmanId], references: [id])

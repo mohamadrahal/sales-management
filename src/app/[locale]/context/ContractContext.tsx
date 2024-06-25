@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
-import { Contract } from "../../../../types/types";
+import { Contract } from "../../../types/types";
 
 interface ContractsContextProps {
   contracts: Contract[];

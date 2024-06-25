@@ -1,6 +1,6 @@
 {
   "sidebar": {
-    "title": "Sales Management System"
+    "title": "Sales Management"
   },
   "menuItems": [
     { "name": "Teams", "path": "/home/teams" },

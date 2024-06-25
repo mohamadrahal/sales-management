@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export const contractSchema = z.object({
-  salesmanId: z.number(),
+  salesmanId: z.number().int(),
   type: z.enum(["Subagent", "Merchant", "Both"]),
-  companyName: z.string().min(1),
+  companyName: z.string(),
   businessType: z.enum([
     "Retail",
     "Wholesale",
@@ -18,38 +18,11 @@ export const contractSchema = z.object({
     "Entertainment",
     "NonProfit",
   ]),
-  ownerName: z.string().min(1),
-  ownerMobileNumber: z.string().min(10),
-  companyMobileNumber: z.string().min(10),
-  contactPersonName: z.string().min(1),
-  contactPersonMobileNumber: z.string().min(10),
+  ownerName: z.string(),
+  ownerMobileNumber: z.string(),
+  companyMobileNumber: z.string(),
+  contactPersonName: z.string(),
+  contactPersonMobileNumber: z.string(),
   bcdAccountNumber: z.string().optional(),
-  numberOfBranches: z.number().min(1),
-  documentPath: z.string().url(),
-  status: z.enum(["Pending", "Approved", "Declined"]).default("Pending"),
-  branches: z.array(
-    z.object({
-      name: z.string().min(1),
-      phone: z.string().min(10),
-      city: z.enum([
-        "Tripoli",
-        "Benghazi",
-        "Misrata",
-        "Bayda",
-        "Zawiya",
-        "Khoms",
-        "Tobruk",
-        "Ajdabiya",
-        "Sebha",
-        "Sirte",
-        "Derna",
-        "Zliten",
-        "Sabratha",
-        "Ghat",
-        "Jalu",
-      ]),
-      locationX: z.number(),
-      locationY: z.number(),
-    })
-  ),
+  documentPath: z.string(),
 });
