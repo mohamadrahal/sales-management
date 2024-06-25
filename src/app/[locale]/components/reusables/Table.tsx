@@ -3,6 +3,7 @@
 import React from "react";
 import ActionButton from "./ActionButton";
 import { IconType } from "react-icons";
+import { useTranslations } from "next-intl";
 
 interface Column {
   header: string;
@@ -22,6 +23,8 @@ type TableProps = {
 };
 
 const Table = ({ columns, data, actions }: TableProps) => {
+  const t = useTranslations("teamAction");
+
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white border border-gray-200">
@@ -37,7 +40,7 @@ const Table = ({ columns, data, actions }: TableProps) => {
             ))}
             {actions && actions.length > 0 && (
               <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
-                Actions
+                {t("title")}
               </th>
             )}
           </tr>

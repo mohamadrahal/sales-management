@@ -11,19 +11,19 @@ import Pagination from "../../../components/reusables/Pagination";
 import { useTeams } from "../../../context/TeamsContext";
 import axios from "axios";
 import ConfirmationModal from "../../../components/reusables/ConfirmationModal";
+import { useTranslations } from "next-intl";
 
 interface TeamsPageProps {
   teams: Team[];
 }
 
-const teamsColumns = [
-  { header: "ID", accessor: "id" },
-  { header: "Name", accessor: "name" },
-  { header: "Location", accessor: "location" },
-  { header: "Salesmen Count", accessor: "salesmenCount" },
-];
+
 
 const TeamsPage: React.FC<TeamsPageProps> = ({ teams }) => {
+  const t = useTranslations();
+  const t2 = useTranslations("teamsHeader");
+
+  const teamsColumns = t.raw("teamsColumns");
   const router = useRouter();
   const { fetchTeams, totalCount } = useTeams();
   const [currentPage, setCurrentPage] = useState(1);
@@ -74,8 +74,8 @@ const TeamsPage: React.FC<TeamsPageProps> = ({ teams }) => {
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-semibold text-primary">Teams</h1>
-        <AddButton text="Add Team" link={`/home/teams/new-team`} />
+        <h1 className="text-2xl font-semibold text-primary">{t2("title")}</h1>
+        <AddButton text={t2("teamsButton")} link={`/home/teams/new-team`} />
       </div>
       <Table columns={teamsColumns} data={teams} actions={actions} />
       <Pagination

@@ -11,18 +11,19 @@ import Pagination from "../../../components/reusables/Pagination";
 import { useContracts } from "../../../context/ContractContext";
 import axios from "axios";
 import ConfirmationModal from "../../../components/reusables/ConfirmationModal";
+import { useTranslations } from "next-intl";
 
 type ContractPageProps = {
   contracts: Contract[];
 };
 
-const contractColumns = [
-  { header: "ID", accessor: "id" },
-  { header: "Company Name", accessor: "companyName" },
-  { header: "Owner Name", accessor: "ownerName" },
-  { header: "Status", accessor: "status" },
-  { header: "Number of Branches", accessor: "numberOfBranches" },
-];
+// const contractColumns = [
+//   { header: "ID", accessor: "id" },
+//   { header: "Company Name", accessor: "companyName" },
+//   { header: "Owner Name", accessor: "ownerName" },
+//   { header: "Status", accessor: "status" },
+//   { header: "Number of Branches", accessor: "numberOfBranches" },
+// ];
 
 const ContractsPage = ({ contracts }: ContractPageProps) => {
   const router = useRouter();
@@ -75,11 +76,14 @@ const ContractsPage = ({ contracts }: ContractPageProps) => {
     },
   ];
 
+  const t = useTranslations();
+  const contractColumns = t.raw("contractColumns");
+
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-semibold text-primary">Contracts</h1>
-        <AddButton text="Add Contract" link={`/home/contracts/new-contract`} />
+        <h1 className="text-2xl font-semibold text-primary">{t("contractsHeader.title")}</h1>
+        <AddButton text={t("contractsHeader.contractButton")} link={`/home/contracts/new-contract`} />
       </div>
       <Table columns={contractColumns} data={contracts} actions={actions} />
       <Pagination

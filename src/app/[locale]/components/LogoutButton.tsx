@@ -4,13 +4,18 @@ import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import useAuthStore from "../stores/authStore";
 import useRequireAuth from "../hooks/useRequireAuth";
+import Cookies from "js-cookie";
+import { useTranslations } from "next-intl";
 
 const LogoutButton = () => {
   useRequireAuth();
 
+  const t = useTranslations("logout");
+
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const locale = searchParams.get("locale") || "en";
+  // const searchParams = useSearchParams();
+  // const locale = searchParams.get("locale") || "en";
+  const locale = Cookies.get("NEXT_LOCALE") || "en";
   const { logout, setLoading } = useAuthStore((state) => ({
     logout: state.logout,
     setLoading: state.setLoading,
@@ -36,9 +41,9 @@ const LogoutButton = () => {
   return (
     <button
       onClick={handleLogout}
-      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-3/4 m-auto"
     >
-      Logout
+      {t("label")}
     </button>
   );
 };

@@ -1,17 +1,16 @@
-// components/Login.tsx
 "use client";
 import React, { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import InputField from "../../components/reusables/InputField";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import useAuthStore from "../../stores/authStore";
+import Cookies from "js-cookie";
+import { useTranslations } from "next-intl";
 
 const Login = () => {
   const [usernameOrMobile, setUsernameOrMobile] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const locale = searchParams.get("locale") || "en";
+  const locale = Cookies.get("NEXT_LOCALE") || "en";
   const { setUser, setLoading } = useAuthStore((state) => ({
     setUser: state.setUser,
     setLoading: state.setLoading,
@@ -42,34 +41,44 @@ const Login = () => {
     }
   };
 
+  const t = useTranslations("loginPage");
+
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
-        <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
-          Login
+    <div className=" w-full h-full flex items-center justify-center bg-blue-600">
+      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
+        <h1 className="text-3xl font-bold text-center mb-6 text-gray-900">
+          {t("title")}
         </h1>
+
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <InputField
+            <label className="block text-gray-700">{t("email")}</label>
+            <input
               type="text"
               value={usernameOrMobile}
               onChange={(e) => setUsernameOrMobile(e.target.value)}
-              placeholder="Username or Mobile Number"
+              placeholder={t("emailPlaceholder")}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div className="mb-6">
-            <InputField
+            <label className="block text-gray-700">{t("pass")}</label>
+            <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
+              placeholder={t("passPlaceholder")}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            <a href="#" className="text-sm text-blue-500 mt-2 inline-block">
+              {t("forget")}
+            </a>
           </div>
           <button
             type="submit"
             className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            Login
+            {t("button")}
           </button>
         </form>
       </div>

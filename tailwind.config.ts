@@ -19,6 +19,7 @@ const config: Config = {
         accent: "#3ABEF9",
         light: "#A7E6FF",
       },
+
     },
   },
   plugins: [],

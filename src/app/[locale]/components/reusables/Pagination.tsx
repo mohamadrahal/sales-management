@@ -1,5 +1,7 @@
 "use client";
 
+import Cookies from "js-cookie";
+import { useSearchParams } from "next/navigation";
 import React from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
@@ -17,6 +19,9 @@ const Pagination = ({
   onPageChange,
 }: PaginationProps) => {
   const totalPages = Math.ceil(totalCount / pageSize);
+  const locale = Cookies.get("NEXT_LOCALE");
+
+  console.log(locale);
 
   return (
     <div className="flex justify-center space-x-2 mt-4">
@@ -25,7 +30,7 @@ const Pagination = ({
         disabled={currentPage === 1}
         className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
       >
-        <FaChevronLeft />
+        <FaChevronLeft className={locale === "ar" ? "rotate-180" : ""} />
       </button>
       {[...Array(totalPages)].map((_, index) => (
         <button
@@ -45,7 +50,7 @@ const Pagination = ({
         disabled={currentPage === totalPages}
         className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
       >
-        <FaChevronRight />
+        <FaChevronRight className={locale === "ar" ? "rotate-180" : ""} />
       </button>
     </div>
   );

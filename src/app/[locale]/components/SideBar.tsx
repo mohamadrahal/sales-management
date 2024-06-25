@@ -29,7 +29,9 @@ const SideBar: React.FC = () => {
             {item.name}
           </Link>
         ))}
-        <LogoutButton />
+        <div className=" w-full flex justify-center mt-4">
+          <LogoutButton />
+        </div>
       </nav>
     </div>
   );

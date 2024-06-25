@@ -19,7 +19,7 @@ export default async function RootLayout({
       dir={locale === "ar" ? "rtl" : "ltr"}
     >
       <body className="h-full">
-        <NextIntlClientProvider messages={messages}>
+        <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
         </NextIntlClientProvider>
       </body>

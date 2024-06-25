@@ -1,5 +1,6 @@
 // stores/authStore.ts
 import { create } from "zustand";
+import Cookies from "js-cookie";
 
 interface User {
   id: number;
@@ -17,10 +18,16 @@ interface AuthState {
 }
 
 const useAuthStore = create<AuthState>((set) => ({
-  user: null,
+  user: JSON.parse(Cookies.get("user") || "null"),
   isLoading: false, // Initialize loading state as false
-  setUser: (user) => set({ user, isLoading: false }),
-  logout: () => set({ user: null, isLoading: false }), // Update loading state on logout
+  setUser: (user) => {
+    Cookies.set("user", JSON.stringify(user));
+    set({ user, isLoading: false });
+  },
+  logout: () => {
+    Cookies.remove("user");
+    set({ user: null, isLoading: false }); // Update loading state on logout
+  },
   setLoading: (loading) => set({ isLoading: loading }),
 }));
 

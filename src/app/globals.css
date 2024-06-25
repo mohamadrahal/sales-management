@@ -14,8 +14,7 @@ body {
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-  }
+
 }
 
 body {
@@ -27,4 +26,8 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+.ltr-direction {
+  direction: ltr;
 }

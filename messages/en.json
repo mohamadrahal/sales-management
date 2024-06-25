@@ -15,5 +15,37 @@
     { "header": "Name", "accessor": "name" },
     { "header": "Location", "accessor": "location" },
     { "header": "Salesmen Count", "accessor": "salesmenCount" }
-  ]
+  ],
+  "logout":{
+    "label":"Logout"
+  },
+  "teamsHeader":{
+    "title":"Teams",
+    "teamsButton":"Add Teams"
+  },
+  "teamAction":{
+    "title":"Actions"
+  },
+  "contractColumns": [
+    { "header": "ID", "accessor": "id" },
+    { "header": "Company Name", "accessor": "companyName" },
+    { "header": "Owner Name", "accessor": "ownerName" },
+    { "header": "Status", "accessor": "status" },
+    { "header": "Number of Branches", "accessor": "numberOfBranches" }
+  ],
+  "contractsHeader":{
+    "title":"Contracts",
+    "contractButton":"Add Contract"
+  },
+  "loginPage":{
+    "title":"Login",
+    "email":"Email / Username",
+    "pass":"Password",
+    "forget":"Forget Password?",
+    "button":"Login",
+    "emailPlaceholder":"Email/Username",
+    "passPlaceholder":"Password"
+
+  }
+
 }

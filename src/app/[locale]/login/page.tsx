@@ -3,7 +3,7 @@ import Login from "./components/Login";
 
 const page = () => {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center">
+    <div className="w-full h-full flex flex-col items-center justify-center">
       <Login />
     </div>
   );

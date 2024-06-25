@@ -5,7 +5,7 @@
   "menuItems": [
     { "name": "الفرق", "path": "/home/teams" },
     { "name": "الباعة", "path": "/home/users" },
-    { "name": "اتفاقيات", "path": "/home/contracts" },
+    { "name": "العقود", "path": "/home/contracts" },
     { "name": "الفروع", "path": "/home/branches" },
     { "name": "الأهداف", "path": "/home/targets" },
     { "name": "التقارير", "path": "/home/reports" }
@@ -15,5 +15,36 @@
     { "header": "الاسم", "accessor": "name" },
     { "header": "الموقع", "accessor": "location" },
     { "header": "عدد الباعة", "accessor": "salesmenCount" }
-  ]
+  ],
+  "logout":{
+    "label":"تسجيل خروج"
+  },
+  "teamsHeader":{
+    "title":"الفرق",
+    "teamsButton":"إضافة فرق"
+  },
+  "teamAction":{
+    "title":"أجراءات"
+  },
+  "contractColumns": [
+    { "header": "بطاقة تعريف", "accessor": "id" },
+    { "header": "اسم الشركة", "accessor": "companyName" },
+    { "header": "اسم المالك", "accessor": "ownerName" },
+    { "header": "الحالة", "accessor": "status" },
+    { "header": "عدد الفروع", "accessor": "numberOfBranches" }
+  ],
+  "contractsHeader":{
+    "title":"العقود",
+    "contractButton":"أضف العقد"
+  },
+  "loginPage":{
+    "title":"تسجيل الدخول",
+    "email":"البريد الإلكتروني / اسم المستخدم",
+    "pass":"كلمة المرور",
+    "forget":"نسيت كلمة المرور؟",
+    "button":"تسجيل الدخول",
+    "emailPlaceholder":"البريد الإلكتروني / اسم المستخدم",
+    "passPlaceholder":"كلمة المرور"
+
+  }
 }
