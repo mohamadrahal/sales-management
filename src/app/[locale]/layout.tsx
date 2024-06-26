@@ -18,6 +18,12 @@ export default async function RootLayout({
       lang={locale}
       dir={locale === "ar" ? "rtl" : "ltr"}
     >
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className="h-full">
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}

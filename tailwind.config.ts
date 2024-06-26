@@ -19,7 +19,10 @@ const config: Config = {
         accent: "#3ABEF9",
         light: "#A7E6FF",
       },
-
+      fontFamily: {
+        sans: ['"Poppins"', "sans-serif"], // Add your custom font here
+        // You can add other font families if needed
+      },
     },
   },
   plugins: [],

@@ -12,7 +12,7 @@ const AddButton = ({ text, link }: Props) => {
   return (
     <Link
       href={link}
-      className="bg-secondary hover:bg-primary text-white font-bold py-2 px-4 rounded"
+      className="bg-secondary hover:bg-primary text-white py-2 px-4 rounded"
     >
       {text}
     </Link>

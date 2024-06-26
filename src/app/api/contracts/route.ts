@@ -3,8 +3,7 @@ import mime from "mime";
 import { join } from "path";
 import { stat, mkdir, writeFile } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
-
-const prisma = new PrismaClient();
+import prisma from "../../../../prisma/client";
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData();

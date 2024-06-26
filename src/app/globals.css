@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: "Cairo";
-}
-
 :root {
   --color-primary: #050c9c;
   --color-secondary: #3572ef;
@@ -14,11 +10,13 @@ body {
 }
 
 @media (prefers-color-scheme: dark) {
+}
 
+html {
+  @apply font-sans; /* Use the new font family */
 }
 
 body {
-  font-family: "Inter", sans-serif;
   background-color: white;
 }
 

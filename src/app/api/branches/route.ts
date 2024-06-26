@@ -1,8 +1,6 @@
 // pages/api/branches/index.ts
-import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-
-const prisma = new PrismaClient();
+import prisma from "../../../../prisma/client";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
