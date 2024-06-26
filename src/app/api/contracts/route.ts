@@ -124,12 +124,23 @@ export async function GET(req: NextRequest) {
       prisma.contract.count(),
     ]);
 
-    return NextResponse.json({ contracts, totalCount }, { status: 200 });
+    // Map contracts to include the number of branches
+    const contractsWithBranchCount = contracts.map((contract) => ({
+      ...contract,
+      numberOfBranches: contract.branches.length,
+    }));
+
+    return NextResponse.json(
+      { contracts: contractsWithBranchCount, totalCount },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Failed to fetch contracts:", error);
     return NextResponse.json(
       { error: "Failed to fetch contracts" },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }

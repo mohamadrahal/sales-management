@@ -4,7 +4,7 @@
   },
   "menuItems": [
     { "name": "Teams", "path": "/home/teams" },
-    { "name": "Salesmen", "path": "/home/users" },
+    { "name": "Users", "path": "/home/users" },
     { "name": "Contracts", "path": "/home/contracts" },
     { "name": "Branches", "path": "/home/branches" },
     { "name": "Targets", "path": "/home/targets" },
@@ -16,15 +16,15 @@
     { "header": "Location", "accessor": "location" },
     { "header": "Salesmen Count", "accessor": "salesmenCount" }
   ],
-  "logout":{
-    "label":"Logout"
+  "logout": {
+    "label": "Logout"
   },
-  "teamsHeader":{
-    "title":"Teams",
-    "teamsButton":"Add Teams"
+  "teamsHeader": {
+    "title": "Teams",
+    "teamsButton": "Add Teams"
   },
-  "teamAction":{
-    "title":"Actions"
+  "teamAction": {
+    "title": "Actions"
   },
   "contractColumns": [
     { "header": "ID", "accessor": "id" },
@@ -33,19 +33,29 @@
     { "header": "Status", "accessor": "status" },
     { "header": "Number of Branches", "accessor": "numberOfBranches" }
   ],
-  "contractsHeader":{
-    "title":"Contracts",
-    "contractButton":"Add Contract"
+  "contractsHeader": {
+    "title": "Contracts",
+    "contractButton": "Add Contract"
   },
-  "loginPage":{
-    "title":"Login",
-    "email":"Email / Username",
-    "pass":"Password",
-    "forget":"Forget Password?",
-    "button":"Login",
-    "emailPlaceholder":"Email/Username",
-    "passPlaceholder":"Password"
+  "loginPage": {
+    "title": "Login",
+    "email": "Email / Username",
+    "pass": "Password",
+    "forget": "Forget Password?",
+    "button": "Login",
+    "emailPlaceholder": "Email/Username",
+    "passPlaceholder": "Password"
+  },
 
-  }
-
+  "usersHeader": {
+    "title": "Users",
+    "userButton": "Add Users"
+  },
+  "usersColumns": [
+    { "header": "ID", "accessor": "id" },
+    { "header": "Role", "accessor": "role" },
+    { "header": "Username", "accessor": "username" },
+    { "header": "Name", "accessor": "name" },
+    { "header": "Mobile Number", "accessor": "mobileNumber" }
+  ]
 }

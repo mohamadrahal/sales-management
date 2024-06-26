@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "@/navigation";
-import { useSearchParams } from "next/navigation";
 import axios from "axios";
 import InputField from "../../../../components/reusables/InputField";
 import { ContractType, BusinessType } from "@prisma/client";
@@ -23,8 +22,6 @@ const NewContractPage = () => {
   const [document, setDocument] = useState<File | null>(null);
 
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const locale = searchParams.get("locale") || "en";
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>

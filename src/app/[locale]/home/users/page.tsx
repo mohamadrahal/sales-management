@@ -1,24 +1,20 @@
+"use client";
+
 import React from "react";
-import prisma from "../../../../../prisma/client";
-import Table from "../../components/reusables/Table";
+import UsersPageWrapper from "./components/UserPageWrapper";
+import { UsersProvider } from "../../context/UserContext";
+import useRequireAuth from "../../hooks/useRequireAuth";
 
-const usersColumns = [
-  { header: "ID", accessor: "id" },
-  { header: "Role", accessor: "role" },
-  { header: "Username", accessor: "username" },
-  { header: "Name", accessor: "name" },
-  { header: "Mobile Number", accessor: "mobileNumber" },
-];
-
-const UsersPage = async () => {
-  const users = await prisma.user.findMany();
+const HomePage = () => {
+  useRequireAuth();
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-semibold mb-4">Teams</h1>
-      <Table columns={usersColumns} data={users} />
-    </div>
+    <UsersProvider>
+      <div>
+        <UsersPageWrapper />
+      </div>
+    </UsersProvider>
   );
 };
 
-export default UsersPage;
+export default HomePage;

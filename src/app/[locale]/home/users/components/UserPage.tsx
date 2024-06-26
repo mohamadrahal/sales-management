@@ -1,47 +1,52 @@
-// components/ContractPage.tsx
 "use client";
 
 import React, { useState } from "react";
 import { useRouter } from "@/navigation";
 import Table from "../../../components/reusables/Table";
 import AddButton from "../../../components/reusables/AddButton";
-import { Contract } from "../../../../../types/types";
+import { User } from "@prisma/client";
 import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
 import Pagination from "../../../components/reusables/Pagination";
-import { useContracts } from "../../../context/ContractContext";
+import { useUsers } from "../../../context/UserContext";
 import axios from "axios";
 import ConfirmationModal from "../../../components/reusables/ConfirmationModal";
 import { useTranslations } from "next-intl";
 
-type ContractPageProps = {
-  contracts: Contract[];
+type UsersPageProps = {
+  users: User[];
 };
 
-const ContractsPage = ({ contracts }: ContractPageProps) => {
+const usersColumns = [
+  { header: "ID", accessor: "id" },
+  { header: "Role", accessor: "role" },
+  { header: "Username", accessor: "username" },
+  { header: "Name", accessor: "name" },
+  { header: "Mobile Number", accessor: "mobileNumber" },
+];
+
+const UsersPage = ({ users }: UsersPageProps) => {
   const router = useRouter();
-  const { fetchContracts, totalCount } = useContracts();
+  const { fetchUsers, totalCount } = useUsers();
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedContract, setSelectedContract] = useState<Contract | null>(
-    null
-  );
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showModal, setShowModal] = useState(false);
   const pageSize = 10;
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    fetchContracts(page, pageSize);
+    fetchUsers(page, pageSize);
   };
 
   const handleDelete = async () => {
-    if (selectedContract) {
+    if (selectedUser) {
       try {
-        await axios.delete(`/api/contracts/${selectedContract.id}`);
-        fetchContracts(currentPage, pageSize);
+        await axios.delete(`/api/users/${selectedUser.id}`);
+        fetchUsers(currentPage, pageSize);
       } catch (error) {
-        console.error("Failed to delete contract:", error);
+        console.error("Failed to delete user:", error);
       } finally {
         setShowModal(false);
-        setSelectedContract(null);
+        setSelectedUser(null);
       }
     }
   };
@@ -49,50 +54,44 @@ const ContractsPage = ({ contracts }: ContractPageProps) => {
   const actions = [
     {
       icon: FaEdit,
-      onClick: (row: Contract) =>
-        router.push(`/home/contracts/new-contract?id=${row.id}`),
+      onClick: (row: User) => router.push(`/home/users/new-user?id=${row.id}`),
       className: "bg-secondary hover:bg-primary",
     },
     {
       icon: FaEye,
-      onClick: (row: Contract) => router.push(`/home/contracts/${row.id}`),
+      onClick: (row: User) => router.push(`/home/users/${row.id}`),
       className: "bg-gray-400 hover:bg-gray-600",
     },
     {
       icon: FaTrash,
-      onClick: (row: Contract) => {
-        setSelectedContract(row);
+      onClick: (row: User) => {
+        setSelectedUser(row);
         setShowModal(true);
       },
       className: "bg-red-400 hover:bg-red-600",
     },
   ];
 
-  const t = useTranslations();
-  const contractColumns = t.raw("contractColumns");
+  //   const t = useTranslations();
+  //   const usersColumns = t.raw("usersColumns");
 
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-semibold text-primary">
-          {t("contractsHeader.title")}
-        </h1>
-        <AddButton
-          text={t("contractsHeader.contractButton")}
-          link={`/home/contracts/new-contract`}
-        />
+        <h1 className="text-2xl font-semibold text-primary">Users</h1>
+        <AddButton text="Create User" link={`/home/users/new-user`} />
       </div>
-      <Table columns={contractColumns} data={contracts} actions={actions} />
+      <Table columns={usersColumns} data={users} actions={actions} />
       <Pagination
         currentPage={currentPage}
         totalCount={totalCount}
         pageSize={pageSize}
         onPageChange={handlePageChange}
       />
-      {showModal && selectedContract && (
+      {showModal && selectedUser && (
         <ConfirmationModal
           title="Confirm Deletion"
-          content={`Are you sure you want to delete the contract for "${selectedContract.companyName}"?`}
+          content={`Are you sure you want to delete the user "${selectedUser.name}"?`}
           onConfirm={handleDelete}
           onCancel={() => setShowModal(false)}
         />
@@ -101,4 +100,4 @@ const ContractsPage = ({ contracts }: ContractPageProps) => {
   );
 };
 
-export default ContractsPage;
+export default UsersPage;

@@ -24,23 +24,7 @@ export async function POST(req: NextRequest) {
       })
     );
 
-    // Construct the absolute URL for redirection
-    const url = new URL(req.url);
-    const redirectUrl = `${url.protocol}//${url.host}/${locale}/login`;
-
-    // Redirect to the locale-specific login page
-    const redirectResponse = NextResponse.redirect(redirectUrl);
-    redirectResponse.headers.set(
-      "Set-Cookie",
-      cookie.serialize("token", "", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        expires: new Date(0),
-        path: "/",
-      })
-    );
-
-    return redirectResponse;
+    return response;
   } catch (error) {
     console.error("Error during logout:", error);
     return NextResponse.json(

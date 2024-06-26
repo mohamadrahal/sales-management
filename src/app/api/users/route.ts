@@ -44,11 +44,24 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const page = parseInt(searchParams.get("page") || "1", 10);
+  const limit = parseInt(searchParams.get("limit") || "10", 10);
+  const offset = (page - 1) * limit;
+
   try {
-    const users = await prisma.user.findMany();
-    return NextResponse.json(users, { status: 200 });
+    const [users, totalCount] = await Promise.all([
+      prisma.user.findMany({
+        skip: offset,
+        take: limit,
+      }),
+      prisma.user.count(),
+    ]);
+
+    return NextResponse.json({ users, totalCount }, { status: 200 });
   } catch (error) {
+    console.error("Failed to fetch users:", error);
     return NextResponse.json(
       { error: "Failed to fetch users" },
       { status: 500 }

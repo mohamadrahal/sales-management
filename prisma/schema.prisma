@@ -152,7 +152,7 @@ model Branch {
   id         Int      @id @default(autoincrement())
   contractId Int
   name       String
-  phone      String
+  phone      String   @unique
   city       City
   locationX  Float
   locationY  Float
@@ -168,8 +168,8 @@ model User {
   name               String
   mobileNumber       String               @unique
   bcdAccount         String?
-  evoAppId           String
-  nationalId         String
+  evoAppId           String               @unique
+  nationalId         String               @unique
   team               Team?                @relation(fields: [teamId], references: [id])
   contracts          Contract[]
   targets            Target[]

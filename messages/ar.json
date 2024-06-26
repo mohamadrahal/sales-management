@@ -16,15 +16,15 @@
     { "header": "الموقع", "accessor": "location" },
     { "header": "عدد الباعة", "accessor": "salesmenCount" }
   ],
-  "logout":{
-    "label":"تسجيل خروج"
+  "logout": {
+    "label": "تسجيل خروج"
   },
-  "teamsHeader":{
-    "title":"الفرق",
-    "teamsButton":"إضافة فرق"
+  "teamsHeader": {
+    "title": "الفرق",
+    "teamsButton": "إضافة فرق"
   },
-  "teamAction":{
-    "title":"أجراءات"
+  "teamAction": {
+    "title": "أجراءات"
   },
   "contractColumns": [
     { "header": "بطاقة تعريف", "accessor": "id" },
@@ -33,18 +33,28 @@
     { "header": "الحالة", "accessor": "status" },
     { "header": "عدد الفروع", "accessor": "numberOfBranches" }
   ],
-  "contractsHeader":{
-    "title":"العقود",
-    "contractButton":"أضف العقد"
+  "contractsHeader": {
+    "title": "العقود",
+    "contractButton": "أضف العقد"
   },
-  "loginPage":{
-    "title":"تسجيل الدخول",
-    "email":"البريد الإلكتروني / اسم المستخدم",
-    "pass":"كلمة المرور",
-    "forget":"نسيت كلمة المرور؟",
-    "button":"تسجيل الدخول",
-    "emailPlaceholder":"البريد الإلكتروني / اسم المستخدم",
-    "passPlaceholder":"كلمة المرور"
-
-  }
+  "loginPage": {
+    "title": "تسجيل الدخول",
+    "email": "البريد الإلكتروني / اسم المستخدم",
+    "pass": "كلمة المرور",
+    "forget": "نسيت كلمة المرور؟",
+    "button": "تسجيل الدخول",
+    "emailPlaceholder": "البريد الإلكتروني / اسم المستخدم",
+    "passPlaceholder": "كلمة المرور"
+  },
+  "usersHeader": {
+    "title": "Users",
+    "userButton": "Add Users"
+  },
+  "usersColumns": [
+    { "header": "ID", "accessor": "id" },
+    { "header": "Role", "accessor": "role" },
+    { "header": "Username", "accessor": "username" },
+    { "header": "Name", "accessor": "name" },
+    { "header": "Mobile Number", "accessor": "mobileNumber" }
+  ]
 }

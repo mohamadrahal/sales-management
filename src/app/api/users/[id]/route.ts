@@ -2,24 +2,38 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../../prisma/client";
 
 export async function DELETE(
-  request: NextRequest,
+  req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
 
+  if (!id) {
+    return NextResponse.json({ error: "User ID is required" }, { status: 400 });
+  }
+
+  const userId = parseInt(id, 10);
+
   try {
-    // Check if the user exists
-    const user = await prisma.user.findUnique({
-      where: { id: parseInt(id) },
+    // Find all contracts related to the user
+    const contracts = await prisma.contract.findMany({
+      where: { salesmanId: userId },
     });
 
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    // Delete all branches related to the contracts
+    for (const contract of contracts) {
+      await prisma.branch.deleteMany({
+        where: { contractId: contract.id },
+      });
     }
+
+    // Delete all contracts related to the user
+    await prisma.contract.deleteMany({
+      where: { salesmanId: userId },
+    });
 
     // Delete the user
     await prisma.user.delete({
-      where: { id: parseInt(id) },
+      where: { id: userId },
     });
 
     return NextResponse.json(
@@ -29,8 +43,10 @@ export async function DELETE(
   } catch (error) {
     console.error("Failed to delete user:", error);
     return NextResponse.json(
-      { error: "An error occurred while deleting the user" },
+      { error: "Failed to delete user" },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }
