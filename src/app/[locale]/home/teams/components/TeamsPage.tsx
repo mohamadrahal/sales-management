@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "@/navigation";
 import { useSearchParams } from "next/navigation";
 import Table from "../../../components/reusables/Table";
@@ -12,12 +12,11 @@ import { useTeams } from "../../../context/TeamsContext";
 import axios from "axios";
 import ConfirmationModal from "../../../components/reusables/ConfirmationModal";
 import { useTranslations } from "next-intl";
+import useAuthStore from "@/app/[locale]/stores/authStore";
 
 interface TeamsPageProps {
   teams: Team[];
 }
-
-
 
 const TeamsPage: React.FC<TeamsPageProps> = ({ teams }) => {
   const t = useTranslations();
@@ -26,10 +25,17 @@ const TeamsPage: React.FC<TeamsPageProps> = ({ teams }) => {
   const teamsColumns = t.raw("teamsColumns");
   const router = useRouter();
   const { fetchTeams, totalCount } = useTeams();
+  const { user } = useAuthStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [isClient, setIsClient] = useState(false); // New state to track client-side rendering
+
   const pageSize = 10;
+
+  useEffect(() => {
+    setIsClient(true); // Set to true after the initial render
+  }, []);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -75,7 +81,11 @@ const TeamsPage: React.FC<TeamsPageProps> = ({ teams }) => {
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-semibold text-primary">{t2("title")}</h1>
-        <AddButton text={t2("teamsButton")} link={`/home/teams/new-team`} />
+        {isClient &&
+          user &&
+          (user.role === "Admin" || user.role === "SalesManager") && (
+            <AddButton text="Create User" link={`/home/teams/new-team`} />
+          )}{" "}
       </div>
       <Table columns={teamsColumns} data={teams} actions={actions} />
       <Pagination

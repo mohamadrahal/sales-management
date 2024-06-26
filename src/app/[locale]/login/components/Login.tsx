@@ -33,7 +33,9 @@ const Login = () => {
       if (response.status === 200) {
         const user = response.data.user;
         setUser(user); // Set the user in the store
-        router.push(`/${locale}/home/teams`);
+        const redirectPath =
+          user.role === "Salesman" ? "/home/contracts" : "/home/teams";
+        router.push(`/${locale}${redirectPath}`);
       }
     } catch (error) {
       console.error("Failed to login:", error);

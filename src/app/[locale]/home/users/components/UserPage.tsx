@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "@/navigation";
 import Table from "../../../components/reusables/Table";
 import AddButton from "../../../components/reusables/AddButton";
@@ -11,6 +11,7 @@ import { useUsers } from "../../../context/UserContext";
 import axios from "axios";
 import ConfirmationModal from "../../../components/reusables/ConfirmationModal";
 import { useTranslations } from "next-intl";
+import useAuthStore from "@/app/[locale]/stores/authStore";
 
 type UsersPageProps = {
   users: User[];
@@ -27,10 +28,17 @@ const usersColumns = [
 const UsersPage = ({ users }: UsersPageProps) => {
   const router = useRouter();
   const { fetchUsers, totalCount } = useUsers();
+  const { user } = useAuthStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [isClient, setIsClient] = useState(false); // New state to track client-side rendering
+
   const pageSize = 10;
+
+  useEffect(() => {
+    setIsClient(true); // Set to true after the initial render
+  }, []);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -79,7 +87,11 @@ const UsersPage = ({ users }: UsersPageProps) => {
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-semibold text-primary">Users</h1>
-        <AddButton text="Create User" link={`/home/users/new-user`} />
+        {isClient &&
+          user &&
+          (user.role === "Admin" || user.role === "SalesManager") && (
+            <AddButton text="Create User" link={`/home/users/new-user`} />
+          )}
       </div>
       <Table columns={usersColumns} data={users} actions={actions} />
       <Pagination

@@ -1,16 +1,34 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import { Link } from "../../../navigation";
 import { useTranslations } from "next-intl";
 import LogoutButton from "./LogoutButton";
+import useAuthStore from "../stores/authStore";
 
 interface MenuItem {
   name: string;
   path: string;
 }
 
-const SideBar: React.FC = () => {
+const SideBar = () => {
+  const { user } = useAuthStore();
   const t = useTranslations();
-  const menuItems: MenuItem[] = t.raw("menuItems");
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+
+  useEffect(() => {
+    let items: MenuItem[] = t.raw("menuItems");
+
+    if (user && user.role === "Salesman") {
+      items = items.filter(
+        (item) =>
+          item.name === "Contracts" ||
+          item.name === "Branches" ||
+          item.name === "Targets"
+      );
+    }
+    setMenuItems(items);
+  }, [t, user]);
 
   return (
     <div className="h-full w-64 bg-white text-white shadow-lg">
