@@ -40,36 +40,46 @@ export async function POST(request: NextRequest) {
 
     // Validate request body
     const parsedBody = TargetSchema.parse(body);
+    console.log("Parsed body:", parsedBody);
 
     // Check if the owner exists based on targetType
-    if (parsedBody.targetType === "Team") {
-      const teamExists = await prisma.team.findUnique({
+    let ownerExists;
+    if (parsedBody.targetType === TargetType.Team) {
+      ownerExists = await prisma.team.findUnique({
         where: { id: parsedBody.targetOwnerId },
       });
-      if (!teamExists) {
-        return NextResponse.json({ error: "Team not found" }, { status: 404 });
-      }
-    } else if (parsedBody.targetType === "Salesman") {
-      const userExists = await prisma.user.findUnique({
+      console.log("Owner (Team) exists:", ownerExists);
+    } else if (parsedBody.targetType === TargetType.Salesman) {
+      ownerExists = await prisma.user.findUnique({
         where: { id: parsedBody.targetOwnerId },
       });
-      if (!userExists) {
-        return NextResponse.json({ error: "User not found" }, { status: 404 });
-      }
+      console.log("Owner (Salesman) exists:", ownerExists);
+    }
+
+    if (!ownerExists) {
+      return NextResponse.json({ error: `${parsedBody.targetType} not found` }, { status: 404 });
     }
 
     // Create new target
-    const newTarget = await prisma.target.create({
-      data: {
-        targetOwnerId: parsedBody.targetOwnerId,
-        periodFrom: new Date(parsedBody.periodFrom),
-        periodTo: new Date(parsedBody.periodTo),
-        targetType: parsedBody.targetType,
-        numberOfContracts: parsedBody.numberOfContracts,
-        totalAmountLYD: parsedBody.totalAmountLYD,
-        bonusAmount: parsedBody.bonusAmount || null,
-      },
-    });
+    const data: any = {
+      periodFrom: new Date(parsedBody.periodFrom),
+      periodTo: new Date(parsedBody.periodTo),
+      targetType: parsedBody.targetType,
+      numberOfContracts: parsedBody.numberOfContracts,
+      totalAmountLYD: parsedBody.totalAmountLYD,
+      bonusAmount: parsedBody.bonusAmount || null,
+    };
+
+    if (parsedBody.targetType === TargetType.Team) {
+      data.team = { connect: { id: parsedBody.targetOwnerId } };
+      console.log("Assigning to team:", data.team);
+    } else if (parsedBody.targetType === TargetType.Salesman) {
+      data.individual = { connect: { id: parsedBody.targetOwnerId } };
+      console.log("Assigning to salesman:", data.individual);
+    }
+
+    const newTarget = await prisma.target.create({ data });
+    console.log("New target created:", newTarget);
 
     return NextResponse.json(newTarget);
   } catch (error) {

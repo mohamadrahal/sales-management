@@ -73,11 +73,19 @@ const TargetsPage: React.FC<TargetsPageProps> = ({ targets }) => {
   ];
 
   const filterOptions = getFilterOptions(t2);
+
+  // Update targetsColumns to dynamically set the header based on filter
   const targetsColumns = getTargetsColumns(t2, filter);
 
-  const filteredTargets = targets.filter((target) =>
-    filter === "team" ? target.team !== null : target.individual !== null
-  );
+  // Adjust the filtering logic
+  const filteredTargets = targets.filter((target) => {
+    if (filter === "team") {
+      return target.team !== null;
+    } else if (filter === "salesman") {
+      return target.individual !== null;
+    }
+    return true; // Default case if no filter is set
+  });
 
   return (
     <div className="p-4">
