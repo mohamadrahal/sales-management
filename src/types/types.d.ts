@@ -1,3 +1,5 @@
+import { Target as PrismaTarget, Team, User } from "@prisma/client";
+
 export interface Team {
   id: number;
   name: string;
@@ -119,4 +121,9 @@ export enum City {
   Sabratha = "Sabratha",
   Ghat = "Ghat",
   Jalu = "Jalu",
+}
+
+export interface Target extends PrismaTarget {
+  team?: Team;
+  individual?: User;
 }

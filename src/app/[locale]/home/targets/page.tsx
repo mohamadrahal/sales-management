@@ -1,7 +1,21 @@
-import React from "react";
+// pages/home/targets/page.tsx
+"use client";
 
-const page = () => {
-  return <div>page</div>;
+import React from "react";
+import { TargetsProvider } from "../../context/TargetsContext";
+import TargetsPageWrapper from "./components/TargetsPageWrapper";
+import useRequireAuth from "../../hooks/useRequireAuth";
+
+const HomePage = () => {
+  useRequireAuth();
+
+  return (
+    <TargetsProvider>
+      <div>
+        <TargetsPageWrapper />
+      </div>
+    </TargetsProvider>
+  );
 };
 
-export default page;
+export default HomePage;
