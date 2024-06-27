@@ -11,8 +11,9 @@ import ConfirmationModal from "../../../components/reusables/ConfirmationModal";
 import Filter from "../../../components/reusables/Filter";
 import { Target } from "../../../../../types/types"; // Adjust the path to where your types file is located
 import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
-import { Column } from "../../../components/reusables/Table";
 import axios from "axios";
+import { useTranslations } from "next-intl";
+import { getFilterOptions, getTargetsColumns } from "../data/translation"; // Adjust the path as needed
 
 type TargetsPageProps = {
   targets: Target[];
@@ -25,6 +26,7 @@ const TargetsPage: React.FC<TargetsPageProps> = ({ targets }) => {
   const [selectedTarget, setSelectedTarget] = useState<Target | null>(null);
   const [showModal, setShowModal] = useState(false);
   const pageSize = 10;
+  const t2 = useTranslations("targetHeader");
 
   useEffect(() => {
     fetchTargets(currentPage, pageSize);
@@ -70,27 +72,8 @@ const TargetsPage: React.FC<TargetsPageProps> = ({ targets }) => {
     },
   ];
 
-  const filterOptions = [
-    { label: "Team Targets", value: "team" },
-    { label: "Salesman Targets", value: "salesman" },
-  ];
-
-  const targetsColumns: Column[] = [
-    { header: "ID", accessor: "id" },
-    { header: "Owner Type", accessor: "targetType" },
-    {
-      header: "Owner Name",
-      accessor: (row: Target) => row.team?.name || row.individual?.name || "",
-    },
-    {
-      header: filter === "team" ? "Team ID" : "Salesman ID",
-      accessor: filter === "team" ? "teamId" : "individualId",
-    },
-    { header: "Period From", accessor: "periodFrom" },
-    { header: "Period To", accessor: "periodTo" },
-    { header: "Number of Contracts", accessor: "numberOfContracts" },
-    { header: "Total Amount (LYD)", accessor: "totalAmountLYD" },
-  ];
+  const filterOptions = getFilterOptions(t2);
+  const targetsColumns = getTargetsColumns(t2, filter);
 
   const filteredTargets = targets.filter((target) =>
     filter === "team" ? target.team !== null : target.individual !== null
@@ -99,8 +82,8 @@ const TargetsPage: React.FC<TargetsPageProps> = ({ targets }) => {
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-semibold text-primary">Targets</h1>
-        <AddButton text="Set Target" link={`/home/targets/new-target`} />
+        <h1 className="text-2xl font-semibold text-primary">{t2("title")}</h1>
+        <AddButton text={t2("setTarget")} link={`/home/targets/new-target`} />
       </div>
       <Filter
         options={filterOptions}

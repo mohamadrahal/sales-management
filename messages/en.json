@@ -21,7 +21,7 @@
   },
   "teamsHeader": {
     "title": "Teams",
-    "teamsButton": "Add Teams"
+    "teamsButton": "Create User"
   },
   "teamAction": {
     "title": "Actions"
@@ -57,5 +57,36 @@
     { "header": "Username", "accessor": "username" },
     { "header": "Name", "accessor": "name" },
     { "header": "Mobile Number", "accessor": "mobileNumber" }
-  ]
+  ],
+  "branchHeader":{
+    "title":"Branches",
+    "branchButton":"Add Branch"
+  },
+  "branchColumns" : [
+    { "header": "ID", "accessor": "id" },
+    { "header": "Name", "accessor": "name" },
+    { "header": "Phone", "accessor": "phone" },
+    { "header": "City", "accessor": "city" },
+    { "header": "Contract ID", "accessor": "contractId" }
+  ],
+
+  "targetHeader": {
+    "title": "Targets",
+    "setTarget": "Set Target",
+    "teamTargets": "Team Targets",
+    "salesmanTargets": "Salesman Targets",
+    "columns": {
+      "id": "ID",
+      "ownerType": "Owner Type",
+      "ownerName": "Owner Name",
+      "teamId": "Team ID",
+      "salesmanId": "Salesman ID",
+      "periodFrom": "Period From",
+      "periodTo": "Period To",
+      "numberOfContracts": "Number of Contracts",
+      "totalAmountLYD": "Total Amount (LYD)"
+    }
+  }
+
+
 }

@@ -84,7 +84,7 @@ const TeamsPage: React.FC<TeamsPageProps> = ({ teams }) => {
         {isClient &&
           user &&
           (user.role === "Admin" || user.role === "SalesManager") && (
-            <AddButton text="Create User" link={`/home/teams/new-team`} />
+            <AddButton text={t2("teamsButton")} link={`/home/teams/new-team`} />
           )}{" "}
       </div>
       <Table columns={teamsColumns} data={teams} actions={actions} />

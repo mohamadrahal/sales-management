@@ -17,13 +17,13 @@ type UsersPageProps = {
   users: User[];
 };
 
-const usersColumns = [
-  { header: "ID", accessor: "id" },
-  { header: "Role", accessor: "role" },
-  { header: "Username", accessor: "username" },
-  { header: "Name", accessor: "name" },
-  { header: "Mobile Number", accessor: "mobileNumber" },
-];
+// const usersColumns = [
+//   { header: "ID", accessor: "id" },
+//   { header: "Role", accessor: "role" },
+//   { header: "Username", accessor: "username" },
+//   { header: "Name", accessor: "name" },
+//   { header: "Mobile Number", accessor: "mobileNumber" },
+// ];
 
 const UsersPage = ({ users }: UsersPageProps) => {
   const router = useRouter();
@@ -32,7 +32,10 @@ const UsersPage = ({ users }: UsersPageProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [isClient, setIsClient] = useState(false); // New state to track client-side rendering
+  const [isClient, setIsClient] = useState(false); // New state to track client-side renderin
+  const t = useTranslations();
+  const usersColumns = t.raw("usersColumns");
+  const t2 = useTranslations("usersHeader");
 
   const pageSize = 10;
 
@@ -80,17 +83,14 @@ const UsersPage = ({ users }: UsersPageProps) => {
     },
   ];
 
-  //   const t = useTranslations();
-  //   const usersColumns = t.raw("usersColumns");
-
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-semibold text-primary">Users</h1>
+        <h1 className="text-2xl font-semibold text-primary">{t2("title")}</h1>
         {isClient &&
           user &&
           (user.role === "Admin" || user.role === "SalesManager") && (
-            <AddButton text="Create User" link={`/home/users/new-user`} />
+            <AddButton text={t2("userButton")} link={`/home/users/new-user`} />
           )}
       </div>
       <Table columns={usersColumns} data={users} actions={actions} />

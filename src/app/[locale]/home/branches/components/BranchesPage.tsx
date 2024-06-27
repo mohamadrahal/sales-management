@@ -11,18 +11,19 @@ import Pagination from "../../../components/reusables/Pagination";
 import ConfirmationModal from "../../../components/reusables/ConfirmationModal";
 import { useBranches } from "../../../context/BranchContext";
 import axios from "axios";
+import { useTranslations } from "next-intl";
 
 type BranchesProps = {
   branches: Branch[];
 };
 
-const branchColumns = [
-  { header: "ID", accessor: "id" },
-  { header: "Name", accessor: "name" },
-  { header: "Phone", accessor: "phone" },
-  { header: "City", accessor: "city" },
-  { header: "Contract ID", accessor: "contractId" }, // Add this line
-];
+// const branchColumns = [
+//   { header: "ID", accessor: "id" },
+//   { header: "Name", accessor: "name" },
+//   { header: "Phone", accessor: "phone" },
+//   { header: "City", accessor: "city" },
+//   { header: "Contract ID", accessor: "contractId" }, // Add this line
+// ];
 
 const BranchesPage = ({ branches }: BranchesProps) => {
   const router = useRouter();
@@ -31,6 +32,9 @@ const BranchesPage = ({ branches }: BranchesProps) => {
   const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
   const [showModal, setShowModal] = useState(false);
   const pageSize = 10;
+  const t = useTranslations();
+  const branchColumns = t.raw("branchColumns");
+  const t2 = useTranslations("branchHeader");
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -76,8 +80,8 @@ const BranchesPage = ({ branches }: BranchesProps) => {
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-semibold text-primary">Branches</h1>
-        <AddButton text="Add Branch" link={`/home/branches/new-branch`} />
+        <h1 className="text-2xl font-semibold text-primary">{t2("title")}</h1>
+        <AddButton text={t2("branchButton")} link={`/home/branches/new-branch`} />
       </div>
       <Table columns={branchColumns} data={branches} actions={actions} />
       <Pagination

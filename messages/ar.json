@@ -21,7 +21,7 @@
   },
   "teamsHeader": {
     "title": "الفرق",
-    "teamsButton": "إضافة فرق"
+    "teamsButton": "إنشاء مستخدم "
   },
   "teamAction": {
     "title": "أجراءات"
@@ -47,14 +47,45 @@
     "passPlaceholder": "كلمة المرور"
   },
   "usersHeader": {
-    "title": "Users",
-    "userButton": "Add Users"
+    "title": "المستخدمين",
+    "userButton": "إضافة مستخدمين"
   },
   "usersColumns": [
-    { "header": "ID", "accessor": "id" },
-    { "header": "Role", "accessor": "role" },
-    { "header": "Username", "accessor": "username" },
-    { "header": "Name", "accessor": "name" },
-    { "header": "Mobile Number", "accessor": "mobileNumber" }
-  ]
+    { "header": "بطاقة تعريف", "accessor": "id" },
+    { "header": "الدور", "accessor": "role" },
+    { "header": "اسم المستخدم", "accessor": "username" },
+    { "header": "الاسم", "accessor": "name" },
+    { "header": "رقم الهاتف المحمول", "accessor": "mobileNumber" }
+  ],
+  "branchHeader":{
+    "title":"الفروع",
+    "branchButton":"إضافة فرع"
+  },
+  "branchColumns" : [
+    { "header": "بطاقة تعريف", "accessor": "id" },
+    { "header": "الاسم", "accessor": "name" },
+    { "header": "رقم الهاتف المحمول", "accessor": "phone" },
+    { "header": "المدينة", "accessor": "city" },
+    { "header": "رقم العقد", "accessor": "contractId" }
+  ],
+
+  "targetHeader": {
+    "title": "الأهداف",
+    "setTarget": "تعيين الهدف",
+    "teamTargets": "أهداف الفريق",
+    "salesmanTargets": "أهداف البائع",
+    "columns": {
+      "id": "المعرف",
+      "ownerType": "نوع المالك",
+      "ownerName": "اسم المالك",
+      "teamId": "معرف الفريق",
+      "salesmanId": "معرف البائع",
+      "periodFrom": "الفترة من",
+      "periodTo": "الفترة إلى",
+      "numberOfContracts": "عدد العقود",
+      "totalAmountLYD": "إجمالي المبلغ (دينار ليبي)"
+    }
+  }
+
+
 }

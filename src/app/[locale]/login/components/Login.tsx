@@ -46,43 +46,59 @@ const Login = () => {
   const t = useTranslations("loginPage");
 
   return (
-    <div className=" w-full h-full flex items-center justify-center bg-blue-600">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-center mb-6 text-gray-900">
-          {t("title")}
-        </h1>
+    <div className="w-full h-screen flex items-center justify-center bg-gray-100">
+      <div className="flex w-3/4 h-3/4 bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="w-1/2 bg-secondary flex flex-col justify-center items-center p-8">
+          <img
+            src="/path/to/your/image.png"
+            alt="Exam Mastery Hub"
+            className="mb-6"
+          />
+          <h2 className="text-2xl font-bold text-white mb-2">
+            Exam Mastery Hub
+          </h2>
+          <p className="text-white mb-4 text-center">
+            Unleash Your Academic Success with Exam Mastery Hub's Exam
+            Excellence Platform
+          </p>
 
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-700">{t("email")}</label>
-            <input
-              type="text"
-              value={usernameOrMobile}
-              onChange={(e) => setUsernameOrMobile(e.target.value)}
-              placeholder={t("emailPlaceholder")}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div className="mb-6">
-            <label className="block text-gray-700">{t("pass")}</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder={t("passPlaceholder")}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <a href="#" className="text-sm text-blue-500 mt-2 inline-block">
-              {t("forget")}
-            </a>
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {t("button")}
-          </button>
-        </form>
+        </div>
+        <div className="w-1/2 p-8 flex flex-col justify-center">
+          <h1 className="text-3xl font-bold text-center mb-6 text-gray-900">
+            {t("title")}
+          </h1>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label className="block text-gray-700">{t("email")}</label>
+              <input
+                type="text"
+                value={usernameOrMobile}
+                onChange={(e) => setUsernameOrMobile(e.target.value)}
+                placeholder={t("emailPlaceholder")}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="mb-6">
+              <label className="block text-gray-700">{t("pass")}</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder={t("passPlaceholder")}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <a href="#" className="text-sm text-blue-500 mt-2 inline-block">
+                {t("forget")}
+              </a>
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {t("button")}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

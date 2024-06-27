@@ -5,6 +5,7 @@ import { Link } from "../../../navigation";
 import { useTranslations } from "next-intl";
 import LogoutButton from "./LogoutButton";
 import useAuthStore from "../stores/authStore";
+import LocaleSwitcher from "./LocalSwitcher";
 
 interface MenuItem {
   name: string;
@@ -47,7 +48,8 @@ const SideBar = () => {
             {item.name}
           </Link>
         ))}
-        <div className=" w-full flex justify-center mt-4">
+        <div className="w-full flex justify-center mt-4 flex-col gap-2">
+          <LocaleSwitcher />
           <LogoutButton />
         </div>
       </nav>
