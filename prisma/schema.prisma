@@ -83,6 +83,23 @@ model Team {
   CompensationReport CompensationReport[]
 }
 
+model User {
+  id                 Int                  @id @default(autoincrement())
+  role               UserRole // "Admin", "SalesManager", "Salesman"
+  username           String               @unique
+  password           String
+  teamId             Int?
+  name               String
+  mobileNumber       String               @unique
+  bcdAccount         String?
+  evoAppId           String               @unique
+  nationalId         String               @unique
+  team               Team?                @relation(fields: [teamId], references: [id])
+  contracts          Contract[]
+  targets            Target[]
+  CompensationReport CompensationReport[]
+}
+
 model Target {
   id                Int        @id @default(autoincrement())
   targetOwnerId     Int // Generalizing the owner of the target
@@ -91,6 +108,7 @@ model Target {
   targetType        TargetType // Enum to distinguish between 'Team' and 'Salesman'
   numberOfContracts Int
   totalAmountLYD    Float
+  bonusAmount       Float? // Bonus amount
   team              Team?      @relation(fields: [targetOwnerId], references: [id], map: "TeamTarget")
   individual        User?      @relation(fields: [targetOwnerId], references: [id], map: "SalesmanTarget")
   createdAt         DateTime   @default(now())
@@ -159,19 +177,4 @@ model Branch {
   contract   Contract @relation(fields: [contractId], references: [id])
 }
 
-model User {
-  id                 Int                  @id @default(autoincrement())
-  role               UserRole // "Admin", "SalesManager", "Salesman"
-  username           String               @unique
-  password           String
-  teamId             Int?
-  name               String
-  mobileNumber       String               @unique
-  bcdAccount         String?
-  evoAppId           String               @unique
-  nationalId         String               @unique
-  team               Team?                @relation(fields: [teamId], references: [id])
-  contracts          Contract[]
-  targets            Target[]
-  CompensationReport CompensationReport[]
-}
+
