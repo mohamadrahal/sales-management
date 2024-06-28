@@ -1,8 +1,7 @@
-// components/BranchesPage.tsx
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "@/navigation";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Table from "../../../components/reusables/Table";
 import AddButton from "../../../components/reusables/AddButton";
 import { Branch } from "../../../../../types/types";
@@ -12,20 +11,14 @@ import ConfirmationModal from "../../../components/reusables/ConfirmationModal";
 import { useBranches } from "../../../context/BranchContext";
 import axios from "axios";
 import { useTranslations } from "next-intl";
+import useRequireAuth from "@/app/[locale]/hooks/useRequireAuth";
 
 type BranchesProps = {
   branches: Branch[];
 };
 
-// const branchColumns = [
-//   { header: "ID", accessor: "id" },
-//   { header: "Name", accessor: "name" },
-//   { header: "Phone", accessor: "phone" },
-//   { header: "City", accessor: "city" },
-//   { header: "Contract ID", accessor: "contractId" }, // Add this line
-// ];
-
-const BranchesPage = ({ branches }: BranchesProps) => {
+const BranchesPage: React.FC<BranchesProps> = ({ branches }) => {
+  const { token, user, loading } = useRequireAuth();
   const router = useRouter();
   const { fetchBranches, totalCount } = useBranches();
   const [currentPage, setCurrentPage] = useState(1);
@@ -35,6 +28,16 @@ const BranchesPage = ({ branches }: BranchesProps) => {
   const t = useTranslations();
   const branchColumns = t.raw("branchColumns");
   const t2 = useTranslations("branchHeader");
+
+  useEffect(() => {
+    if (!loading) {
+      if (!token) {
+        router.push("/login");
+      } else {
+        fetchBranches(currentPage, pageSize);
+      }
+    }
+  }, [token, user, loading, currentPage, pageSize, router, fetchBranches]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -77,11 +80,18 @@ const BranchesPage = ({ branches }: BranchesProps) => {
     },
   ];
 
+  if (loading || !token) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-semibold text-primary">{t2("title")}</h1>
-        <AddButton text={t2("branchButton")} link={`/home/branches/new-branch`} />
+        <AddButton
+          text={t2("branchButton")}
+          link={`/home/branches/new-branch`}
+        />
       </div>
       <Table columns={branchColumns} data={branches} actions={actions} />
       <Pagination

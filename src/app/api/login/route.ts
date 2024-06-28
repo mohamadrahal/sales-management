@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import cookie from "cookie";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
+const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET || "your_jwt_secret";
 
 export async function POST(req: NextRequest) {
   try {
@@ -42,10 +42,11 @@ export async function POST(req: NextRequest) {
       message: "Login successful",
       user: { id: user.id, username: user.username, role: user.role },
     });
+
     response.headers.set(
       "Set-Cookie",
       cookie.serialize("token", token, {
-        httpOnly: true,
+        httpOnly: false, // Make sure it is accessible by JavaScript
         secure: process.env.NODE_ENV === "production",
         maxAge: 3600,
         path: "/",

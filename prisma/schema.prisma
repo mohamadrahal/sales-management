@@ -78,8 +78,10 @@ model Team {
   id                 Int                  @id @default(autoincrement())
   name               String
   location           City
+  managerId          Int?                 @unique
+  manager            User?                @relation("TeamManager", fields: [managerId], references: [id])
   salesmen           User[]
-  targets            Target[] // Targets related to the team as a whole
+  targets            Target[]             // Targets related to the team as a whole
   CompensationReport CompensationReport[]
 }
 
@@ -88,13 +90,14 @@ model User {
   role               UserRole // "Admin", "SalesManager", "Salesman"
   username           String               @unique
   password           String
-  teamId             Int?
   name               String
   mobileNumber       String               @unique
   bcdAccount         String?
   evoAppId           String               @unique
   nationalId         String               @unique
+  teamId             Int?
   team               Team?                @relation(fields: [teamId], references: [id])
+  managedTeams       Team[]               @relation("TeamManager")
   contracts          Contract[]
   targets            Target[]
   CompensationReport CompensationReport[]
@@ -102,15 +105,16 @@ model User {
 
 model Target {
   id                Int        @id @default(autoincrement())
-  targetOwnerId     Int // Generalizing the owner of the target
+  teamId            Int?       // Foreign key for Team
+  userId            Int?       // Foreign key for User  periodFrom        DateTime
   periodFrom        DateTime
-  periodTo          DateTime
+  periodTo          DateTime  
   targetType        TargetType // Enum to distinguish between 'Team' and 'Salesman'
   numberOfContracts Int
   totalAmountLYD    Float
   bonusAmount       Float? // Bonus amount
-  team              Team?      @relation(fields: [targetOwnerId], references: [id], map: "TeamTarget")
-  individual        User?      @relation(fields: [targetOwnerId], references: [id], map: "SalesmanTarget")
+  team              Team?      @relation(fields: [teamId], references: [id])
+  individual        User?      @relation(fields: [userId], references: [id])
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
 }

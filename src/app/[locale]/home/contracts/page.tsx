@@ -6,8 +6,6 @@ import { ContractsProvider } from "../../context/ContractContext";
 import useRequireAuth from "../../hooks/useRequireAuth";
 
 const HomePage = () => {
-  useRequireAuth();
-
   return (
     <ContractsProvider>
       <div>

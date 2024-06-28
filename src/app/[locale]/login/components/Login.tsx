@@ -1,24 +1,17 @@
 "use client";
-import React, { useEffect, useState } from "react";
+
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import useAuthStore from "../../stores/authStore";
 import Cookies from "js-cookie";
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 
 const Login = () => {
   const [usernameOrMobile, setUsernameOrMobile] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
   const locale = Cookies.get("NEXT_LOCALE") || "en";
-  const { setUser, setLoading } = useAuthStore((state) => ({
-    setUser: state.setUser,
-    setLoading: state.setLoading,
-  }));
-
-  useEffect(() => {
-    setLoading(true);
-  }, [setLoading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +25,6 @@ const Login = () => {
 
       if (response.status === 200) {
         const user = response.data.user;
-        setUser(user); // Set the user in the store
         const redirectPath =
           user.role === "Salesman" ? "/home/contracts" : "/home/teams";
         router.push(`/${locale}${redirectPath}`);
@@ -49,19 +41,20 @@ const Login = () => {
     <div className="w-full h-screen flex items-center justify-center bg-gray-100">
       <div className="flex w-3/4 h-3/4 bg-white shadow-lg rounded-lg overflow-hidden">
         <div className="w-1/2 bg-secondary flex flex-col justify-center items-center p-8">
-          <img
+          {/* <Image
             src="/path/to/your/image.png"
             alt="Exam Mastery Hub"
             className="mb-6"
-          />
+            width={200}
+            height={200}
+          /> */}
           <h2 className="text-2xl font-bold text-white mb-2">
             Exam Mastery Hub
           </h2>
           <p className="text-white mb-4 text-center">
-            Unleash Your Academic Success with Exam Mastery Hub's Exam
+            Unleash Your Academic Success with Exam Mastery Hub&apos;s Exam
             Excellence Platform
           </p>
-
         </div>
         <div className="w-1/2 p-8 flex flex-col justify-center">
           <h1 className="text-3xl font-bold text-center mb-6 text-gray-900">

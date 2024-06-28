@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "@/navigation";
-import { useSearchParams } from "next/navigation";
 import Table from "../../../components/reusables/Table";
 import AddButton from "../../../components/reusables/AddButton";
 import { Team } from "../../../../../types/types";
@@ -12,34 +11,44 @@ import { useTeams } from "../../../context/TeamsContext";
 import axios from "axios";
 import ConfirmationModal from "../../../components/reusables/ConfirmationModal";
 import { useTranslations } from "next-intl";
-import useAuthStore from "@/app/[locale]/stores/authStore";
+import useRequireAuth from "@/app/[locale]/hooks/useRequireAuth";
 
 interface TeamsPageProps {
   teams: Team[];
 }
 
 const TeamsPage: React.FC<TeamsPageProps> = ({ teams }) => {
+  const { token, user, loading } = useRequireAuth();
+
   const t = useTranslations();
   const t2 = useTranslations("teamsHeader");
 
   const teamsColumns = t.raw("teamsColumns");
   const router = useRouter();
   const { fetchTeams, totalCount } = useTeams();
-  const { user } = useAuthStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [isClient, setIsClient] = useState(false); // New state to track client-side rendering
+  const [isClient, setIsClient] = useState(false);
 
   const pageSize = 10;
 
   useEffect(() => {
-    setIsClient(true); // Set to true after the initial render
+    if (!loading && !token) {
+      router.push("/login");
+    }
+  }, [token, user, loading, router]);
+
+  useEffect(() => {
+    setIsClient(true);
   }, []);
+
+  useEffect(() => {
+    fetchTeams(currentPage, pageSize);
+  }, [currentPage, pageSize, fetchTeams]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    fetchTeams(page, pageSize);
   };
 
   const handleDelete = async () => {
@@ -77,6 +86,10 @@ const TeamsPage: React.FC<TeamsPageProps> = ({ teams }) => {
     },
   ];
 
+  if (loading || !token) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
@@ -85,7 +98,7 @@ const TeamsPage: React.FC<TeamsPageProps> = ({ teams }) => {
           user &&
           (user.role === "Admin" || user.role === "SalesManager") && (
             <AddButton text={t2("teamsButton")} link={`/home/teams/new-team`} />
-          )}{" "}
+          )}
       </div>
       <Table columns={teamsColumns} data={teams} actions={actions} />
       <Pagination

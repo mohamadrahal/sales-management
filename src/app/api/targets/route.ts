@@ -37,6 +37,7 @@ export async function GET(req: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+    console.log("Request body:", body);
 
     // Validate request body
     const parsedBody = TargetSchema.parse(body);
@@ -57,7 +58,15 @@ export async function POST(request: NextRequest) {
     }
 
     if (!ownerExists) {
-      return NextResponse.json({ error: `${parsedBody.targetType} not found` }, { status: 404 });
+      console.log(
+        "Owner not found:",
+        parsedBody.targetType,
+        parsedBody.targetOwnerId
+      );
+      return NextResponse.json(
+        { error: `${parsedBody.targetType} not found` },
+        { status: 404 }
+      );
     }
 
     // Create new target
@@ -71,11 +80,11 @@ export async function POST(request: NextRequest) {
     };
 
     if (parsedBody.targetType === TargetType.Team) {
-      data.team = { connect: { id: parsedBody.targetOwnerId } };
-      console.log("Assigning to team:", data.team);
+      data.teamId = parsedBody.targetOwnerId;
+      console.log("Assigning to team:", data.teamId);
     } else if (parsedBody.targetType === TargetType.Salesman) {
-      data.individual = { connect: { id: parsedBody.targetOwnerId } };
-      console.log("Assigning to salesman:", data.individual);
+      data.userId = parsedBody.targetOwnerId;
+      console.log("Assigning to salesman:", data.userId);
     }
 
     const newTarget = await prisma.target.create({ data });

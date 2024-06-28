@@ -6,8 +6,6 @@ import { TeamsProvider } from "../../context/TeamsContext";
 import useRequireAuth from "../../hooks/useRequireAuth";
 
 const HomePage = () => {
-  useRequireAuth();
-
   return (
     <TeamsProvider>
       <div>

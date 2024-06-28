@@ -1,8 +1,7 @@
-// components/ContractPage.tsx
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "@/navigation";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Table from "../../../components/reusables/Table";
 import AddButton from "../../../components/reusables/AddButton";
 import { Contract } from "../../../../../types/types";
@@ -12,12 +11,14 @@ import { useContracts } from "../../../context/ContractContext";
 import axios from "axios";
 import ConfirmationModal from "../../../components/reusables/ConfirmationModal";
 import { useTranslations } from "next-intl";
+import useRequireAuth from "@/app/[locale]/hooks/useRequireAuth";
 
-type ContractPageProps = {
+type ContractsPageProps = {
   contracts: Contract[];
 };
 
-const ContractsPage = ({ contracts }: ContractPageProps) => {
+const ContractsPage: React.FC<ContractsPageProps> = ({ contracts }) => {
+  const { token, user, loading } = useRequireAuth();
   const router = useRouter();
   const { fetchContracts, totalCount } = useContracts();
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,6 +27,18 @@ const ContractsPage = ({ contracts }: ContractPageProps) => {
   );
   const [showModal, setShowModal] = useState(false);
   const pageSize = 10;
+  const t = useTranslations();
+  const contractColumns = t.raw("contractColumns");
+
+  useEffect(() => {
+    if (!loading) {
+      if (!token) {
+        router.push("/login");
+      } else {
+        fetchContracts(currentPage, pageSize);
+      }
+    }
+  }, [token, user, loading, currentPage, pageSize, router, fetchContracts]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -68,8 +81,9 @@ const ContractsPage = ({ contracts }: ContractPageProps) => {
     },
   ];
 
-  const t = useTranslations();
-  const contractColumns = t.raw("contractColumns");
+  if (loading || !token) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="p-4">

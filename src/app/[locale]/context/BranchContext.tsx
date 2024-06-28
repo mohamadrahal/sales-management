@@ -1,7 +1,13 @@
-// context/BranchContext.tsx
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 import axios from "axios";
 import { Branch } from "../../../types/types";
 
@@ -22,7 +28,7 @@ export const BranchesProvider: React.FC<{ children: React.ReactNode }> = ({
   const [branches, setBranches] = useState<Branch[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
 
-  const fetchBranches = async (page = 1, limit = 10) => {
+  const fetchBranches = useCallback(async (page = 1, limit = 10) => {
     try {
       const response = await axios.get("/api/branches", {
         params: { page, limit },
@@ -33,20 +39,28 @@ export const BranchesProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch (error) {
       console.error("Failed to fetch branches:", error);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchBranches(1, 10); // Ensure fetchBranches is called with default parameters
-  }, []);
+    fetchBranches(1, 10);
+  }, [fetchBranches]);
 
   const addBranch = (branch: Branch) => {
     setBranches((prevBranches) => [...prevBranches, branch]);
   };
 
+  const contextValue = useMemo(
+    () => ({
+      branches,
+      addBranch,
+      fetchBranches,
+      totalCount,
+    }),
+    [branches, totalCount, fetchBranches]
+  );
+
   return (
-    <BranchesContext.Provider
-      value={{ branches, addBranch, fetchBranches, totalCount }}
-    >
+    <BranchesContext.Provider value={contextValue}>
       {children}
     </BranchesContext.Provider>
   );

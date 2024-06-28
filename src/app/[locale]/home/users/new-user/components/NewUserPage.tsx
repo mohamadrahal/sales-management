@@ -1,7 +1,6 @@
-// components/NewUserPage.tsx
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "@/navigation";
 import axios from "axios";
 import InputField from "../../../../components/reusables/InputField";
@@ -12,7 +11,7 @@ const NewUserPage = () => {
     role: UserRole.Salesman as UserRole,
     username: "",
     password: "",
-    teamId: "",
+    teamIds: [] as number[],
     name: "",
     mobileNumber: "",
     bcdAccount: "",
@@ -20,7 +19,21 @@ const NewUserPage = () => {
     nationalId: "",
   });
 
+  const [teams, setTeams] = useState<{ id: number; name: string }[]>([]);
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const response = await axios.get("/api/teams/team-ids");
+        setTeams(response.data);
+      } catch (error) {
+        console.error("Failed to fetch teams:", error);
+      }
+    };
+
+    fetchTeams();
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -29,9 +42,30 @@ const NewUserPage = () => {
     setForm({ ...form, [name]: value });
   };
 
-  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value as UserRole });
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.target;
+    const id = Number(value);
+    if (checked) {
+      setForm((prevForm) => ({
+        ...prevForm,
+        teamIds: [...prevForm.teamIds, id],
+      }));
+    } else {
+      setForm((prevForm) => ({
+        ...prevForm,
+        teamIds: prevForm.teamIds.filter((teamId) => teamId !== id),
+      }));
+    }
+  };
+
+  const handleSingleSelectChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const { value } = e.target;
+    setForm((prevForm) => ({
+      ...prevForm,
+      teamIds: [Number(value)],
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -39,7 +73,6 @@ const NewUserPage = () => {
 
     const submitForm = {
       ...form,
-      teamId: form.teamId ? Number(form.teamId) : null,
       bcdAccount: form.bcdAccount || null,
     };
 
@@ -63,13 +96,48 @@ const NewUserPage = () => {
             <select
               name="role"
               value={form.role}
-              onChange={handleSelectChange}
+              onChange={handleInputChange}
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value={UserRole.Admin}>Admin</option>
               <option value={UserRole.SalesManager}>Sales Manager</option>
               <option value={UserRole.Salesman}>Salesman</option>
             </select>
+            {form.role === UserRole.SalesManager && (
+              <div className="w-full p-2 border border-gray-300 rounded-md">
+                <label className="block text-gray-700 font-bold mb-2">
+                  Select Teams
+                </label>
+                {teams.map((team) => (
+                  <div key={team.id} className="flex items-center mb-2">
+                    <input
+                      type="checkbox"
+                      id={`team-${team.id}`}
+                      value={team.id}
+                      checked={form.teamIds.includes(team.id)}
+                      onChange={handleCheckboxChange}
+                      className="mr-2"
+                    />
+                    <label htmlFor={`team-${team.id}`}>{team.name}</label>
+                  </div>
+                ))}
+              </div>
+            )}
+            {form.role === UserRole.Salesman && (
+              <select
+                name="teamIds"
+                value={form.teamIds[0]?.toString() || ""}
+                onChange={handleSingleSelectChange}
+                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select Team</option>
+                {teams.map((team) => (
+                  <option key={team.id} value={team.id}>
+                    {team.name}
+                  </option>
+                ))}
+              </select>
+            )}
             <InputField
               type="text"
               name="username"
@@ -83,13 +151,6 @@ const NewUserPage = () => {
               value={form.password}
               onChange={handleInputChange}
               placeholder="Password"
-            />
-            <InputField
-              type="number"
-              name="teamId"
-              value={form.teamId}
-              onChange={handleInputChange}
-              placeholder="Team ID"
             />
             <InputField
               type="text"

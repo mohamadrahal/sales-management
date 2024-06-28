@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Link } from "../../../navigation";
+import { Link } from "@/navigation";
 import { useTranslations } from "next-intl";
 import LogoutButton from "./LogoutButton";
-import useAuthStore from "../stores/authStore";
+import useRequireAuth from "@/app/[locale]/hooks/useRequireAuth";
 import LocaleSwitcher from "./LocalSwitcher";
 
 interface MenuItem {
@@ -13,26 +13,32 @@ interface MenuItem {
 }
 
 const SideBar = () => {
-  const { user } = useAuthStore();
+  const { user, loading } = useRequireAuth();
   const t = useTranslations();
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
 
   useEffect(() => {
-    let items: MenuItem[] = t.raw("menuItems");
+    if (!loading && user) {
+      let items: MenuItem[] = t.raw("menuItems");
 
-    if (user && user.role === "Salesman") {
-      items = items.filter(
-        (item) =>
-          item.name === "Contracts" ||
-          item.name === "Branches" ||
-          item.name === "Targets"
-      );
+      if (user.role === "Salesman") {
+        items = items.filter(
+          (item) =>
+            item.name === "Contracts" ||
+            item.name === "Branches" ||
+            item.name === "Targets"
+        );
+      }
+      setMenuItems(items);
     }
-    setMenuItems(items);
-  }, [t, user]);
+  }, [t, user, loading]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <div className="h-full w-64 bg-white text-white shadow-lg">
+    <div className="h-full w-64 bg-white text-primary shadow-lg">
       <div className="p-4">
         <h2 className="text-2xl text-primary font-semibold">
           {t("sidebar.title")}

@@ -1,8 +1,7 @@
-// components/TargetsPage.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/navigation";
 import { useTargets } from "../../../context/TargetsContext";
 import Table from "../../../components/reusables/Table";
 import AddButton from "../../../components/reusables/AddButton";
@@ -14,12 +13,14 @@ import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
 import axios from "axios";
 import { useTranslations } from "next-intl";
 import { getFilterOptions, getTargetsColumns } from "../data/translation"; // Adjust the path as needed
+import useRequireAuth from "@/app/[locale]/hooks/useRequireAuth";
 
 type TargetsPageProps = {
   targets: Target[];
 };
 
 const TargetsPage: React.FC<TargetsPageProps> = ({ targets }) => {
+  const { token, user, loading } = useRequireAuth();
   const router = useRouter();
   const { fetchTargets, totalCount, filter, setFilter } = useTargets();
   const [currentPage, setCurrentPage] = useState(1);
@@ -27,6 +28,14 @@ const TargetsPage: React.FC<TargetsPageProps> = ({ targets }) => {
   const [showModal, setShowModal] = useState(false);
   const pageSize = 10;
   const t2 = useTranslations("targetHeader");
+
+  useEffect(() => {
+    if (!loading) {
+      if (!token) {
+        router.push("/login");
+      }
+    }
+  }, [token, user, loading, router]);
 
   useEffect(() => {
     fetchTargets(currentPage, pageSize);
@@ -74,18 +83,20 @@ const TargetsPage: React.FC<TargetsPageProps> = ({ targets }) => {
 
   const filterOptions = getFilterOptions(t2);
 
-  // Update targetsColumns to dynamically set the header based on filter
   const targetsColumns = getTargetsColumns(t2, filter);
 
-  // Adjust the filtering logic
   const filteredTargets = targets.filter((target) => {
     if (filter === "team") {
       return target.team !== null;
     } else if (filter === "salesman") {
       return target.individual !== null;
     }
-    return true; // Default case if no filter is set
+    return true;
   });
+
+  if (loading || !token) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="p-4">

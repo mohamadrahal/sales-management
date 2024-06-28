@@ -1,6 +1,13 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 import axios from "axios";
 import { User } from "@prisma/client";
 
@@ -19,7 +26,7 @@ export const UsersProvider: React.FC<{ children: React.ReactNode }> = ({
   const [users, setUsers] = useState<User[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
 
-  const fetchUsers = async (page = 1, limit = 10) => {
+  const fetchUsers = useCallback(async (page = 1, limit = 10) => {
     try {
       const response = await axios.get("/api/users", {
         params: { page, limit },
@@ -30,18 +37,28 @@ export const UsersProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch (error) {
       console.error("Failed to fetch users:", error);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchUsers(1, 10); // Ensure fetchUsers is called with default parameters
-  }, []);
+    fetchUsers(1, 10);
+  }, [fetchUsers]);
 
   const addUser = (user: User) => {
     setUsers((prevUsers) => [...prevUsers, user]);
   };
 
+  const contextValue = useMemo(
+    () => ({
+      users,
+      addUser,
+      fetchUsers,
+      totalCount,
+    }),
+    [users, totalCount, fetchUsers]
+  );
+
   return (
-    <UsersContext.Provider value={{ users, addUser, fetchUsers, totalCount }}>
+    <UsersContext.Provider value={contextValue}>
       {children}
     </UsersContext.Provider>
   );

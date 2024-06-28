@@ -1,7 +1,13 @@
-// context/TargetsContext.tsx
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 import axios from "axios";
 import { Target } from "../../../types/types"; // Adjust the path to where your types file is located
 
@@ -24,27 +30,39 @@ export const TargetsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [totalCount, setTotalCount] = useState<number>(0);
   const [filter, setFilter] = useState<string>("team");
 
-  const fetchTargets = async (page = 1, limit = 10) => {
-    try {
-      const response = await axios.get("/api/targets", {
-        params: { page, limit, filter },
-      });
-      const { targets, totalCount } = response.data;
-      setTargets(targets);
-      setTotalCount(totalCount);
-    } catch (error) {
-      console.error("Failed to fetch targets:", error);
-    }
-  };
+  const fetchTargets = useCallback(
+    async (page = 1, limit = 10) => {
+      try {
+        const response = await axios.get("/api/targets", {
+          params: { page, limit, filter },
+        });
+        const { targets, totalCount } = response.data;
+        setTargets(targets);
+        setTotalCount(totalCount);
+      } catch (error) {
+        console.error("Failed to fetch targets:", error);
+      }
+    },
+    [filter]
+  );
 
   useEffect(() => {
     fetchTargets(1, 10); // Ensure fetchTargets is called with default parameters
-  }, [filter]);
+  }, [fetchTargets, filter]);
+
+  const contextValue = useMemo(
+    () => ({
+      targets,
+      fetchTargets,
+      totalCount,
+      filter,
+      setFilter,
+    }),
+    [targets, totalCount, filter, fetchTargets]
+  );
 
   return (
-    <TargetsContext.Provider
-      value={{ targets, fetchTargets, totalCount, filter, setFilter }}
-    >
+    <TargetsContext.Provider value={contextValue}>
       {children}
     </TargetsContext.Provider>
   );

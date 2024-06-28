@@ -1,6 +1,13 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 import axios from "axios";
 import { Team } from "../../../types/types";
 
@@ -19,7 +26,7 @@ export const TeamsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [teams, setTeams] = useState<Team[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
 
-  const fetchTeams = async (page = 1, limit = 10) => {
+  const fetchTeams = useCallback(async (page = 1, limit = 10) => {
     try {
       const response = await axios.get("/api/teams", {
         params: { page, limit },
@@ -30,18 +37,28 @@ export const TeamsProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch (error) {
       console.error("Failed to fetch teams:", error);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchTeams(1, 10); // Ensure fetchTeams is called with default parameters
-  }, []);
+    fetchTeams(1, 10);
+  }, [fetchTeams]);
 
   const addTeam = (team: Team) => {
     setTeams((prevTeams) => [...prevTeams, team]);
   };
 
+  const contextValue = useMemo(
+    () => ({
+      teams,
+      addTeam,
+      fetchTeams,
+      totalCount,
+    }),
+    [teams, totalCount, fetchTeams]
+  );
+
   return (
-    <TeamsContext.Provider value={{ teams, addTeam, fetchTeams, totalCount }}>
+    <TeamsContext.Provider value={contextValue}>
       {children}
     </TeamsContext.Provider>
   );

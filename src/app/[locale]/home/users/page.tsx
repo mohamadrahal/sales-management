@@ -6,8 +6,6 @@ import { UsersProvider } from "../../context/UserContext";
 import useRequireAuth from "../../hooks/useRequireAuth";
 
 const HomePage = () => {
-  useRequireAuth();
-
   return (
     <UsersProvider>
       <div>

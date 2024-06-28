@@ -1,6 +1,13 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 import axios from "axios";
 import { Contract } from "../../../types/types";
 
@@ -21,7 +28,7 @@ export const ContractsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
 
-  const fetchContracts = async (page = 1, limit = 10) => {
+  const fetchContracts = useCallback(async (page = 1, limit = 10) => {
     try {
       const response = await axios.get("/api/contracts", {
         params: { page, limit },
@@ -32,20 +39,28 @@ export const ContractsProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch (error) {
       console.error("Failed to fetch contracts:", error);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchContracts(1, 10); // Ensure fetchContracts is called with default parameters
-  }, []);
+    fetchContracts(1, 10);
+  }, [fetchContracts]);
 
   const addContract = (contract: Contract) => {
     setContracts((prevContracts) => [...prevContracts, contract]);
   };
 
+  const contextValue = useMemo(
+    () => ({
+      contracts,
+      addContract,
+      fetchContracts,
+      totalCount,
+    }),
+    [contracts, totalCount, fetchContracts]
+  );
+
   return (
-    <ContractsContext.Provider
-      value={{ contracts, addContract, fetchContracts, totalCount }}
-    >
+    <ContractsContext.Provider value={contextValue}>
       {children}
     </ContractsContext.Provider>
   );
