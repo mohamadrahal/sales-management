@@ -14,7 +14,7 @@ import { useTranslations } from "next-intl";
 import useRequireAuth from "@/app/[locale]/hooks/useRequireAuth";
 
 interface UsersPageProps {
-  users: (User & { team: Team | null })[];
+  users: (User & { team: Team | null; managedTeams: Team[] })[];
   teams: Team[];
 }
 
@@ -34,13 +34,10 @@ const UsersPage = ({ users, teams = [] }: UsersPageProps) => {
     { header: "Mobile Number", accessor: "mobileNumber" },
     {
       header: "Team",
-      accessor: (row: User & { team: Team | null }) =>
-        row.team?.name || "No Team",
-    },
-    {
-      header: "Team IDs",
-      accessor: (row: User & { team: Team | null }) =>
-        row.team ? row.team.id.toString() : teams.map((t) => t.id).join(", "),
+      accessor: (row: User & { team: Team | null; managedTeams: Team[] }) =>
+        row.role === "SalesManager"
+          ? row.managedTeams.map((team) => team.name).join(", ")
+          : row.team?.name || "No Team",
     },
   ];
   const t2 = useTranslations("usersHeader");

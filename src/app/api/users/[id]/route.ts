@@ -2,38 +2,56 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../../prisma/client";
 
 export async function DELETE(
-  req: NextRequest,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
 
-  if (!id) {
-    return NextResponse.json({ error: "User ID is required" }, { status: 400 });
+  const userId = parseInt(id);
+
+  if (isNaN(userId) || userId <= 0) {
+    return NextResponse.json(
+      { error: "Invalid or missing user ID" },
+      { status: 400 }
+    );
   }
 
-  const userId = parseInt(id, 10);
-
   try {
-    // Find all contracts related to the user
-    const contracts = await prisma.contract.findMany({
-      where: { salesmanId: userId },
+    // Check if the user exists
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        managedTeams: true,
+        team: true,
+      },
     });
 
-    // Delete all branches related to the contracts
-    for (const contract of contracts) {
-      await prisma.branch.deleteMany({
-        where: { contractId: contract.id },
-      });
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Delete all contracts related to the user
-    await prisma.contract.deleteMany({
-      where: { salesmanId: userId },
-    });
+    // Handle disassociating the user from managed teams and their own team
+    await prisma.$transaction(async (prisma) => {
+      if (user.managedTeams.length > 0) {
+        for (const team of user.managedTeams) {
+          await prisma.team.update({
+            where: { id: team.id },
+            data: { managerId: null },
+          });
+        }
+      }
 
-    // Delete the user
-    await prisma.user.delete({
-      where: { id: userId },
+      if (user.team) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { teamId: null },
+        });
+      }
+
+      // Delete the user
+      await prisma.user.delete({
+        where: { id: userId },
+      });
     });
 
     return NextResponse.json(
@@ -41,12 +59,10 @@ export async function DELETE(
       { status: 200 }
     );
   } catch (error) {
-    console.error("Failed to delete user:", error);
+    console.error("Error occurred while deleting user:", error);
     return NextResponse.json(
-      { error: "Failed to delete user" },
+      { error: "An error occurred while deleting the user" },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }

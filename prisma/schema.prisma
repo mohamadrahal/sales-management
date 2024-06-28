@@ -78,10 +78,10 @@ model Team {
   id                 Int                  @id @default(autoincrement())
   name               String
   location           City
-  managerId          Int?                 @unique
+  managerId          Int?                 
   manager            User?                @relation("TeamManager", fields: [managerId], references: [id])
   salesmen           User[]
-  targets            Target[]             // Targets related to the team as a whole
+  targets            Target[] // Targets related to the team as a whole
   CompensationReport CompensationReport[]
 }
 
@@ -105,10 +105,10 @@ model User {
 
 model Target {
   id                Int        @id @default(autoincrement())
-  teamId            Int?       // Foreign key for Team
-  userId            Int?       // Foreign key for User  periodFrom        DateTime
+  teamId            Int? // Foreign key for Team
+  userId            Int? // Foreign key for User  periodFrom        DateTime
   periodFrom        DateTime
-  periodTo          DateTime  
+  periodTo          DateTime
   targetType        TargetType // Enum to distinguish between 'Team' and 'Salesman'
   numberOfContracts Int
   totalAmountLYD    Float
@@ -121,7 +121,7 @@ model Target {
 
 model Report {
   id                  Int                  @id @default(autoincrement())
-  type                ReportType // Enum to distinguish report type
+  type                ReportType
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   contractReports     ContractReport[]
@@ -180,5 +180,3 @@ model Branch {
   locationY  Float
   contract   Contract @relation(fields: [contractId], references: [id])
 }
-
-

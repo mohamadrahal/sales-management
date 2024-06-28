@@ -15,10 +15,14 @@ export async function POST(request: NextRequest) {
   const hashedPassword = await bcrypt.hash(userData.password, 10);
 
   try {
-    // Check if a user with the same mobile number already exists
+    console.log(
+      "Checking for existing user with mobile number:",
+      userData.mobileNumber
+    );
     const existingUser = await prisma.user.findUnique({
       where: { mobileNumber: userData.mobileNumber },
     });
+    console.log("Existing user:", existingUser);
 
     if (existingUser) {
       return NextResponse.json(
@@ -27,14 +31,35 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (role === "Admin") {
+      if (teamIds.length > 0) {
+        return NextResponse.json(
+          { error: "Admin users should not be assigned to any team." },
+          { status: 400 }
+        );
+      }
+
+      console.log("Creating new Admin");
+      const newUser = await prisma.user.create({
+        data: {
+          ...userData,
+          password: hashedPassword,
+          role,
+        },
+      });
+      console.log("New Admin created:", newUser);
+      return NextResponse.json(newUser, { status: 201 });
+    }
+
     if (role === "SalesManager" && teamIds.length > 0) {
-      // Ensure each team can only have one manager
+      console.log("Ensuring each team can only have one manager");
       const teamsWithManagers = await prisma.team.findMany({
         where: {
           id: { in: teamIds },
           managerId: { not: null },
         },
       });
+      console.log("Teams with managers already assigned:", teamsWithManagers);
 
       if (teamsWithManagers.length > 0) {
         return NextResponse.json(
@@ -43,25 +68,26 @@ export async function POST(request: NextRequest) {
         );
       }
 
+      console.log("Creating new SalesManager");
       const newUser = await prisma.user.create({
         data: {
           ...userData,
           password: hashedPassword,
           role,
-          managedTeams: {
-            connect: teamIds.map((id: number) => ({ id })),
-          },
         },
       });
+      console.log("New user created:", newUser);
 
-      // Update each team to set the new user as the manager
+      // Assign the new user as the manager to the specified teams
       await prisma.team.updateMany({
         where: { id: { in: teamIds } },
         data: { managerId: newUser.id },
       });
 
+      console.log("Teams updated with new manager ID");
       return NextResponse.json(newUser, { status: 201 });
     } else if (role === "Salesman" && teamIds.length === 1) {
+      console.log("Creating new Salesman");
       const newUser = await prisma.user.create({
         data: {
           ...userData,
@@ -70,7 +96,7 @@ export async function POST(request: NextRequest) {
           team: { connect: { id: teamIds[0] } },
         },
       });
-
+      console.log("New Salesman created:", newUser);
       return NextResponse.json(newUser, { status: 201 });
     } else {
       return NextResponse.json(
@@ -79,6 +105,8 @@ export async function POST(request: NextRequest) {
       );
     }
   } catch (error: any) {
+    console.error("Error occurred while creating user:", error);
+
     if (error.code === "P2002") {
       // Unique constraint failed
       return NextResponse.json(
