@@ -1,12 +1,40 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../../prisma/client";
+import jwt from "jsonwebtoken";
+
+// Secret key for JWT verification, you should store this in your environment variables
+const SECRET_KEY = process.env.NEXT_PUBLIC_JWT_SECRET || "your_secret_key";
+
+const verifyToken = (token: string) => {
+  try {
+    return jwt.verify(token, SECRET_KEY);
+  } catch (error) {
+    return null;
+  }
+};
 
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const { id } = params;
+  const token = request.headers.get("Authorization")?.split(" ")[1];
 
+  if (!token) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const decoded = verifyToken(token);
+
+  if (!decoded) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { role: userRole, id: authUserId } = decoded as {
+    role: string;
+    id: number;
+  };
+
+  const { id } = params;
   const userId = parseInt(id);
 
   if (isNaN(userId) || userId <= 0) {
@@ -28,6 +56,19 @@ export async function DELETE(
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    // Authorization checks
+    if (
+      userRole === "SalesManager" &&
+      (user.role === "Admin" || user.role === "SalesManager")
+    ) {
+      return NextResponse.json(
+        {
+          error: "Forbidden: SalesManager cannot delete Admin or SalesManager",
+        },
+        { status: 403 }
+      );
     }
 
     // Handle disassociating the user from managed teams and their own team

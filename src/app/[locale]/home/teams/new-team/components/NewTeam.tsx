@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { teamSchema, cityEnum, City } from "@/app/schemas/teamSchema";
 import { useTeams } from "@/app/[locale]/context/TeamsContext";
+import useRequireAuth from "@/app/[locale]/hooks/useRequireAuth";
 
 const NewTeam: React.FC = () => {
   const [name, setName] = useState("");
@@ -15,6 +16,8 @@ const NewTeam: React.FC = () => {
   const searchParams = useSearchParams();
   const locale = searchParams.get("locale") || "en";
   const teamId = searchParams.get("id");
+
+  const { token } = useRequireAuth();
 
   useEffect(() => {
     if (teamId) {
@@ -40,7 +43,11 @@ const NewTeam: React.FC = () => {
 
     try {
       if (isEditing && teamId) {
-        const response = await axios.put(`/api/teams/${teamId}`, teamData);
+        const response = await axios.put(`/api/teams/${teamId}`, teamData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (response.status === 200) {
           fetchTeams(1, 10);
           router.push(`/${locale}/home/teams`);
@@ -48,7 +55,11 @@ const NewTeam: React.FC = () => {
           alert("Failed to update team");
         }
       } else {
-        const response = await axios.post("/api/teams", teamData);
+        const response = await axios.post("/api/teams", teamData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (response.status === 201) {
           addTeam(response.data);
           router.push(`/${locale}/home/teams`);

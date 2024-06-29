@@ -62,7 +62,11 @@ const UsersPage = ({ users, teams = [] }: UsersPageProps) => {
   const handleDelete = async () => {
     if (selectedUser) {
       try {
-        await axios.delete(`/api/users/${selectedUser.id}`);
+        await axios.delete(`/api/users/${selectedUser.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         fetchUsers(currentPage, pageSize);
       } catch (error) {
         console.error("Failed to delete user:", error);

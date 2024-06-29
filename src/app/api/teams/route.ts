@@ -1,6 +1,17 @@
 import prisma from "../../../../prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { teamSchema } from "@/app/schemas/teamSchema";
+import jwt from "jsonwebtoken";
+
+const SECRET_KEY = process.env.NEXT_PUBLIC_JWT_SECRET || "your_secret_key";
+
+const verifyToken = (token: string) => {
+  try {
+    return jwt.verify(token, SECRET_KEY);
+  } catch (error) {
+    return null;
+  }
+};
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -41,6 +52,23 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const token = request.headers.get("Authorization")?.split(" ")[1];
+
+  if (!token) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const decoded = verifyToken(token);
+
+  if (!decoded) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { role } = decoded as { role: string };
+  if (role !== "Admin" && role !== "SalesManager") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const body = await request.json();
   const validation = teamSchema.safeParse(body);
 
