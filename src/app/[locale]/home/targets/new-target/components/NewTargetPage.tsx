@@ -83,6 +83,7 @@ const NewTargetPage: React.FC = () => {
               value={form.targetOwnerId || ""}
               onChange={handleInputChange}
               placeholder="Owner ID"
+              label="Owner ID"
             />
             <InputField
               type="date"
@@ -90,6 +91,7 @@ const NewTargetPage: React.FC = () => {
               value={form.periodFrom}
               onChange={handleInputChange}
               placeholder="Period From"
+              label="Owner ID"
             />
             <InputField
               type="date"
@@ -97,6 +99,7 @@ const NewTargetPage: React.FC = () => {
               value={form.periodTo}
               onChange={handleInputChange}
               placeholder="Period To"
+              label="Owner ID"
             />
             <InputField
               type="number"
@@ -104,6 +107,7 @@ const NewTargetPage: React.FC = () => {
               value={form.numberOfContracts || ""}
               onChange={handleInputChange}
               placeholder="Number of Contracts"
+              label="Owner ID"
             />
             <InputField
               type="number"
@@ -111,6 +115,7 @@ const NewTargetPage: React.FC = () => {
               value={form.totalAmountLYD || ""}
               onChange={handleInputChange}
               placeholder="Total Amount (LYD)"
+              label="Owner ID"
             />
             {form.targetType === TargetType.Team && (
               <InputField
@@ -119,6 +124,7 @@ const NewTargetPage: React.FC = () => {
                 value={form.bonusAmount || ""}
                 onChange={handleInputChange}
                 placeholder="Bonus Amount"
+                label="Owner ID"
               />
             )}
             {errors.bonusAmount && (

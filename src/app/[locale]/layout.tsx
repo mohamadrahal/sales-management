@@ -2,6 +2,7 @@
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import "../globals.css";
+import NavBar from "./components/NavBar";
 
 export default async function RootLayout({
   children,
@@ -26,6 +27,7 @@ export default async function RootLayout({
       </head>
       <body className="h-full">
         <NextIntlClientProvider locale={locale} messages={messages}>
+          <NavBar />
           {children}
         </NextIntlClientProvider>
       </body>

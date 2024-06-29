@@ -1,14 +1,39 @@
-import { PrismaClient, ContractType, BusinessType } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
+import prisma from "../../../../prisma/client";
 import mime from "mime";
 import { join } from "path";
 import { stat, mkdir, writeFile } from "fs/promises";
-import { NextRequest, NextResponse } from "next/server";
-import prisma from "../../../../prisma/client";
+import { BusinessType, ContractType } from "@prisma/client";
+import jwt from "jsonwebtoken";
+
+const SECRET_KEY = process.env.NEXT_PUBLIC_JWT_SECRET || "your_secret_key";
+
+export const verifyToken = (token: string) => {
+  try {
+    return jwt.verify(token, SECRET_KEY);
+  } catch (error) {
+    console.error("Invalid token:", error);
+    return null;
+  }
+};
 
 export async function POST(req: NextRequest) {
+  const token = req.headers.get("Authorization")?.split(" ")[1];
+
+  if (!token) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const decoded = verifyToken(token);
+
+  if (!decoded) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { id: salesmanId } = decoded as { id: number };
+
   const formData = await req.formData();
 
-  const salesmanId = Number(formData.get("salesmanId"));
   const type = formData.get("type") as ContractType;
   const companyName = formData.get("companyName") as string;
   const businessType = formData.get("businessType") as BusinessType;
@@ -66,17 +91,6 @@ export async function POST(req: NextRequest) {
     await writeFile(`${uploadDir}/${filename}`, buffer);
     const fileUrl = `${relativeUploadDir}/${filename}`;
 
-    const salesman = await prisma.user.findUnique({
-      where: { id: salesmanId },
-    });
-
-    if (!salesman) {
-      return NextResponse.json(
-        { error: "Salesman not found" },
-        { status: 404 }
-      );
-    }
-
     const newContract = await prisma.contract.create({
       data: {
         salesmanId,
@@ -105,34 +119,87 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
+  const token = req.headers.get("Authorization")?.split(" ")[1];
+
+  if (!token) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const decoded = verifyToken(token);
+
+  if (!decoded) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { role, userId } = decoded as { role: string; userId: number };
+
   const { searchParams } = new URL(req.url);
   const page = parseInt(searchParams.get("page") || "1", 10);
   const limit = parseInt(searchParams.get("limit") || "10", 10);
   const offset = (page - 1) * limit;
 
   try {
-    const [contracts, totalCount] = await Promise.all([
-      prisma.contract.findMany({
-        skip: offset,
-        take: limit,
-        include: {
-          branches: true,
-          salesman: true,
-        },
-      }),
-      prisma.contract.count(),
-    ]);
+    let contracts, totalCount;
 
-    // Map contracts to include the number of branches
-    const contractsWithBranchCount = contracts.map((contract) => ({
-      ...contract,
-      numberOfBranches: contract.branches.length,
-    }));
+    if (role === "Admin") {
+      [contracts, totalCount] = await Promise.all([
+        prisma.contract.findMany({
+          skip: offset,
+          take: limit,
+          include: {
+            salesman: true,
+          },
+        }),
+        prisma.contract.count(),
+      ]);
+    } else if (role === "SalesManager") {
+      const managedTeamIds = await prisma.team.findMany({
+        where: { managerId: userId },
+        select: { id: true },
+      });
 
-    return NextResponse.json(
-      { contracts: contractsWithBranchCount, totalCount },
-      { status: 200 }
-    );
+      const teamIds = managedTeamIds.map((team) => team.id);
+
+      [contracts, totalCount] = await Promise.all([
+        prisma.contract.findMany({
+          where: {
+            salesman: {
+              teamId: { in: teamIds },
+            },
+          },
+          skip: offset,
+          take: limit,
+          include: {
+            salesman: true,
+          },
+        }),
+        prisma.contract.count({
+          where: {
+            salesman: {
+              teamId: { in: teamIds },
+            },
+          },
+        }),
+      ]);
+    } else if (role === "Salesman") {
+      [contracts, totalCount] = await Promise.all([
+        prisma.contract.findMany({
+          where: { salesmanId: userId },
+          skip: offset,
+          take: limit,
+          include: {
+            salesman: true,
+          },
+        }),
+        prisma.contract.count({ where: { salesmanId: userId } }),
+      ]);
+
+      console.log(userId);
+    } else {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    return NextResponse.json({ contracts, totalCount }, { status: 200 });
   } catch (error) {
     console.error("Failed to fetch contracts:", error);
     return NextResponse.json(

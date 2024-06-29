@@ -54,10 +54,10 @@ const SideBar = () => {
             {item.name}
           </Link>
         ))}
-        <div className="w-full flex justify-center mt-4 flex-col gap-2">
+        {/* <div className="w-full flex justify-center mt-4 flex-col gap-2">
           <LocaleSwitcher />
           <LogoutButton />
-        </div>
+        </div> */}
       </nav>
     </div>
   );

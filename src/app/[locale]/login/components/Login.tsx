@@ -39,15 +39,8 @@ const Login = () => {
 
   return (
     <div className="w-full h-screen flex items-center justify-center bg-gray-100">
-      <div className="flex w-3/4 h-3/4 bg-white shadow-lg rounded-lg overflow-hidden">
+      <div className="flex w-3/4 h-3/4 bg-white shadow-lg rounded-xl overflow-hidden">
         <div className="w-1/2 bg-secondary flex flex-col justify-center items-center p-8">
-          {/* <Image
-            src="/path/to/your/image.png"
-            alt="Exam Mastery Hub"
-            className="mb-6"
-            width={200}
-            height={200}
-          /> */}
           <h2 className="text-2xl font-bold text-white mb-2">
             Exam Mastery Hub
           </h2>

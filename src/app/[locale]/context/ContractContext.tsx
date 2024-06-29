@@ -10,6 +10,7 @@ import React, {
 } from "react";
 import axios from "axios";
 import { Contract } from "../../../types/types";
+import useRequireAuth from "../hooks/useRequireAuth";
 
 interface ContractsContextProps {
   contracts: Contract[];
@@ -28,22 +29,32 @@ export const ContractsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
 
-  const fetchContracts = useCallback(async (page = 1, limit = 10) => {
-    try {
-      const response = await axios.get("/api/contracts", {
-        params: { page, limit },
-      });
-      const { contracts, totalCount } = response.data;
-      setContracts(contracts);
-      setTotalCount(totalCount);
-    } catch (error) {
-      console.error("Failed to fetch contracts:", error);
-    }
-  }, []);
+  const { token } = useRequireAuth();
+
+  const fetchContracts = useCallback(
+    async (page = 1, limit = 10) => {
+      try {
+        const response = await axios.get("/api/contracts", {
+          params: { page, limit },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const { contracts, totalCount } = response.data;
+        setContracts(contracts);
+        setTotalCount(totalCount);
+      } catch (error) {
+        console.error("Failed to fetch contracts:", error);
+      }
+    },
+    [token]
+  );
 
   useEffect(() => {
-    fetchContracts(1, 10);
-  }, [fetchContracts]);
+    if (token) {
+      fetchContracts(1, 10);
+    }
+  }, [fetchContracts, token]);
 
   const addContract = (contract: Contract) => {
     setContracts((prevContracts) => [...prevContracts, contract]);
