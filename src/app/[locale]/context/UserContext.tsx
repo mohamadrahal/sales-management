@@ -10,6 +10,7 @@ import React, {
 } from "react";
 import axios from "axios";
 import { User } from "@prisma/client";
+import useRequireAuth from "../hooks/useRequireAuth";
 
 interface UsersContextProps {
   users: User[];
@@ -26,18 +27,27 @@ export const UsersProvider: React.FC<{ children: React.ReactNode }> = ({
   const [users, setUsers] = useState<User[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
 
-  const fetchUsers = useCallback(async (page = 1, limit = 10) => {
-    try {
-      const response = await axios.get("/api/users", {
-        params: { page, limit },
-      });
-      const { users, totalCount } = response.data;
-      setUsers(users);
-      setTotalCount(totalCount);
-    } catch (error) {
-      console.error("Failed to fetch users:", error);
-    }
-  }, []);
+  const { token } = useRequireAuth();
+
+  const fetchUsers = useCallback(
+    async (page = 1, limit = 10) => {
+      if (!token) return;
+      try {
+        const response = await axios.get("/api/users", {
+          params: { page, limit },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const { users, totalCount } = response.data;
+        setUsers(users);
+        setTotalCount(totalCount);
+      } catch (error) {
+        console.error("Failed to fetch users:", error);
+      }
+    },
+    [token]
+  );
 
   useEffect(() => {
     fetchUsers(1, 10);

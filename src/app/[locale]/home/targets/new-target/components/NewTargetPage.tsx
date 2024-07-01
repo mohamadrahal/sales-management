@@ -35,28 +35,25 @@ const NewTargetPage: React.FC = () => {
     }));
   };
 
-  const validateForm = () => {
-    const newErrors: { [key: string]: string } = {};
-    if (
-      form.targetType === TargetType.Team &&
-      (!form.bonusAmount || form.bonusAmount <= 0)
-    ) {
-      newErrors.bonusAmount = "Bonus amount is required for team targets";
-    }
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!validateForm()) return;
 
     try {
       await axios.post("/api/targets", form);
       router.push(`/home/targets`);
     } catch (error) {
       console.error("Failed to create target:", error);
-      alert("Failed to create target");
+      if (axios.isAxiosError(error) && error.response?.data?.error) {
+        const newErrors: { [key: string]: string } = {};
+        error.response.data.error.forEach((err: any) => {
+          if (err.path && err.path.length > 0) {
+            newErrors[err.path[0]] = err.message;
+          }
+        });
+        setErrors(newErrors);
+      } else {
+        alert("Failed to create target");
+      }
     }
   };
 
@@ -84,6 +81,7 @@ const NewTargetPage: React.FC = () => {
               onChange={handleInputChange}
               placeholder="Owner ID"
               label="Owner ID"
+              error={errors.targetOwnerId}
             />
             <InputField
               type="date"
@@ -91,7 +89,8 @@ const NewTargetPage: React.FC = () => {
               value={form.periodFrom}
               onChange={handleInputChange}
               placeholder="Period From"
-              label="Owner ID"
+              label="Period From"
+              error={errors.periodFrom}
             />
             <InputField
               type="date"
@@ -99,7 +98,8 @@ const NewTargetPage: React.FC = () => {
               value={form.periodTo}
               onChange={handleInputChange}
               placeholder="Period To"
-              label="Owner ID"
+              label="Period To"
+              error={errors.periodTo}
             />
             <InputField
               type="number"
@@ -107,7 +107,8 @@ const NewTargetPage: React.FC = () => {
               value={form.numberOfContracts || ""}
               onChange={handleInputChange}
               placeholder="Number of Contracts"
-              label="Owner ID"
+              label="Number of Contracts"
+              error={errors.numberOfContracts}
             />
             <InputField
               type="number"
@@ -115,7 +116,8 @@ const NewTargetPage: React.FC = () => {
               value={form.totalAmountLYD || ""}
               onChange={handleInputChange}
               placeholder="Total Amount (LYD)"
-              label="Owner ID"
+              label="Total Amount (LYD)"
+              error={errors.totalAmountLYD}
             />
             {form.targetType === TargetType.Team && (
               <InputField
@@ -124,11 +126,9 @@ const NewTargetPage: React.FC = () => {
                 value={form.bonusAmount || ""}
                 onChange={handleInputChange}
                 placeholder="Bonus Amount"
-                label="Owner ID"
+                label="Bonus Amount"
+                error={errors.bonusAmount}
               />
-            )}
-            {errors.bonusAmount && (
-              <p className="text-red-500">{errors.bonusAmount}</p>
             )}
           </div>
 

@@ -1,7 +1,6 @@
-// api/targets.ts
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../prisma/client";
-import { TargetSchema } from "../../schemas/validationSchemas";
+import TargetSchema from "../../schemas/validationSchemas";
 import { TargetType } from "@prisma/client"; // Adjust the path as needed
 import { z } from "zod";
 

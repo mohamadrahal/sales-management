@@ -57,11 +57,11 @@
     { "header": "الاسم", "accessor": "name" },
     { "header": "رقم الهاتف المحمول", "accessor": "mobileNumber" }
   ],
-  "branchHeader":{
-    "title":"الفروع",
-    "branchButton":"إضافة فرع"
+  "branchHeader": {
+    "title": "الفروع",
+    "branchButton": "إضافة فرع"
   },
-  "branchColumns" : [
+  "branchColumns": [
     { "header": "بطاقة تعريف", "accessor": "id" },
     { "header": "الاسم", "accessor": "name" },
     { "header": "رقم الهاتف المحمول", "accessor": "phone" },
@@ -79,13 +79,11 @@
       "ownerType": "نوع المالك",
       "ownerName": "اسم المالك",
       "teamId": "معرف الفريق",
-      "salesmanId": "معرف البائع",
+      "userId": "معرف البائع",
       "periodFrom": "الفترة من",
       "periodTo": "الفترة إلى",
       "numberOfContracts": "عدد العقود",
       "totalAmountLYD": "إجمالي المبلغ (دينار ليبي)"
     }
   }
-
-
 }

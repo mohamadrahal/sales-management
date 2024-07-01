@@ -2,6 +2,18 @@ import prisma from "../../../../prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { userSchema } from "../../schemas/userSchema";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
+const SECRET_KEY = process.env.NEXT_PUBLIC_JWT_SECRET || "your_secret_key";
+
+export const verifyToken = (token: string) => {
+  try {
+    return jwt.verify(token, SECRET_KEY);
+  } catch (error) {
+    console.error("Invalid token:", error);
+    return null;
+  }
+};
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
@@ -129,23 +141,76 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
+  const token = req.headers.get("Authorization")?.split(" ")[1];
+
+  if (!token) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const decoded = verifyToken(token);
+
+  if (!decoded) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { role, userId } = decoded as { role: string; userId: number };
+
   const { searchParams } = new URL(req.url);
   const page = parseInt(searchParams.get("page") || "1", 10);
   const limit = parseInt(searchParams.get("limit") || "10", 10);
   const offset = (page - 1) * limit;
 
   try {
-    const [users, totalCount] = await Promise.all([
-      prisma.user.findMany({
-        skip: offset,
-        take: limit,
-        include: {
-          team: true,
-          managedTeams: true, // Include managed teams
-        },
-      }),
-      prisma.user.count(),
-    ]);
+    let users, totalCount;
+
+    if (role === "Admin") {
+      [users, totalCount] = await Promise.all([
+        prisma.user.findMany({
+          skip: offset,
+          take: limit,
+          include: {
+            team: true,
+            managedTeams: true, // Include managed teams
+          },
+        }),
+        prisma.user.count(),
+      ]);
+    } else if (role === "SalesManager") {
+      // Get team IDs managed by the SalesManager
+      const managedTeams = await prisma.team.findMany({
+        where: { managerId: userId },
+        select: { id: true },
+      });
+
+      const managedTeamIds = managedTeams.map((team) => team.id);
+
+      [users, totalCount] = await Promise.all([
+        prisma.user.findMany({
+          where: {
+            OR: [
+              { teamId: { in: managedTeamIds } },
+              { managedTeams: { some: { id: { in: managedTeamIds } } } },
+            ],
+          },
+          skip: offset,
+          take: limit,
+          include: {
+            team: true,
+            managedTeams: true, // Include managed teams
+          },
+        }),
+        prisma.user.count({
+          where: {
+            OR: [
+              { teamId: { in: managedTeamIds } },
+              { managedTeams: { some: { id: { in: managedTeamIds } } } },
+            ],
+          },
+        }),
+      ]);
+    } else {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
     const teams = await prisma.team.findMany({
       select: {
@@ -161,5 +226,7 @@ export async function GET(req: NextRequest) {
       { error: "Failed to fetch users" },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }

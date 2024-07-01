@@ -38,9 +38,9 @@ const SideBar = () => {
   }
 
   return (
-    <div className="h-full w-64 bg-white text-primary shadow-lg">
+    <div className="h-full w-64 bg-white text-secondary shadow-lg">
       <div className="p-4">
-        <h2 className="text-2xl text-primary font-semibold">
+        <h2 className="text-2xl text-secondary font-semibold">
           {t("sidebar.title")}
         </h2>
       </div>

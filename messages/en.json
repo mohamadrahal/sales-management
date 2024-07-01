@@ -58,11 +58,11 @@
     { "header": "Name", "accessor": "name" },
     { "header": "Mobile Number", "accessor": "mobileNumber" }
   ],
-  "branchHeader":{
-    "title":"Branches",
-    "branchButton":"Add Branch"
+  "branchHeader": {
+    "title": "Branches",
+    "branchButton": "Add Branch"
   },
-  "branchColumns" : [
+  "branchColumns": [
     { "header": "ID", "accessor": "id" },
     { "header": "Name", "accessor": "name" },
     { "header": "Phone", "accessor": "phone" },
@@ -80,13 +80,11 @@
       "ownerType": "Owner Type",
       "ownerName": "Owner Name",
       "teamId": "Team ID",
-      "salesmanId": "Salesman ID",
+      "userId": "Salesman ID",
       "periodFrom": "Period From",
       "periodTo": "Period To",
       "numberOfContracts": "Number of Contracts",
       "totalAmountLYD": "Total Amount (LYD)"
     }
   }
-
-
 }
