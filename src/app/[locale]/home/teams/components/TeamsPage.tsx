@@ -65,10 +65,10 @@ const TeamsPage: React.FC<TeamsPageProps> = ({ teams }) => {
     }
   };
 
-  const actions = [
+  const actions = (row: Team) => [
     {
       icon: FaEdit,
-      onClick: (row: Team) => router.push(`/home/teams/new-team?id=${row.id}`),
+      onClick: () => router.push(`/home/teams/new-team?id=${row.id}`),
       className: "bg-secondary hover:bg-primary",
     },
     {

@@ -58,21 +58,20 @@ const BranchesPage: React.FC<BranchesProps> = ({ branches }) => {
     }
   };
 
-  const actions = [
+  const actions = (row: Branch) => [
     {
       icon: FaEdit,
-      onClick: (row: Branch) =>
-        router.push(`/home/branches/new-branch?id=${row.id}`),
+      onClick: () => router.push(`/home/branches/new-branch?id=${row.id}`),
       className: "bg-secondary hover:bg-primary",
     },
     {
       icon: FaEye,
-      onClick: (row: Branch) => router.push(`/home/branches/${row.id}`),
+      onClick: () => router.push(`/home/branches/${row.id}`),
       className: "bg-gray-400 hover:bg-gray-600",
     },
     {
       icon: FaTrash,
-      onClick: (row: Branch) => {
+      onClick: () => {
         setSelectedBranch(row);
         setShowModal(true);
       },

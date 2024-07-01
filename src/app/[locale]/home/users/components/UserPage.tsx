@@ -77,20 +77,20 @@ const UsersPage = ({ users, teams = [] }: UsersPageProps) => {
     }
   };
 
-  const actions = [
+  const actions = (row: User) => [
     {
       icon: FaEdit,
-      onClick: (row: User) => router.push(`/home/users/new-user?id=${row.id}`),
+      onClick: () => router.push(`/home/users/new-user?id=${row.id}`),
       className: "bg-secondary hover:bg-primary",
     },
     {
       icon: FaEye,
-      onClick: (row: User) => router.push(`/home/users/${row.id}`),
+      onClick: () => router.push(`/home/users/${row.id}`),
       className: "bg-gray-400 hover:bg-gray-600",
     },
     {
       icon: FaTrash,
-      onClick: (row: User) => {
+      onClick: () => {
         setSelectedUser(row);
         setShowModal(true);
       },

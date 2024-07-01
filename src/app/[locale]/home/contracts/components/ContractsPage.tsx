@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/navigation";
 import Table from "../../../components/reusables/Table";
 import AddButton from "../../../components/reusables/AddButton";
 import { Contract } from "../../../../../types/types";
-import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
+import { FaEye, FaCheck, FaTimes, FaTrash } from "react-icons/fa";
 import Pagination from "../../../components/reusables/Pagination";
 import { useContracts } from "../../../context/ContractContext";
 import axios from "axios";
@@ -26,6 +26,7 @@ const ContractsPage: React.FC<ContractsPageProps> = ({ contracts }) => {
     null
   );
   const [showModal, setShowModal] = useState(false);
+  const [modalAction, setModalAction] = useState("");
   const pageSize = 10;
   const t = useTranslations();
   const contractColumns = t.raw("contractColumns");
@@ -45,6 +46,28 @@ const ContractsPage: React.FC<ContractsPageProps> = ({ contracts }) => {
     fetchContracts(page, pageSize);
   };
 
+  const handleAction = async (action: string) => {
+    if (selectedContract) {
+      try {
+        await axios.post(
+          `/api/contracts/${selectedContract.id}/action`,
+          { action },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        fetchContracts(currentPage, pageSize);
+      } catch (error) {
+        console.error(`Failed to ${action} contract:`, error);
+      } finally {
+        setShowModal(false);
+        setSelectedContract(null);
+      }
+    }
+  };
+
   const handleDelete = async () => {
     if (selectedContract) {
       try {
@@ -59,27 +82,54 @@ const ContractsPage: React.FC<ContractsPageProps> = ({ contracts }) => {
     }
   };
 
-  const actions = [
-    {
-      icon: FaEdit,
-      onClick: (row: Contract) =>
-        router.push(`/home/contracts/new-contract?id=${row.id}`),
-      className: "bg-secondary hover:bg-primary",
-    },
-    {
-      icon: FaEye,
-      onClick: (row: Contract) => router.push(`/home/contracts/${row.id}`),
-      className: "bg-gray-400 hover:bg-gray-600",
-    },
-    {
+  const getActions = (row: Contract) => {
+    const commonActions = [
+      {
+        icon: FaEye,
+        onClick: () => router.push(`/home/contracts/${row.id}`),
+        className: "bg-gray-400 hover:bg-gray-600",
+      },
+    ];
+
+    if (row.status === "Pending") {
+      commonActions.push(
+        {
+          icon: FaCheck,
+          onClick: () => {
+            setSelectedContract(row);
+            setModalAction("approve");
+            setShowModal(true);
+          },
+          className: "bg-green-400 hover:bg-green-600",
+        },
+        {
+          icon: FaTimes,
+          onClick: () => {
+            setSelectedContract(row);
+            setModalAction("decline");
+            setShowModal(true);
+          },
+          className: "bg-yellow-400 hover:bg-yellow-600",
+        }
+      );
+    }
+
+    commonActions.push({
       icon: FaTrash,
-      onClick: (row: Contract) => {
+      onClick: () => {
         setSelectedContract(row);
+        setModalAction("delete");
         setShowModal(true);
       },
       className: "bg-red-400 hover:bg-red-600",
-    },
-  ];
+    });
+
+    if (user?.role === "Salesman") {
+      return commonActions.slice(0, 1); // Only view for Salesman
+    }
+
+    return commonActions;
+  };
 
   if (loading || !token) {
     return <div>Loading...</div>;
@@ -96,7 +146,7 @@ const ContractsPage: React.FC<ContractsPageProps> = ({ contracts }) => {
           link={`/home/contracts/new-contract`}
         />
       </div>
-      <Table columns={contractColumns} data={contracts} actions={actions} />
+      <Table columns={contractColumns} data={contracts} actions={getActions} />
       <Pagination
         currentPage={currentPage}
         totalCount={totalCount}
@@ -105,9 +155,13 @@ const ContractsPage: React.FC<ContractsPageProps> = ({ contracts }) => {
       />
       {showModal && selectedContract && (
         <ConfirmationModal
-          title="Confirm Deletion"
-          content={`Are you sure you want to delete the contract for "${selectedContract.companyName}"?`}
-          onConfirm={handleDelete}
+          title={`Confirm ${modalAction}`}
+          content={`Are you sure you want to ${modalAction} the contract for "${selectedContract.companyName}"?`}
+          onConfirm={
+            modalAction === "delete"
+              ? handleDelete
+              : () => handleAction(modalAction)
+          }
           onCancel={() => setShowModal(false)}
         />
       )}

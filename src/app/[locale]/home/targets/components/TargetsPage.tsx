@@ -59,21 +59,20 @@ const TargetsPage: React.FC<TargetsPageProps> = ({ targets }) => {
     }
   };
 
-  const actions = [
+  const getActions = (row: Target) => [
     {
       icon: FaEdit,
-      onClick: (row: Target) =>
-        router.push(`/home/targets/new-target?id=${row.id}`),
+      onClick: () => router.push(`/home/targets/new-target?id=${row.id}`),
       className: "bg-secondary hover:bg-primary",
     },
     {
       icon: FaEye,
-      onClick: (row: Target) => router.push(`/home/targets/${row.id}`),
+      onClick: () => router.push(`/home/targets/${row.id}`),
       className: "bg-gray-400 hover:bg-gray-600",
     },
     {
       icon: FaTrash,
-      onClick: (row: Target) => {
+      onClick: () => {
         setSelectedTarget(row);
         setShowModal(true);
       },
@@ -112,7 +111,7 @@ const TargetsPage: React.FC<TargetsPageProps> = ({ targets }) => {
       <Table
         columns={targetsColumns}
         data={filteredTargets}
-        actions={actions}
+        actions={getActions}
       />
       <Pagination
         currentPage={currentPage}

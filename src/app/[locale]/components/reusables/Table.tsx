@@ -19,7 +19,7 @@ interface Action {
 type TableProps = {
   columns: Column[];
   data?: any[];
-  actions?: Action[];
+  actions?: (row: any) => Action[]; // Change to function that returns an array of actions
 };
 
 const Table = ({ columns, data, actions }: TableProps) => {
@@ -42,7 +42,7 @@ const Table = ({ columns, data, actions }: TableProps) => {
                 {column.header}
               </th>
             ))}
-            {actions && actions.length > 0 && (
+            {actions && (
               <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
                 {t("title")}
               </th>
@@ -70,7 +70,7 @@ const Table = ({ columns, data, actions }: TableProps) => {
                 {actions && (
                   <td className="px-6 py-2 whitespace-no-wrap border-b border-gray-200">
                     <div className="flex space-x-2">
-                      {actions.map((action, actionIndex) => (
+                      {actions(row).map((action, actionIndex) => (
                         <ActionButton
                           key={actionIndex}
                           icon={action.icon}

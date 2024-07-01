@@ -30,7 +30,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { id: salesmanId } = decoded as { id: number };
+  console.log(decoded);
+
+  const { userId: salesmanId } = decoded as { userId: number };
+
+  console.log(salesmanId);
+
+  if (!salesmanId) {
+    console.error("Salesman ID is missing from the token.");
+    return NextResponse.json(
+      { error: "Salesman ID is missing." },
+      { status: 400 }
+    );
+  }
 
   const formData = await req.formData();
 
@@ -69,12 +81,17 @@ export async function POST(req: NextRequest) {
     await stat(uploadDir);
   } catch (e: any) {
     if (e.code === "ENOENT") {
-      await mkdir(uploadDir, { recursive: true });
+      try {
+        await mkdir(uploadDir, { recursive: true });
+      } catch (mkdirError) {
+        console.error("Error creating upload directory:", mkdirError);
+        return NextResponse.json(
+          { error: "Failed to create upload directory." },
+          { status: 500 }
+        );
+      }
     } else {
-      console.error(
-        "Error while trying to create directory when uploading a file\n",
-        e
-      );
+      console.error("Error checking upload directory:", e);
       return NextResponse.json(
         { error: "Something went wrong." },
         { status: 500 }
@@ -110,7 +127,10 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(newContract, { status: 201 });
   } catch (e) {
-    console.error("Error while trying to upload a file\n", e);
+    console.error(
+      "Error while trying to upload a file or create a contract:",
+      e
+    );
     return NextResponse.json(
       { error: "Something went wrong." },
       { status: 500 }
