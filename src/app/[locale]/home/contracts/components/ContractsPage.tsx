@@ -71,7 +71,11 @@ const ContractsPage: React.FC<ContractsPageProps> = ({ contracts }) => {
   const handleDelete = async () => {
     if (selectedContract) {
       try {
-        await axios.delete(`/api/contracts/${selectedContract.id}`);
+        await axios.delete(`/api/contracts/${selectedContract.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         fetchContracts(currentPage, pageSize);
       } catch (error) {
         console.error("Failed to delete contract:", error);
@@ -138,7 +142,7 @@ const ContractsPage: React.FC<ContractsPageProps> = ({ contracts }) => {
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-semibold text-primary">
+        <h1 className="text-2xl text-secondary">
           {t("contractsHeader.title")}
         </h1>
         <AddButton

@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "@/navigation";
 import axios from "axios";
 import InputField from "../../../../components/reusables/InputField";
-import { City } from "@prisma/client";
+import { City, Contract } from "@prisma/client";
+import useRequireAuth from "@/app/[locale]/hooks/useRequireAuth";
 
 const NewBranchPage = () => {
   const [form, setForm] = useState({
@@ -15,8 +16,26 @@ const NewBranchPage = () => {
     locationX: 0,
     locationY: 0,
   });
-
+  const [contracts, setContracts] = useState<Contract[]>([]);
   const router = useRouter();
+  const { token } = useRequireAuth();
+
+  useEffect(() => {
+    const fetchContracts = async () => {
+      try {
+        const response = await axios.get("/api/contracts", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setContracts(response.data.contracts);
+      } catch (error) {
+        console.error("Failed to fetch contracts:", error);
+      }
+    };
+
+    fetchContracts();
+  }, [token]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -41,7 +60,11 @@ const NewBranchPage = () => {
     };
 
     try {
-      await axios.post("/api/branches", parsedForm);
+      await axios.post("/api/branches", parsedForm, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       router.push(`/home/branches`);
     } catch (error) {
       console.error("Failed to create branch:", error);
@@ -57,19 +80,31 @@ const NewBranchPage = () => {
         </h1>
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-4">
-            <InputField
-              type="number"
-              name="contractId"
-              value={form.contractId}
-              onChange={handleInputChange}
-              placeholder="Contract ID"
-            />
+            <div className="mb-1">
+              <label className="block text-gray-700 font-bold mb-2">
+                Contract ID
+              </label>
+              <select
+                name="contractId"
+                value={form.contractId}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select Contract</option>
+                {contracts.map((contract) => (
+                  <option key={contract.id} value={contract.id}>
+                    {contract.id} - {contract.companyName}
+                  </option>
+                ))}
+              </select>
+            </div>
             <InputField
               type="text"
               name="name"
               value={form.name}
               onChange={handleInputChange}
               placeholder="Branch Name"
+              label="Branch Name"
             />
             <InputField
               type="text"
@@ -77,6 +112,7 @@ const NewBranchPage = () => {
               value={form.phone}
               onChange={handleInputChange}
               placeholder="Phone"
+              label="Phone"
             />
             <select
               name="city"
@@ -106,6 +142,7 @@ const NewBranchPage = () => {
               value={form.locationX}
               onChange={handleInputChange}
               placeholder="Location X"
+              label="Location X"
             />
             <InputField
               type="number"
@@ -113,6 +150,7 @@ const NewBranchPage = () => {
               value={form.locationY}
               onChange={handleInputChange}
               placeholder="Location Y"
+              label="Location Y"
             />
           </div>
 

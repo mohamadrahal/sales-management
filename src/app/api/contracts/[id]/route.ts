@@ -13,84 +13,13 @@ export const verifyToken = (token: string) => {
   }
 };
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { id: string; action: string } }
-) {
-  const token = req.headers.get("Authorization")?.split(" ")[1];
-
-  if (!token) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const decoded = verifyToken(token);
-
-  if (!decoded) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const { role } = decoded as { role: string };
-
-  if (role !== "Admin" && role !== "SalesManager") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-
-  const { id, action } = params;
-
-  try {
-    if (action === "approve" || action === "decline") {
-      const status = action === "approve" ? "Approved" : "Declined";
-      const updatedContract = await prisma.contract.update({
-        where: { id: Number(id) },
-        data: { status },
-      });
-      return NextResponse.json(updatedContract, { status: 200 });
-    } else {
-      return NextResponse.json({ error: "Invalid action" }, { status: 400 });
-    }
-  } catch (error) {
-    console.error(`Failed to ${action} contract:`, error);
-    return NextResponse.json(
-      { error: `Failed to ${action} contract` },
-      { status: 500 }
-    );
-  }
-}
-
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const contract = await prisma.contract.findUnique({
-      where: { id: Number(params.id) },
-      include: {
-        salesman: true,
-      },
-    });
-
-    if (!contract) {
-      return NextResponse.json(
-        { error: "Contract not found" },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(contract, { status: 200 });
-  } catch (error) {
-    console.error("Failed to fetch contract:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch contract" },
-      { status: 500 }
-    );
-  }
-}
-
 export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   const token = req.headers.get("Authorization")?.split(" ")[1];
+
+  console.log(token);
 
   if (!token) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -122,6 +51,42 @@ export async function DELETE(
     console.error("Failed to delete contract:", error);
     return NextResponse.json(
       { error: "Failed to delete contract" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const id = parseInt(params.id);
+
+  if (!id) {
+    return NextResponse.json({ error: "Invalid contract ID" }, { status: 400 });
+  }
+
+  try {
+    const contract = await prisma.contract.findUnique({
+      where: { id },
+      include: {
+        branches: true,
+        salesman: true,
+      },
+    });
+
+    if (!contract) {
+      return NextResponse.json(
+        { error: "Contract not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(contract, { status: 200 });
+  } catch (error) {
+    console.error("Failed to fetch contract:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

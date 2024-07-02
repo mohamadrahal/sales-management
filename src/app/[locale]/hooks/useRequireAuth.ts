@@ -1,4 +1,3 @@
-// hooks/useRequireAuth.ts
 import { useRouter } from "@/navigation";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
@@ -52,13 +51,8 @@ const useRequireAuth = () => {
   }, [router]);
 
   useEffect(() => {
-    if (!loading) {
-      if (token && user) {
-        console.log("User authenticated:", user);
-      } else {
-        console.log("User not authenticated, redirecting to login");
-        router.push("/login");
-      }
+    if (!loading && (!token || !user)) {
+      router.push("/login");
     }
   }, [token, user, loading, router]);
 

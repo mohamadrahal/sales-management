@@ -27,7 +27,7 @@ const Filter: React.FC<FilterProps> = ({
           onClick={() => onFilterChange(option.value)}
           className={`px-4 py-2 mr-2 ${
             selectedFilter === option.value
-              ? "bg-primary text-white"
+              ? "bg-secondary text-white"
               : "bg-gray-200 text-black"
           } rounded-md focus:outline-none`}
         >

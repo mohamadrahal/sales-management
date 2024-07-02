@@ -109,7 +109,7 @@ const UsersPage = ({ users, teams = [] }: UsersPageProps) => {
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-semibold text-primary">{t2("title")}</h1>
+        <h1 className="text-2xl text-secondary">{t2("title")}</h1>
         {user && (user.role === "Admin" || user.role === "SalesManager") && (
           <AddButton text={t2("userButton")} link={`/home/users/new-user`} />
         )}

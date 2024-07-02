@@ -37,23 +37,44 @@ export async function POST(
   }
 
   try {
-    let updatedContract;
+    const contract = await prisma.contract.findUnique({
+      where: { id: Number(id) },
+      include: { branches: true },
+    });
+
+    if (!contract) {
+      return NextResponse.json(
+        { error: "Contract not found" },
+        { status: 404 }
+      );
+    }
+
+    console.log(contract.branches.length);
 
     if (action === "approve") {
-      updatedContract = await prisma.contract.update({
+      if (contract.branches.length === 0) {
+        return NextResponse.json(
+          { error: "Cannot approve contract with no branches" },
+          { status: 400 }
+        );
+      }
+
+      const updatedContract = await prisma.contract.update({
         where: { id: Number(id) },
         data: { status: "Approved" },
       });
+
+      return NextResponse.json(updatedContract, { status: 200 });
     } else if (action === "decline") {
-      updatedContract = await prisma.contract.update({
+      const updatedContract = await prisma.contract.update({
         where: { id: Number(id) },
         data: { status: "Declined" },
       });
+
+      return NextResponse.json(updatedContract, { status: 200 });
     } else {
       return NextResponse.json({ error: "Invalid action" }, { status: 400 });
     }
-
-    return NextResponse.json(updatedContract, { status: 200 });
   } catch (error) {
     console.error(`Failed to ${action} contract:`, error);
     return NextResponse.json(

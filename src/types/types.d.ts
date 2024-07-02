@@ -127,3 +127,9 @@ export interface Target extends PrismaTarget {
   team?: Team;
   individual?: User;
 }
+
+export type ContractWithBranches = Contract & {
+  branches: Branch[];
+  salesman: User;
+  contractReports: ContractReport[];
+};
