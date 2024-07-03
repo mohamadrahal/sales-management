@@ -133,3 +133,17 @@ export type ContractWithBranches = Contract & {
   salesman: User;
   contractReports: ContractReport[];
 };
+
+// types/types.ts
+
+export enum ReportType {
+  Contract = "Contract",
+  Compensation = "Compensation",
+}
+
+export interface Report {
+  id: number;
+  type: ReportType;
+  createdAt: Date;
+  updatedAt: Date;
+}

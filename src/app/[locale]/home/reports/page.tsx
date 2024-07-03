@@ -1,7 +1,17 @@
-import React from "react";
+"use client";
 
-const page = () => {
-  return <div>page</div>;
+import React from "react";
+import { ReportsProvider } from "../../context/ReportsContext";
+import ReportsPageWrapper from "./components/ReportsPageWrapper";
+
+const HomePage = () => {
+  return (
+    <ReportsProvider>
+      <div>
+        <ReportsPageWrapper />
+      </div>
+    </ReportsProvider>
+  );
 };
 
-export default page;
+export default HomePage;
