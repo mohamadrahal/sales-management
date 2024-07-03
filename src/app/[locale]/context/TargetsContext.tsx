@@ -1,3 +1,5 @@
+// context/TargetsContext.tsx
+
 "use client";
 
 import React, {
@@ -10,6 +12,7 @@ import React, {
 } from "react";
 import axios from "axios";
 import { Target } from "../../../types/types"; // Adjust the path to where your types file is located
+import useRequireAuth from "../hooks/useRequireAuth";
 
 interface TargetsContextProps {
   targets: Target[];
@@ -29,12 +32,16 @@ export const TargetsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [targets, setTargets] = useState<Target[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [filter, setFilter] = useState<string>("team");
+  const { token } = useRequireAuth();
 
   const fetchTargets = useCallback(
     async (page = 1, limit = 10) => {
       try {
         const response = await axios.get("/api/targets", {
           params: { page, limit, filter },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
         const { targets, totalCount } = response.data;
         setTargets(targets);
@@ -43,7 +50,7 @@ export const TargetsProvider: React.FC<{ children: React.ReactNode }> = ({
         console.error("Failed to fetch targets:", error);
       }
     },
-    [filter]
+    [filter, token] // Include token in the dependency array
   );
 
   useEffect(() => {

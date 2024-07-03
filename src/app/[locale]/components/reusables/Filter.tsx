@@ -20,7 +20,7 @@ const Filter: React.FC<FilterProps> = ({
   onFilterChange,
 }) => {
   return (
-    <div className="mb-4">
+    <div className="mb-4 flex">
       {options.map((option) => (
         <button
           key={option.value}

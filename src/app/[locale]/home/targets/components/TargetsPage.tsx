@@ -1,7 +1,9 @@
+// components/TargetsPage.tsx
+
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "@/navigation";
+import { useRouter } from "next/navigation";
 import { useTargets } from "../../../context/TargetsContext";
 import Table from "../../../components/reusables/Table";
 import AddButton from "../../../components/reusables/AddButton";
@@ -30,16 +32,14 @@ const TargetsPage: React.FC<TargetsPageProps> = ({ targets }) => {
   const t2 = useTranslations("targetHeader");
 
   useEffect(() => {
-    if (!loading) {
-      if (!token) {
-        router.push("/login");
-      }
+    if (!loading && !token) {
+      router.push("/login");
     }
-  }, [token, user, loading, router]);
+  }, [token, loading, router]);
 
   useEffect(() => {
     fetchTargets(currentPage, pageSize);
-  }, [currentPage, filter]);
+  }, [currentPage, filter, fetchTargets]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -48,7 +48,11 @@ const TargetsPage: React.FC<TargetsPageProps> = ({ targets }) => {
   const handleDelete = async () => {
     if (selectedTarget) {
       try {
-        await axios.delete(`/api/targets/${selectedTarget.id}`);
+        await axios.delete(`/api/targets/${selectedTarget.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         fetchTargets(currentPage, pageSize);
       } catch (error) {
         console.error("Failed to delete target:", error);
@@ -103,11 +107,13 @@ const TargetsPage: React.FC<TargetsPageProps> = ({ targets }) => {
         <h1 className="text-2xl text-secondary">{t2("title")}</h1>
         <AddButton text={t2("setTarget")} link={`/home/targets/new-target`} />
       </div>
-      <Filter
-        options={filterOptions}
-        selectedFilter={filter}
-        onFilterChange={setFilter}
-      />
+      <div className="flex bg-gray-100 p-4 rounded-md mb-4">
+        <Filter
+          options={filterOptions}
+          selectedFilter={filter}
+          onFilterChange={setFilter}
+        />
+      </div>
       <Table
         columns={targetsColumns}
         data={filteredTargets}

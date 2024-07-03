@@ -5,6 +5,7 @@ import { useRouter } from "@/navigation";
 import axios from "axios";
 import InputField from "../../../../components/reusables/InputField";
 import { UserRole } from "@prisma/client";
+import useRequireAuth from "@/app/[locale]/hooks/useRequireAuth";
 
 const NewUserPage = () => {
   const [form, setForm] = useState({
@@ -22,18 +23,25 @@ const NewUserPage = () => {
   const [teams, setTeams] = useState<{ id: number; name: string }[]>([]);
   const router = useRouter();
 
+  const { user } = useRequireAuth();
+
   useEffect(() => {
     const fetchTeams = async () => {
       try {
-        const response = await axios.get("/api/teams/team-ids");
-        setTeams(response.data);
+        let response;
+        if (user?.role === UserRole.Admin) {
+          response = await axios.get("/api/teams/team-ids");
+        } else if (user?.role === UserRole.SalesManager) {
+          response = await axios.get(`/api/teams/managed-by/${user.userId}`);
+        }
+        setTeams(response!.data);
       } catch (error) {
         console.error("Failed to fetch teams:", error);
       }
     };
 
     fetchTeams();
-  }, []);
+  }, [user]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -99,8 +107,12 @@ const NewUserPage = () => {
               onChange={handleInputChange}
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value={UserRole.Admin}>Admin</option>
-              <option value={UserRole.SalesManager}>Sales Manager</option>
+              {user && user.role === "Admin" && (
+                <option value={UserRole.Admin}>Admin</option>
+              )}
+              {user && user.role === "Admin" && (
+                <option value={UserRole.SalesManager}>Sales Manager</option>
+              )}
               <option value={UserRole.Salesman}>Salesman</option>
             </select>
             {form.role === UserRole.SalesManager && (
@@ -144,6 +156,7 @@ const NewUserPage = () => {
               value={form.username}
               onChange={handleInputChange}
               placeholder="Username"
+              label="Username"
             />
             <InputField
               type="password"
@@ -151,6 +164,7 @@ const NewUserPage = () => {
               value={form.password}
               onChange={handleInputChange}
               placeholder="Password"
+              label="Password"
             />
             <InputField
               type="text"
@@ -158,6 +172,7 @@ const NewUserPage = () => {
               value={form.name}
               onChange={handleInputChange}
               placeholder="Name"
+              label="Name"
             />
             <InputField
               type="text"
@@ -165,6 +180,7 @@ const NewUserPage = () => {
               value={form.mobileNumber}
               onChange={handleInputChange}
               placeholder="Mobile Number"
+              label="Mobile Number"
             />
             <InputField
               type="text"
@@ -172,6 +188,7 @@ const NewUserPage = () => {
               value={form.bcdAccount}
               onChange={handleInputChange}
               placeholder="BCD Account (optional)"
+              label="BCD Account (optional)"
             />
             <InputField
               type="text"
@@ -179,6 +196,7 @@ const NewUserPage = () => {
               value={form.evoAppId}
               onChange={handleInputChange}
               placeholder="EVO App ID"
+              label="EVO App ID"
             />
             <InputField
               type="text"
@@ -186,6 +204,7 @@ const NewUserPage = () => {
               value={form.nationalId}
               onChange={handleInputChange}
               placeholder="National ID"
+              label="National ID"
             />
           </div>
 

@@ -3,27 +3,83 @@ import prisma from "../../../../prisma/client";
 import TargetSchema from "../../schemas/validationSchemas";
 import { TargetType } from "@prisma/client"; // Adjust the path as needed
 import { z } from "zod";
+import jwt from "jsonwebtoken";
+
+const SECRET_KEY = process.env.NEXT_PUBLIC_JWT_SECRET || "your_secret_key";
+
+const verifyToken = (token: string) => {
+  try {
+    return jwt.verify(token, SECRET_KEY);
+  } catch (error) {
+    return null;
+  }
+};
 
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const page = parseInt(searchParams.get("page") || "1", 10);
-  const limit = parseInt(searchParams.get("limit") || "10", 10);
-  const offset = (page - 1) * limit;
+  const token = req.headers.get("Authorization")?.split(" ")[1];
+
+  if (!token) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const decoded = verifyToken(token);
+
+  if (!decoded) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { userId, role } = decoded as { userId: number; role: string };
+  const url = new URL(req.url);
+  const page = parseInt(url.searchParams.get("page") || "1");
+  const limit = parseInt(url.searchParams.get("limit") || "10");
+  const filter = url.searchParams.get("filter") || "team";
 
   try {
-    const [targets, totalCount] = await Promise.all([
-      prisma.target.findMany({
-        skip: offset,
-        take: limit,
-        include: {
-          team: true,
-          individual: true,
-        },
-      }),
-      prisma.target.count(),
-    ]);
+    const skip = (page - 1) * limit;
+    const whereClause: any = {};
 
-    return NextResponse.json({ targets, totalCount }, { status: 200 });
+    if (role === "SalesManager") {
+      whereClause.OR = [
+        { team: { managerId: userId } },
+        { individual: { team: { managerId: userId } } },
+      ];
+    } else if (role === "Salesman") {
+      const user = await prisma.user.findUnique({ where: { id: userId } });
+      if (user) {
+        if (user.teamId !== null) {
+          whereClause.OR = [
+            { userId: userId },
+            { teamId: { equals: user.teamId } },
+          ];
+        } else {
+          whereClause.OR = [{ userId: userId }];
+        }
+      } else {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
+      }
+    }
+
+    if (filter === "team") {
+      whereClause.teamId = { not: null };
+    } else if (filter === "salesman") {
+      whereClause.userId = { not: null };
+    }
+
+    console.log(filter);
+
+    const targets = await prisma.target.findMany({
+      where: whereClause,
+      skip,
+      take: limit,
+      include: {
+        team: true,
+        individual: true,
+      },
+    });
+
+    const totalCount = await prisma.target.count({ where: whereClause });
+
+    return NextResponse.json({ targets, totalCount });
   } catch (error) {
     console.error("Failed to fetch targets:", error);
     return NextResponse.json(
