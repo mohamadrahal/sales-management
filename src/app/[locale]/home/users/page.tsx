@@ -2,16 +2,15 @@
 
 import React from "react";
 import UsersPageWrapper from "./components/UserPageWrapper";
-import { UsersProvider } from "../../context/UserContext";
-import useRequireAuth from "../../hooks/useRequireAuth";
+import { UserProvider } from "../../context/UserContext";
 
 const HomePage = () => {
   return (
-    <UsersProvider>
+    <UserProvider>
       <div>
         <UsersPageWrapper />
       </div>
-    </UsersProvider>
+    </UserProvider>
   );
 };
 

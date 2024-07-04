@@ -1,3 +1,5 @@
+// context/UserContext.tsx
+
 "use client";
 
 import React, {
@@ -9,32 +11,41 @@ import React, {
   useMemo,
 } from "react";
 import axios from "axios";
-import { User } from "@prisma/client";
+import { User, Team } from "@prisma/client";
 import useRequireAuth from "../hooks/useRequireAuth";
 
-interface UsersContextProps {
-  users: User[];
-  addUser: (user: User) => void;
-  fetchUsers: (page: number, limit: number) => void;
+interface UserContextProps {
+  users: (User & { team: Team | null; managedTeams: Team[] })[];
+  fetchUsers: (
+    page: number,
+    limit: number,
+    searchTerm?: string,
+    searchField?: string
+  ) => void;
   totalCount: number;
 }
 
-const UsersContext = createContext<UsersContextProps | undefined>(undefined);
+const UserContext = createContext<UserContextProps | undefined>(undefined);
 
-export const UsersProvider: React.FC<{ children: React.ReactNode }> = ({
+export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<
+    (User & { team: Team | null; managedTeams: Team[] })[]
+  >([]);
   const [totalCount, setTotalCount] = useState<number>(0);
-
   const { token } = useRequireAuth();
 
   const fetchUsers = useCallback(
-    async (page = 1, limit = 10) => {
-      if (!token) return;
+    async (page = 1, limit = 10, searchTerm = "", searchField = "") => {
+      if (!token) {
+        console.error("No token found");
+        return;
+      }
+
       try {
         const response = await axios.get("/api/users", {
-          params: { page, limit },
+          params: { page, limit, searchTerm, searchField },
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -50,17 +61,14 @@ export const UsersProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   useEffect(() => {
-    fetchUsers(1, 10);
-  }, [fetchUsers]);
-
-  const addUser = (user: User) => {
-    setUsers((prevUsers) => [...prevUsers, user]);
-  };
+    if (token) {
+      fetchUsers(1, 10); // Ensure fetchUsers is called with default parameters
+    }
+  }, [fetchUsers, token]);
 
   const contextValue = useMemo(
     () => ({
       users,
-      addUser,
       fetchUsers,
       totalCount,
     }),
@@ -68,16 +76,14 @@ export const UsersProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   return (
-    <UsersContext.Provider value={contextValue}>
-      {children}
-    </UsersContext.Provider>
+    <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>
   );
 };
 
 export const useUsers = () => {
-  const context = useContext(UsersContext);
+  const context = useContext(UserContext);
   if (context === undefined) {
-    throw new Error("useUsers must be used within a UsersProvider");
+    throw new Error("useUsers must be used within a UserProvider");
   }
   return context;
 };

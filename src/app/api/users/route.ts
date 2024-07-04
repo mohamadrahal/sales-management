@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { userSchema } from "../../schemas/userSchema";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { UserRole } from "@prisma/client";
 
 const SECRET_KEY = process.env.NEXT_PUBLIC_JWT_SECRET || "your_secret_key";
 
@@ -141,14 +142,17 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  const token = req.headers.get("Authorization")?.split(" ")[1];
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
+  const token = authHeader.split(" ")[1];
   if (!token) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const decoded = verifyToken(token);
-
   if (!decoded) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -159,24 +163,37 @@ export async function GET(req: NextRequest) {
   const page = parseInt(searchParams.get("page") || "1", 10);
   const limit = parseInt(searchParams.get("limit") || "10", 10);
   const offset = (page - 1) * limit;
+  const searchTerm = searchParams.get("searchTerm") || "";
+  const searchField = searchParams.get("searchField") || "";
 
   try {
     let users, totalCount;
+    const whereClause: any = {};
+
+    if (searchTerm && searchField) {
+      if (searchField === "role") {
+        whereClause[searchField] = searchTerm as UserRole;
+      } else {
+        whereClause[searchField] = {
+          contains: searchTerm,
+        };
+      }
+    }
 
     if (role === "Admin") {
       [users, totalCount] = await Promise.all([
         prisma.user.findMany({
           skip: offset,
           take: limit,
+          where: whereClause,
           include: {
             team: true,
-            managedTeams: true, // Include managed teams
+            managedTeams: true,
           },
         }),
-        prisma.user.count(),
+        prisma.user.count({ where: whereClause }),
       ]);
     } else if (role === "SalesManager") {
-      // Get team IDs managed by the SalesManager
       const managedTeams = await prisma.team.findMany({
         where: { managerId: userId },
         select: { id: true },
@@ -184,42 +201,28 @@ export async function GET(req: NextRequest) {
 
       const managedTeamIds = managedTeams.map((team) => team.id);
 
+      whereClause.OR = [
+        { teamId: { in: managedTeamIds } },
+        { managedTeams: { some: { id: { in: managedTeamIds } } } },
+      ];
+
       [users, totalCount] = await Promise.all([
         prisma.user.findMany({
-          where: {
-            OR: [
-              { teamId: { in: managedTeamIds } },
-              { managedTeams: { some: { id: { in: managedTeamIds } } } },
-            ],
-          },
           skip: offset,
           take: limit,
+          where: whereClause,
           include: {
             team: true,
-            managedTeams: true, // Include managed teams
+            managedTeams: true,
           },
         }),
-        prisma.user.count({
-          where: {
-            OR: [
-              { teamId: { in: managedTeamIds } },
-              { managedTeams: { some: { id: { in: managedTeamIds } } } },
-            ],
-          },
-        }),
+        prisma.user.count({ where: whereClause }),
       ]);
     } else {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const teams = await prisma.team.findMany({
-      select: {
-        id: true,
-        name: true,
-      },
-    });
-
-    return NextResponse.json({ users, totalCount, teams }, { status: 200 });
+    return NextResponse.json({ users, totalCount }, { status: 200 });
   } catch (error) {
     console.error("Failed to fetch users:", error);
     return NextResponse.json(

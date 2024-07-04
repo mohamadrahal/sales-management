@@ -1,3 +1,5 @@
+// src/app/home/users/UsersPage.tsx
+
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -12,13 +14,13 @@ import axios from "axios";
 import ConfirmationModal from "../../../components/reusables/ConfirmationModal";
 import { useTranslations } from "next-intl";
 import useRequireAuth from "@/app/[locale]/hooks/useRequireAuth";
+import SearchBar from "../../../components/reusables/SearchBar";
 
 interface UsersPageProps {
   users: (User & { team: Team | null; managedTeams: Team[] })[];
-  teams: Team[];
 }
 
-const UsersPage = ({ users, teams = [] }: UsersPageProps) => {
+const UsersPage = ({ users }: UsersPageProps) => {
   const { token, user, loading } = useRequireAuth();
   const router = useRouter();
   const { fetchUsers, totalCount } = useUsers();
@@ -26,6 +28,7 @@ const UsersPage = ({ users, teams = [] }: UsersPageProps) => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showModal, setShowModal] = useState(false);
   const t = useTranslations();
+  const t2 = useTranslations("usersHeader");
   const usersColumns = [
     { header: "ID", accessor: "id" },
     { header: "Role", accessor: "role" },
@@ -40,7 +43,6 @@ const UsersPage = ({ users, teams = [] }: UsersPageProps) => {
           : row.team?.name || "No Team",
     },
   ];
-  const t2 = useTranslations("usersHeader");
 
   const pageSize = 10;
 
@@ -51,8 +53,10 @@ const UsersPage = ({ users, teams = [] }: UsersPageProps) => {
   }, [token, user, loading, router]);
 
   useEffect(() => {
-    fetchUsers(currentPage, pageSize);
-  }, [currentPage, pageSize, fetchUsers]);
+    if (token) {
+      fetchUsers(currentPage, pageSize);
+    }
+  }, [currentPage, pageSize, fetchUsers, token]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -75,6 +79,10 @@ const UsersPage = ({ users, teams = [] }: UsersPageProps) => {
         setSelectedUser(null);
       }
     }
+  };
+
+  const handleSearch = (searchTerm: string, searchField: string) => {
+    fetchUsers(currentPage, pageSize, searchTerm, searchField);
   };
 
   const actions = (row: User) => [
@@ -114,6 +122,10 @@ const UsersPage = ({ users, teams = [] }: UsersPageProps) => {
           <AddButton text={t2("userButton")} link={`/home/users/new-user`} />
         )}
       </div>
+      <SearchBar
+        onSearch={handleSearch}
+        searchFields={["username", "name", "role"]}
+      />
       <Table columns={usersColumns} data={users} actions={actions} />
       <Pagination
         currentPage={currentPage}

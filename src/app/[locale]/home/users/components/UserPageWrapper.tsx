@@ -2,14 +2,14 @@
 
 import React from "react";
 import UsersPage from "../components/UserPage";
-import { UsersProvider, useUsers } from "../../../context/UserContext";
+import { UserProvider, useUsers } from "../../../context/UserContext";
 import useRequireAuth from "@/app/[locale]/hooks/useRequireAuth";
 
 const UsersPageWrapper: React.FC = () => {
   return (
-    <UsersProvider>
+    <UserProvider>
       <UsersPageWithContext />
-    </UsersProvider>
+    </UserProvider>
   );
 };
 
