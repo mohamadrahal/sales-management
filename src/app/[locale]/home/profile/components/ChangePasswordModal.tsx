@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import useRequireAuth from "@/app/[locale]/hooks/useRequireAuth";
+import { useTranslations } from "next-intl";
 
 interface ChangePasswordModalProps {
   onClose: () => void;
@@ -16,6 +17,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const { token } = useRequireAuth();
+  const t = useTranslations("profile");
 
   const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
@@ -42,10 +44,10 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold mb-4">Change Password</h2>
+        <h2 className="text-2xl font-bold mb-4">{t("modalTitle")}</h2>
         {error && <div className="text-red-500 mb-2">{error}</div>}
         <div className="mb-2">
-          <label className="block text-gray-700">Old Password</label>
+          <label className="block text-gray-700">{t("oldPass")}</label>
           <input
             type="password"
             value={oldPassword}
@@ -54,7 +56,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
           />
         </div>
         <div className="mb-2">
-          <label className="block text-gray-700">New Password</label>
+          <label className="block text-gray-700">{t("newPass")}</label>
           <input
             type="password"
             value={newPassword}
@@ -63,7 +65,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
           />
         </div>
         <div className="mb-2">
-          <label className="block text-gray-700">Confirm Password</label>
+          <label className="block text-gray-700">{t("confirmPass")}</label>
           <input
             type="password"
             value={confirmPassword}
@@ -76,13 +78,13 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
             onClick={onClose}
             className="bg-gray-500 text-white px-4 py-2 rounded-md"
           >
-            Cancel
+            {t("cancelButton")}
           </button>
           <button
             onClick={handleChangePassword}
             className="bg-blue-500 text-white px-4 py-2 rounded-md"
           >
-            Change Password
+            {t("button")}
           </button>
         </div>
       </div>

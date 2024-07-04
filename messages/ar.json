@@ -50,13 +50,15 @@
     "title": "المستخدمين",
     "userButton": "إضافة مستخدمين"
   },
-  "usersColumns": [
-    { "header": "بطاقة تعريف", "accessor": "id" },
-    { "header": "الدور", "accessor": "role" },
-    { "header": "اسم المستخدم", "accessor": "username" },
-    { "header": "الاسم", "accessor": "name" },
-    { "header": "رقم الهاتف المحمول", "accessor": "mobileNumber" }
-  ],
+  "usersColumns": {
+    "id": "المعرف",
+    "role": "الدور",
+    "username": "اسم المستخدم",
+    "name": "الاسم",
+    "bcd": "حساب BCD",
+    "evo": "معرف تطبيق EVO",
+    "team":"الفريق"
+  },
   "branchHeader": {
     "title": "الفروع",
     "branchButton": "إضافة فرع"
@@ -85,5 +87,41 @@
       "numberOfContracts": "عدد العقود",
       "totalAmountLYD": "إجمالي المبلغ (دينار ليبي)"
     }
+  },
+  "reportHeader": {
+      "title": "التقارير",
+      "filter": {
+        "perPeriod": "لكل فترة",
+        "perBranch": "لكل فرع",
+        "perBranchCity": "لكل مدينة فرعية",
+        "perTeam": "لكل فريق",
+        "perSalesman": "لكل مندوب مبيعات"
+      },
+      "columns": {
+        "id": "الرقم التعريفي",
+        "type": "النوع",
+        "period": "الفترة",
+        "branch": "الفرع",
+        "amount": "المبلغ"
+      }
+  },
+  "profile": {
+    "title": "ملف المستخدم",
+    "username": "اسم المستخدم:",
+    "name": "الاسم:",
+    "mobile": "رقم الهاتف:",
+    "id": "الرقم الوطني:",
+    "role": "الدور:",
+    "bcd": "حساب BCD:",
+    "evo": "معرف تطبيق EVO:",
+    "button": "تغيير كلمة المرور",
+    "modalTitle": "تغيير كلمة المرور",
+    "oldPass": "كلمة المرور القديمة",
+    "newPass": "كلمة المرور الجديدة",
+    "confirmPass": "تأكيد كلمة المرور",
+    "cancelButton": "إلغاء"
   }
+  
+  
+  
 }

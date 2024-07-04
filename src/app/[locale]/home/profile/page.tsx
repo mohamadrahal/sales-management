@@ -6,12 +6,14 @@ import axios from "axios";
 import useRequireAuth from "../../hooks/useRequireAuth";
 import ChangePasswordModal from "./components/ChangePasswordModal";
 import { FaUser, FaPhone, FaIdCard, FaKey, FaUserTag } from "react-icons/fa";
+import { useTranslations } from "next-intl";
 
 const ProfilePage: React.FC = () => {
   const { token, loading } = useRequireAuth();
   const [userData, setUserData] = useState<any>(null);
   const [showModal, setShowModal] = useState(false);
   const router = useRouter();
+  const t = useTranslations("profile");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -44,27 +46,27 @@ const ProfilePage: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full">
         <h2 className="text-3xl mb-6 text-center text-secondary">
-          User Profile
+          {t("title")}
         </h2>
         <div className="space-y-4">
           <div className="flex items-center">
             <FaUser className="text-gray-500 mr-2" />
             <div>
-              <strong className="block text-gray-700">Username:</strong>
+              <strong className="block text-gray-700">{t("username")}</strong>
               <span className="block text-gray-800">{userData.username}</span>
             </div>
           </div>
           <div className="flex items-center">
             <FaUserTag className="text-gray-500 mr-2" />
             <div>
-              <strong className="block text-gray-700">Name:</strong>
+              <strong className="block text-gray-700">{t("name")}</strong>
               <span className="block text-gray-800">{userData.name}</span>
             </div>
           </div>
           <div className="flex items-center">
             <FaPhone className="text-gray-500 mr-2" />
             <div>
-              <strong className="block text-gray-700">Mobile Number:</strong>
+              <strong className="block text-gray-700">{t("mobile")}</strong>
               <span className="block text-gray-800">
                 {userData.mobileNumber}
               </span>
@@ -73,28 +75,28 @@ const ProfilePage: React.FC = () => {
           <div className="flex items-center">
             <FaIdCard className="text-gray-500 mr-2" />
             <div>
-              <strong className="block text-gray-700">National ID:</strong>
+              <strong className="block text-gray-700">{t("id")}</strong>
               <span className="block text-gray-800">{userData.nationalId}</span>
             </div>
           </div>
           <div className="flex items-center">
             <FaUser className="text-gray-500 mr-2" />
             <div>
-              <strong className="block text-gray-700">Role:</strong>
+              <strong className="block text-gray-700">{t("role")}</strong>
               <span className="block text-gray-800">{userData.role}</span>
             </div>
           </div>
           <div className="flex items-center">
             <FaKey className="text-gray-500 mr-2" />
             <div>
-              <strong className="block text-gray-700">BCD Account:</strong>
+              <strong className="block text-gray-700">{t("bcd")}</strong>
               <span className="block text-gray-800">{userData.bcdAccount}</span>
             </div>
           </div>
           <div className="flex items-center">
             <FaKey className="text-gray-500 mr-2" />
             <div>
-              <strong className="block text-gray-700">EVO App ID:</strong>
+              <strong className="block text-gray-700">{t("evo")}</strong>
               <span className="block text-gray-800">{userData.evoAppId}</span>
             </div>
           </div>
@@ -104,7 +106,7 @@ const ProfilePage: React.FC = () => {
             onClick={() => setShowModal(true)}
             className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition duration-200"
           >
-            Change Password
+            {t("button")}
           </button>
         </div>
         {showModal && (

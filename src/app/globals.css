@@ -29,3 +29,18 @@ body {
 .ltr-direction {
   direction: ltr;
 }
+
+
+/* globals.css */
+
+@layer utilities {
+  .rtl .flip-horizontal {
+    @apply flex-row-reverse;
+  }
+}
+
+
+.border-r-0-flip {
+  border-right-width: 0;
+  border-left-width: 1px;
+}

@@ -1,7 +1,5 @@
 // src/app/home/users/UsersPage.tsx
-
 "use client";
-
 import React, { useEffect, useState } from "react";
 import { useRouter } from "@/navigation";
 import Table from "../../../components/reusables/Table";
@@ -15,6 +13,7 @@ import ConfirmationModal from "../../../components/reusables/ConfirmationModal";
 import { useTranslations } from "next-intl";
 import useRequireAuth from "@/app/[locale]/hooks/useRequireAuth";
 import SearchBar from "../../../components/reusables/SearchBar";
+import { getUsersColumns } from "./columns";
 
 interface UsersPageProps {
   users: (User & { team: Team | null; managedTeams: Team[] })[];
@@ -27,23 +26,8 @@ const UsersPage = ({ users }: UsersPageProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const t = useTranslations();
+  const t = useTranslations("usersColumns");
   const t2 = useTranslations("usersHeader");
-  const usersColumns = [
-    { header: "ID", accessor: "id" },
-    { header: "Role", accessor: "role" },
-    { header: "Username", accessor: "username" },
-    { header: "Name", accessor: "name" },
-    { header: "BCD Account", accessor: "bcdAccount" },
-    { header: "EVO App ID", accessor: "evoAppId" },
-    {
-      header: "Team",
-      accessor: (row: User & { team: Team | null; managedTeams: Team[] }) =>
-        row.role === "SalesManager"
-          ? row.managedTeams.map((team) => team.name).join(", ")
-          : row.team?.name || "No Team",
-    },
-  ];
 
   const pageSize = 10;
 
@@ -114,6 +98,8 @@ const UsersPage = ({ users }: UsersPageProps) => {
   if (!token) {
     return <div>Redirecting...</div>;
   }
+
+  const usersColumns = getUsersColumns(t);
 
   return (
     <div className="p-4">

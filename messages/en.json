@@ -51,13 +51,15 @@
     "title": "Users",
     "userButton": "Add Users"
   },
-  "usersColumns": [
-    { "header": "ID", "accessor": "id" },
-    { "header": "Role", "accessor": "role" },
-    { "header": "Username", "accessor": "username" },
-    { "header": "Name", "accessor": "name" },
-    { "header": "Mobile Number", "accessor": "mobileNumber" }
-  ],
+  "usersColumns": {
+    "id":"ID",
+    "role":"Role",
+    "username":"Username",
+    "name":"Name",
+    "bcd":"BCD Account",
+    "evo":"EVO App ID",
+    "team":"Team"
+  },
   "branchHeader": {
     "title": "Branches",
     "branchButton": "Add Branch"
@@ -86,5 +88,42 @@
       "numberOfContracts": "Number of Contracts",
       "totalAmountLYD": "Total Amount (LYD)"
     }
+  },
+  "reportHeader": {
+      "title": "Reports",
+      "filter": {
+        "perPeriod": "Per Period",
+        "perBranch": "Per Branch",
+        "perBranchCity": "Per Branch City",
+        "perTeam": "Per Team",
+        "perSalesman": "Per Salesman"
+      },
+      "columns": {
+        "id": "ID",
+        "type": "Type",
+        "period": "Period",
+        "branch": "Branch",
+        "amount": "Amount"
+      }
+  },
+  "profile":{
+    "title":"User Profile",
+    "username":"Username:",
+    "name":"Name:",
+    "mobile":"Mobile Number:",
+    "id":"National ID:",
+    "role":"Role:",
+    "bcd":"BCD Account:",
+    "evo":"EVO App ID:",
+    "button":"Change Password",
+    "modalTitle":"Change Password",
+    "oldPass":"Old Password",
+    "newPass":"New Password",
+    "confirmPass":"Confirm Password",
+    "cancelButton":"Cancel"
   }
+
+  
+
+  
 }
