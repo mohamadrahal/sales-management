@@ -67,20 +67,20 @@ const TargetsPage: React.FC<TargetsPageProps> = ({ targets }) => {
     {
       icon: FaEdit,
       onClick: () => router.push(`/home/targets/new-target?id=${row.id}`),
-      className: "bg-secondary hover:bg-primary",
+      className: "bg-gray-400 hover:bg-gray-500",
     },
-    {
-      icon: FaEye,
-      onClick: () => router.push(`/home/targets/${row.id}`),
-      className: "bg-gray-400 hover:bg-gray-600",
-    },
+    // {
+    //   icon: FaEye,
+    //   onClick: () => router.push(`/home/targets/${row.id}`),
+    //   className: "bg-gray-400 hover:bg-gray-600",
+    // },
     {
       icon: FaTrash,
       onClick: () => {
         setSelectedTarget(row);
         setShowModal(true);
       },
-      className: "bg-red-400 hover:bg-red-600",
+      className: "bg-gray-400 hover:bg-gray-500",
     },
   ];
 
@@ -107,7 +107,7 @@ const TargetsPage: React.FC<TargetsPageProps> = ({ targets }) => {
         <h1 className="text-2xl text-secondary">{t2("title")}</h1>
         <AddButton text={t2("setTarget")} link={`/home/targets/new-target`} />
       </div>
-      <div className="flex bg-gray-100 p-4 rounded-md mb-4">
+      <div className="bg-gray-100 p-4 rounded-md mb-4 flex space-x-4">
         <Filter
           options={filterOptions}
           selectedFilter={filter}

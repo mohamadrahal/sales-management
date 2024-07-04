@@ -17,7 +17,7 @@ const ContractDetails: React.FC<ContractDetailsProps> = ({ contract }) => {
   const branchColumns = t.raw("branchColumns");
 
   return (
-    <div className="bg-white p-6 m-6 rounded-lg shadow-md">
+    <div className="bg-white p-6 m-6 rounded-2xl shadow-md">
       <h2 className="text-2xl font-bold mb-4">Contract Details</h2>
       <div className="mb-2">
         <strong>Company Name:</strong> {contract.companyName}

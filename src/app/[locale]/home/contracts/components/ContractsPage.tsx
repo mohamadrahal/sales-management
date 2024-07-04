@@ -91,7 +91,7 @@ const ContractsPage: React.FC<ContractsPageProps> = ({ contracts }) => {
       {
         icon: FaEye,
         onClick: () => router.push(`/home/contracts/${row.id}`),
-        className: "bg-gray-400 hover:bg-gray-600",
+        className: "bg-gray-400 hover:bg-gray-500",
       },
     ];
 
@@ -104,7 +104,7 @@ const ContractsPage: React.FC<ContractsPageProps> = ({ contracts }) => {
             setModalAction("approve");
             setShowModal(true);
           },
-          className: "bg-green-400 hover:bg-green-600",
+          className: "bg-gray-400 hover:bg-gray-500",
         },
         {
           icon: FaTimes,
@@ -113,7 +113,7 @@ const ContractsPage: React.FC<ContractsPageProps> = ({ contracts }) => {
             setModalAction("decline");
             setShowModal(true);
           },
-          className: "bg-yellow-400 hover:bg-yellow-600",
+          className: "bg-gray-400 hover:bg-gray-500",
         }
       );
     }
@@ -125,7 +125,7 @@ const ContractsPage: React.FC<ContractsPageProps> = ({ contracts }) => {
         setModalAction("delete");
         setShowModal(true);
       },
-      className: "bg-red-400 hover:bg-red-600",
+      className: "bg-gray-400 hover:bg-gray-500",
     });
 
     if (user?.role === "Salesman") {

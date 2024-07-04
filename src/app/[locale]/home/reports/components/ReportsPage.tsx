@@ -115,7 +115,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ reports }) => {
         <h1 className="text-2xl text-secondary">{t2("title")}</h1>
         <AddButton text="Issue Report" link="/home/reports/new-report" />
       </div>
-      <div className="bg-white p-4 rounded-lg mb-4 flex space-x-4 shadow-md">
+      <div className="bg-gray-100 p-4 rounded-lg mb-4 flex space-x-4">
         <SelectFilter
           options={reportTypeOptions}
           selectedOption={reportType}

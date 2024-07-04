@@ -27,14 +27,21 @@ const NewUserPage = () => {
 
   useEffect(() => {
     const fetchTeams = async () => {
+      if (!user) return;
+
       try {
         let response;
-        if (user?.role === UserRole.Admin) {
+        if (user.role === UserRole.Admin) {
           response = await axios.get("/api/teams/team-ids");
-        } else if (user?.role === UserRole.SalesManager) {
+        } else if (user.role === UserRole.SalesManager) {
           response = await axios.get(`/api/teams/managed-by/${user.userId}`);
         }
-        setTeams(response!.data);
+
+        if (response && response.data) {
+          setTeams(response.data);
+        } else {
+          console.error("No data received from fetchTeams response");
+        }
       } catch (error) {
         console.error("Failed to fetch teams:", error);
       }

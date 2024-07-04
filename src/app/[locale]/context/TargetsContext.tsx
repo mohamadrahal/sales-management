@@ -1,5 +1,3 @@
-// context/TargetsContext.tsx
-
 "use client";
 
 import React, {
@@ -32,10 +30,14 @@ export const TargetsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [targets, setTargets] = useState<Target[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [filter, setFilter] = useState<string>("team");
-  const { token } = useRequireAuth();
+  const { token, user, loading } = useRequireAuth();
 
   const fetchTargets = useCallback(
     async (page = 1, limit = 10) => {
+      if (!token) {
+        return;
+      }
+
       try {
         const response = await axios.get("/api/targets", {
           params: { page, limit, filter },
@@ -50,12 +52,14 @@ export const TargetsProvider: React.FC<{ children: React.ReactNode }> = ({
         console.error("Failed to fetch targets:", error);
       }
     },
-    [filter, token] // Include token in the dependency array
+    [filter, token]
   );
 
   useEffect(() => {
-    fetchTargets(1, 10); // Ensure fetchTargets is called with default parameters
-  }, [fetchTargets, filter]);
+    if (!loading && token) {
+      fetchTargets(1, 10); // Ensure fetchTargets is called with default parameters
+    }
+  }, [fetchTargets, filter, token, loading]);
 
   const contextValue = useMemo(
     () => ({

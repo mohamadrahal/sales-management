@@ -82,3 +82,41 @@ export async function POST(req: NextRequest) {
     await prisma.$disconnect();
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const id = parseInt(searchParams.get("id") || "", 10);
+
+  if (!id) {
+    return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+  }
+
+  try {
+    // Check if the branch exists
+    const branchExists = await prisma.branch.findUnique({
+      where: { id },
+    });
+
+    if (!branchExists) {
+      return NextResponse.json({ error: "Branch not found" }, { status: 404 });
+    }
+
+    // Delete the branch
+    await prisma.branch.delete({
+      where: { id },
+    });
+
+    return NextResponse.json(
+      { message: "Branch deleted successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Failed to delete branch:", error);
+    return NextResponse.json(
+      { error: "Failed to delete branch" },
+      { status: 500 }
+    );
+  } finally {
+    await prisma.$disconnect();
+  }
+}

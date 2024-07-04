@@ -21,8 +21,6 @@ const Pagination = ({
   const totalPages = Math.ceil(totalCount / pageSize);
   const locale = Cookies.get("NEXT_LOCALE");
 
-  console.log(locale);
-
   return (
     <div className="flex justify-center space-x-2 mt-4">
       <button

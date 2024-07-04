@@ -47,7 +47,11 @@ const BranchesPage: React.FC<BranchesProps> = ({ branches }) => {
   const handleDelete = async () => {
     if (selectedBranch) {
       try {
-        await axios.delete(`/api/branches/${selectedBranch.id}`);
+        await axios.delete(`/api/branches?id=${selectedBranch.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         fetchBranches(currentPage, pageSize);
       } catch (error) {
         console.error("Failed to delete branch:", error);
@@ -62,20 +66,20 @@ const BranchesPage: React.FC<BranchesProps> = ({ branches }) => {
     {
       icon: FaEdit,
       onClick: () => router.push(`/home/branches/new-branch?id=${row.id}`),
-      className: "bg-secondary hover:bg-primary",
+      className: "bg-gray-400 hover:bg-gray-500",
     },
-    {
-      icon: FaEye,
-      onClick: () => router.push(`/home/branches/${row.id}`),
-      className: "bg-gray-400 hover:bg-gray-600",
-    },
+    // {
+    //   icon: FaEye,
+    //   onClick: () => router.push(`/home/branches/${row.id}`),
+    //   className: "bg-gray-400 hover:bg-gray-600",
+    // },
     {
       icon: FaTrash,
       onClick: () => {
         setSelectedBranch(row);
         setShowModal(true);
       },
-      className: "bg-red-400 hover:bg-red-600",
+      className: "bg-gray-400 hover:bg-gray-500",
     },
   ];
 

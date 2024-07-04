@@ -69,12 +69,12 @@ const TeamsPage: React.FC<TeamsPageProps> = ({ teams }) => {
     {
       icon: FaEdit,
       onClick: () => router.push(`/home/teams/new-team?id=${row.id}`),
-      className: "bg-secondary hover:bg-primary",
+      className: "bg-gray-400 hover:bg-gray-500",
     },
     {
       icon: FaEye,
       onClick: (row: Team) => router.push(`/home/teams/${row.id}`),
-      className: "bg-gray-400 hover:bg-gray-600",
+      className: "bg-gray-400 hover:bg-gray-500",
     },
     {
       icon: FaTrash,
@@ -82,7 +82,7 @@ const TeamsPage: React.FC<TeamsPageProps> = ({ teams }) => {
         setSelectedTeam(row);
         setShowModal(true);
       },
-      className: "bg-red-400 hover:bg-red-600",
+      className: "bg-gray-400 hover:bg-gray-500",
     },
   ];
 

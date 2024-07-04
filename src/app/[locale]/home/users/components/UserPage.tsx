@@ -34,7 +34,8 @@ const UsersPage = ({ users }: UsersPageProps) => {
     { header: "Role", accessor: "role" },
     { header: "Username", accessor: "username" },
     { header: "Name", accessor: "name" },
-    { header: "Mobile Number", accessor: "mobileNumber" },
+    { header: "BCD Account", accessor: "bcdAccount" },
+    { header: "EVO App ID", accessor: "evoAppId" },
     {
       header: "Team",
       accessor: (row: User & { team: Team | null; managedTeams: Team[] }) =>
@@ -89,12 +90,12 @@ const UsersPage = ({ users }: UsersPageProps) => {
     {
       icon: FaEdit,
       onClick: () => router.push(`/home/users/new-user?id=${row.id}`),
-      className: "bg-secondary hover:bg-primary",
+      className: "bg-gray-400 hover:bg-gray-500",
     },
     {
       icon: FaEye,
       onClick: () => router.push(`/home/users/${row.id}`),
-      className: "bg-gray-400 hover:bg-gray-600",
+      className: "bg-gray-400 hover:bg-gray-500",
     },
     {
       icon: FaTrash,
@@ -102,7 +103,7 @@ const UsersPage = ({ users }: UsersPageProps) => {
         setSelectedUser(row);
         setShowModal(true);
       },
-      className: "bg-red-400 hover:bg-red-600",
+      className: "bg-gray-400 hover:bg-gray-500",
     },
   ];
 
