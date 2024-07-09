@@ -122,6 +122,8 @@ model Target {
 model Report {
   id                  Int                  @id @default(autoincrement())
   type                ReportType
+  periodFrom          DateTime
+  periodTo            DateTime
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   contractReports     ContractReport[]
@@ -152,6 +154,7 @@ model Contract {
 model ContractReport {
   contractId Int
   reportId   Int
+  pdfPath    String // Path to the saved PDF file
   contract   Contract @relation(fields: [contractId], references: [id])
   report     Report   @relation(fields: [reportId], references: [id])
 
@@ -164,7 +167,8 @@ model CompensationReport {
   teamId      Int? // Reference to the team, if applicable
   salesmanId  Int? // Reference to the salesman, if applicable
   amountPaid  Float // Amount paid to the salesman or team
-  bonusAmount Float // Bonus amount for the number 1 salesman
+  bonusAmount Float? // Bonus amount for the number 1 salesman
+  pdfPath     String // Path to the saved PDF file
   report      Report @relation(fields: [reportId], references: [id])
   team        Team?  @relation(fields: [teamId], references: [id])
   salesman    User?  @relation(fields: [salesmanId], references: [id])

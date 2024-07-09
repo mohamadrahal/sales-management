@@ -57,7 +57,7 @@
     "name": "الاسم",
     "bcd": "حساب BCD",
     "evo": "معرف تطبيق EVO",
-    "team":"الفريق"
+    "team": "الفريق"
   },
   "branchHeader": {
     "title": "الفروع",
@@ -89,21 +89,22 @@
     }
   },
   "reportHeader": {
-      "title": "التقارير",
-      "filter": {
-        "perPeriod": "لكل فترة",
-        "perBranch": "لكل فرع",
-        "perBranchCity": "لكل مدينة فرعية",
-        "perTeam": "لكل فريق",
-        "perSalesman": "لكل مندوب مبيعات"
-      },
-      "columns": {
-        "id": "الرقم التعريفي",
-        "type": "النوع",
-        "period": "الفترة",
-        "branch": "الفرع",
-        "amount": "المبلغ"
-      }
+    "title": "التقارير",
+    "issueReport": "Issue Report",
+    "filter": {
+      "perPeriod": "لكل فترة",
+      "perBranch": "لكل فرع",
+      "perBranchCity": "لكل مدينة فرعية",
+      "perTeam": "لكل فريق",
+      "perSalesman": "لكل مندوب مبيعات"
+    },
+    "columns": {
+      "id": "الرقم التعريفي",
+      "type": "النوع",
+      "period": "الفترة",
+      "branch": "الفرع",
+      "amount": "المبلغ"
+    }
   },
   "profile": {
     "title": "ملف المستخدم",
@@ -120,8 +121,22 @@
     "newPass": "كلمة المرور الجديدة",
     "confirmPass": "تأكيد كلمة المرور",
     "cancelButton": "إلغاء"
+  },
+
+  "reports": {
+    "issueReport": "إصدار تقرير",
+    "reportType": "نوع التقرير",
+    "filterBy": "تصفية حسب",
+    "choose": "اختر",
+    "contractReport": "تقرير العقد",
+    "compensationReport": "تقرير التعويض",
+    "salesman": "البائع",
+    "branch": "الفرع",
+    "team": "الفريق",
+    "periodFrom": "Period From",
+    "periodTo": "Period To",
+    "selectOption": "اختر خيار",
+    "cancel": "إلغاء",
+    "issue": "إصدار"
   }
-  
-  
-  
 }

@@ -52,13 +52,13 @@
     "userButton": "Add Users"
   },
   "usersColumns": {
-    "id":"ID",
-    "role":"Role",
-    "username":"Username",
-    "name":"Name",
-    "bcd":"BCD Account",
-    "evo":"EVO App ID",
-    "team":"Team"
+    "id": "ID",
+    "role": "Role",
+    "username": "Username",
+    "name": "Name",
+    "bcd": "BCD Account",
+    "evo": "EVO App ID",
+    "team": "Team"
   },
   "branchHeader": {
     "title": "Branches",
@@ -90,40 +90,54 @@
     }
   },
   "reportHeader": {
-      "title": "Reports",
-      "filter": {
-        "perPeriod": "Per Period",
-        "perBranch": "Per Branch",
-        "perBranchCity": "Per Branch City",
-        "perTeam": "Per Team",
-        "perSalesman": "Per Salesman"
-      },
-      "columns": {
-        "id": "ID",
-        "type": "Type",
-        "period": "Period",
-        "branch": "Branch",
-        "amount": "Amount"
-      }
+    "title": "Reports",
+    "issueReport": "Issue Report",
+    "filter": {
+      "perPeriod": "Per Period",
+      "perBranch": "Per Branch",
+      "perBranchCity": "Per Branch City",
+      "perTeam": "Per Team",
+      "perSalesman": "Per Salesman"
+    },
+    "columns": {
+      "id": "ID",
+      "type": "Type",
+      "period": "Period",
+      "branch": "Branch",
+      "amount": "Amount"
+    }
   },
-  "profile":{
-    "title":"User Profile",
-    "username":"Username:",
-    "name":"Name:",
-    "mobile":"Mobile Number:",
-    "id":"National ID:",
-    "role":"Role:",
-    "bcd":"BCD Account:",
-    "evo":"EVO App ID:",
-    "button":"Change Password",
-    "modalTitle":"Change Password",
-    "oldPass":"Old Password",
-    "newPass":"New Password",
-    "confirmPass":"Confirm Password",
-    "cancelButton":"Cancel"
+  "profile": {
+    "title": "User Profile",
+    "username": "Username:",
+    "name": "Name:",
+    "mobile": "Mobile Number:",
+    "id": "National ID:",
+    "role": "Role:",
+    "bcd": "BCD Account:",
+    "evo": "EVO App ID:",
+    "button": "Change Password",
+    "modalTitle": "Change Password",
+    "oldPass": "Old Password",
+    "newPass": "New Password",
+    "confirmPass": "Confirm Password",
+    "cancelButton": "Cancel"
+  },
+
+  "reports": {
+    "issueReport": "Issue Report",
+    "reportType": "Report Type",
+    "filterBy": "Filter By",
+    "choose": "Choose",
+    "contractReport": "Contract Report",
+    "compensationReport": "Compensation Report",
+    "salesman": "Salesman",
+    "branch": "Branch",
+    "team": "Team",
+    "periodFrom": "Period From",
+    "periodTo": "Period To",
+    "selectOption": "Select Option",
+    "cancel": "Cancel",
+    "issue": "Issue"
   }
-
-  
-
-  
 }
