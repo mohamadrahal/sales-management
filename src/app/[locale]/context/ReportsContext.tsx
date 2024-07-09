@@ -1,5 +1,3 @@
-// src/context/ReportsContext.tsx
-
 "use client";
 
 import React, {
@@ -12,17 +10,14 @@ import React, {
 } from "react";
 import axios from "axios";
 import { Report } from "../../../types/types"; // Adjust the path to where your types file is located
+import useRequireAuth from "../hooks/useRequireAuth";
 
 interface ReportsContextProps {
   reports: Report[];
   fetchReports: (page: number, limit: number) => void;
   totalCount: number;
-  reportType: string;
-  setReportType: (type: string) => void;
-  filterType: string;
-  setFilterType: (type: string) => void;
-  filterValue: string;
-  setFilterValue: (value: string) => void;
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
 }
 
 const ReportsContext = createContext<ReportsContextProps | undefined>(
@@ -34,19 +29,20 @@ export const ReportsProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [reports, setReports] = useState<Report[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
-  const [reportType, setReportType] = useState<string>("Contract Report");
-  const [filterType, setFilterType] = useState<string>("per period");
-  const [filterValue, setFilterValue] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  const { token, loading } = useRequireAuth();
 
   const fetchReports = useCallback(
     async (page = 1, limit = 10) => {
+      if (!token) return;
       try {
-        const response = await axios.get(
-          `/api/reports/${reportType.toLowerCase().replace(" ", "-")}`,
-          {
-            params: { page, limit, filterType, filterValue },
-          }
-        );
+        const response = await axios.get("/api/reports", {
+          params: { page, limit },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const { reports, totalCount } = response.data;
         setReports(reports);
         setTotalCount(totalCount);
@@ -54,26 +50,24 @@ export const ReportsProvider: React.FC<{ children: React.ReactNode }> = ({
         console.error("Failed to fetch reports:", error);
       }
     },
-    [reportType, filterType, filterValue]
+    [token]
   );
 
   useEffect(() => {
-    fetchReports(1, 10); // Ensure fetchReports is called with default parameters
-  }, [fetchReports]);
+    if (!loading && token) {
+      fetchReports(currentPage, 10); // Ensure fetchReports is called with currentPage
+    }
+  }, [fetchReports, currentPage, loading, token]);
 
   const contextValue = useMemo(
     () => ({
       reports,
       fetchReports,
       totalCount,
-      reportType,
-      setReportType,
-      filterType,
-      setFilterType,
-      filterValue,
-      setFilterValue,
+      currentPage,
+      setCurrentPage,
     }),
-    [reports, totalCount, reportType, filterType, filterValue, fetchReports]
+    [reports, totalCount, currentPage, fetchReports]
   );
 
   return (

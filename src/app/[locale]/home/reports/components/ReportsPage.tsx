@@ -1,8 +1,6 @@
-// src/components/ReportsPage.tsx
-
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useReports } from "../../../context/ReportsContext";
 import Table from "../../../components/reusables/Table";
@@ -16,24 +14,11 @@ import { getReportsColumns } from "../data/translations"; // Adjust the path as 
 import useRequireAuth from "@/app/[locale]/hooks/useRequireAuth";
 import IssueReportModal from "./IssueReportModal";
 
-type ReportsPageProps = {
-  reports: Report[];
-};
-
-const ReportsPage: React.FC<ReportsPageProps> = ({ reports }) => {
+const ReportsPage: React.FC = () => {
   const { token, user, loading } = useRequireAuth();
   const router = useRouter();
-  const {
-    fetchReports,
-    totalCount,
-    reportType,
-    setReportType,
-    filterType,
-    setFilterType,
-    filterValue,
-    setFilterValue,
-  } = useReports();
-  const [currentPage, setCurrentPage] = useState(1);
+  const { reports, fetchReports, totalCount, currentPage, setCurrentPage } =
+    useReports();
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [showIssueModal, setShowIssueModal] = useState(false);
@@ -42,12 +27,17 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ reports }) => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    fetchReports(page, pageSize);
   };
 
   const handleDelete = async () => {
     if (selectedReport) {
       try {
-        await axios.delete(`/api/reports/${selectedReport.id}`);
+        await axios.delete(`/api/reports/${selectedReport.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         fetchReports(currentPage, pageSize);
       } catch (error) {
         console.error("Failed to delete report:", error);
@@ -79,7 +69,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ reports }) => {
     },
   ];
 
-  const reportsColumns = getReportsColumns(t2, filterType);
+  const reportsColumns = getReportsColumns(t2);
 
   if (loading || !token) {
     return <div>Loading...</div>;

@@ -1,14 +1,12 @@
-import { useRouter } from "@/navigation";
+import { useRouter } from "@/navigation"; // Corrected import
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 
-// Define the structure of the decoded token
 interface DecodedToken {
   userId: number;
   role: string;
 }
 
-// Function to manually decode a JWT token
 const decodeToken = (token: string): DecodedToken | null => {
   try {
     const base64Url = token.split(".")[1];
@@ -42,19 +40,13 @@ const useRequireAuth = () => {
       if (decoded) {
         setUser(decoded);
         setToken(token);
-        setLoading(false);
       } else {
         console.error("Failed to decode token");
         router.push("/login");
       }
     }
+    setLoading(false);
   }, [router]);
-
-  useEffect(() => {
-    if (!loading && (!token || !user)) {
-      router.push("/login");
-    }
-  }, [token, user, loading, router]);
 
   return { token, user, loading };
 };

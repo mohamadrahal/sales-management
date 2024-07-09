@@ -1,6 +1,7 @@
 import { Contract, Target, User } from "@prisma/client";
 import { createWriteStream } from "fs";
 import PDFDocument from "pdfkit";
+import path from "path";
 
 // Extend the Target type to include the individual property
 interface ExtendedTarget extends Target {
@@ -12,7 +13,11 @@ export const generatePDF = async (
   target: ExtendedTarget
 ) => {
   const doc = new PDFDocument();
-  const pdfPath = `/path/to/save/report-${Date.now()}.pdf`;
+  const pdfPath = path.join(
+    process.cwd(),
+    "public",
+    `report-${Date.now()}.pdf`
+  );
   const stream = createWriteStream(pdfPath);
 
   doc.pipe(stream);
