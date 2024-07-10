@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useTranslations } from "next-intl";
@@ -50,11 +48,7 @@ const IssueReportModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         });
         setLastOptions(response.data);
       } else if (secondSelect === "period") {
-        // Set periods
-        setLastOptions([
-          { id: 1, name: "Period 1" },
-          { id: 2, name: "Period 2" },
-        ]); // Example data
+        setLastOptions([]); // No need for options if filtering by period
       }
     };
 
@@ -64,12 +58,17 @@ const IssueReportModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const apiUrl =
+        reportType === "Contract Report"
+          ? "/api/reports/contract"
+          : "/api/reports/compensation";
       await axios.post(
-        "/api/reports/compensation",
+        apiUrl,
         {
           reportType,
           secondSelect,
-          lastSelect: Number(lastSelect), // Ensure lastSelect is a number
+          lastSelect:
+            secondSelect === "period" ? undefined : Number(lastSelect),
           periodFrom,
           periodTo,
         },
@@ -118,21 +117,23 @@ const IssueReportModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               ))}
             </select>
           </div>
-          <div className="mb-4">
-            <label className="block mb-2">{t("choose")}</label>
-            <select
-              value={lastSelect}
-              onChange={(e) => setLastSelect(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded"
-            >
-              <option value="">{t("selectOption")}</option>
-              {lastOptions.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          {secondSelect !== "period" && (
+            <div className="mb-4">
+              <label className="block mb-2">{t("choose")}</label>
+              <select
+                value={lastSelect}
+                onChange={(e) => setLastSelect(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded"
+              >
+                <option value="">{t("selectOption")}</option>
+                {lastOptions.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
           <div className="mb-4">
             <label className="block mb-2">{t("periodFrom")}</label>
             <input
