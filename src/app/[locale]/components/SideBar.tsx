@@ -16,6 +16,8 @@ const SideBar = () => {
   const { user, loading } = useRequireAuth();
   const t = useTranslations();
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const t2 = useTranslations("salesmanSideBar");
+
 
   useEffect(() => {
     if (!loading && user) {
@@ -24,9 +26,9 @@ const SideBar = () => {
       if (user.role === "Salesman") {
         items = items.filter(
           (item) =>
-            item.name === "Contracts" ||
-            item.name === "Branches" ||
-            item.name === "Targets"
+            item.name === t2("contracts")||
+            item.name === t2("branches") ||
+            item.name === t2("targets")
         );
       }
       setMenuItems(items);

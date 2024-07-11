@@ -6,6 +6,7 @@ import axios from "axios";
 import InputField from "../../../../components/reusables/InputField";
 import { City, Contract } from "@prisma/client";
 import useRequireAuth from "@/app/[locale]/hooks/useRequireAuth";
+import { useTranslations } from "next-intl";
 
 const NewBranchPage = () => {
   const [form, setForm] = useState({
@@ -72,17 +73,19 @@ const NewBranchPage = () => {
     }
   };
 
+  const t = useTranslations("newBranch");
+
   return (
     <div className="min-h-screen w-full flex items-center justify-center">
       <div className="w-full bg-white p-8 rounded-lg shadow-md mx-8 my-4">
         <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
-          New Branch
+         {t("title")}
         </h1>
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-4">
             <div className="mb-1">
               <label className="block text-gray-700 font-bold mb-2">
-                Contract ID
+                {t("contractID")}
               </label>
               <select
                 name="contractId"
@@ -90,7 +93,7 @@ const NewBranchPage = () => {
                 onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">Select Contract</option>
+                <option value="">{t("selectContract")}</option>
                 {contracts.map((contract) => (
                   <option key={contract.id} value={contract.id}>
                     {contract.id} - {contract.companyName}
@@ -103,16 +106,16 @@ const NewBranchPage = () => {
               name="name"
               value={form.name}
               onChange={handleInputChange}
-              placeholder="Branch Name"
-              label="Branch Name"
+              placeholder={t("branchName")}
+              label={t("branchName")}
             />
             <InputField
               type="text"
               name="phone"
               value={form.phone}
               onChange={handleInputChange}
-              placeholder="Phone"
-              label="Phone"
+              placeholder={t("phone")}
+              label={t("phone")}
             />
             <select
               name="city"
@@ -141,16 +144,16 @@ const NewBranchPage = () => {
               name="locationX"
               value={form.locationX}
               onChange={handleInputChange}
-              placeholder="Location X"
-              label="Location X"
+              placeholder={t("locationx")}
+              label={t("locationx")}
             />
             <InputField
               type="number"
               name="locationY"
               value={form.locationY}
               onChange={handleInputChange}
-              placeholder="Location Y"
-              label="Location Y"
+              placeholder={t("locationy")}
+              label={t("locationy")}
             />
           </div>
 
@@ -158,7 +161,7 @@ const NewBranchPage = () => {
             type="submit"
             className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            Create Branch
+            {t("button")}
           </button>
         </form>
       </div>

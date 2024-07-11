@@ -5,6 +5,7 @@ import axios from "axios";
 import InputField from "../../../../components/reusables/InputField";
 import { ContractType, BusinessType } from "@prisma/client";
 import useRequireAuth from "@/app/[locale]/hooks/useRequireAuth";
+import { useTranslations } from "next-intl";
 
 const NewContractPage = () => {
   const { user, token } = useRequireAuth();
@@ -77,11 +78,13 @@ const NewContractPage = () => {
     }
   };
 
+  const t = useTranslations("newContract");
+
   return (
     <div className=" w-full flex">
       <div className="w-full bg-white p-8 rounded-lg shadow-md mx-8 my-8">
         <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
-          New Contract
+          {t("title")}
         </h1>
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-3">
@@ -90,13 +93,13 @@ const NewContractPage = () => {
               name="salesmanId"
               value={form.salesmanId}
               onChange={handleInputChange}
-              placeholder="Salesman ID"
+              placeholder={t("id")}
               readOnly
-              label="Salesman ID"
+              label={t("id")}
             />
             <div className="mb-1">
               <label className="block text-gray-700 font-bold mb-2">
-                Contract Type
+                {t("contractType.contractTitle")}
               </label>
               <select
                 name="type"
@@ -114,12 +117,12 @@ const NewContractPage = () => {
               name="companyName"
               value={form.companyName}
               onChange={handleInputChange}
-              placeholder="Company Name"
-              label="Company Name"
+              placeholder={t("companyName")}
+              label={t("companyName")}
             />
             <div className="mb-1">
               <label className="block text-gray-700 font-bold mb-2">
-                Business Type
+                {t("businessType")}
               </label>
               <select
                 name="businessType"
@@ -154,52 +157,52 @@ const NewContractPage = () => {
               name="ownerName"
               value={form.ownerName}
               onChange={handleInputChange}
-              placeholder="Owner Name"
-              label="Owner Name"
+              placeholder={t("ownerName")}
+              label={t("ownerName")}
             />
             <InputField
               type="text"
               name="ownerMobileNumber"
               value={form.ownerMobileNumber}
               onChange={handleInputChange}
-              placeholder="Owner Mobile Number"
-              label="Owner Mobile Number"
+              placeholder={t("ownerMobile")}
+              label={t("ownerMobile")}
             />
             <InputField
               type="text"
               name="companyMobileNumber"
               value={form.companyMobileNumber}
               onChange={handleInputChange}
-              placeholder="Company Mobile Number"
-              label="Company Mobile Number"
+              placeholder={t("companyMobile")}
+              label={t("companyMobile")}
             />
             <InputField
               type="text"
               name="contactPersonName"
               value={form.contactPersonName}
               onChange={handleInputChange}
-              placeholder="Contact Person Name"
-              label="Contact Person Name"
+              placeholder={t("contactPersonName")}
+              label={t("contactPersonName")}
             />
             <InputField
               type="text"
               name="contactPersonMobileNumber"
               value={form.contactPersonMobileNumber}
               onChange={handleInputChange}
-              placeholder="Contact Person Mobile Number"
-              label="Contact Person Mobile Number"
+              placeholder={t("contactPersonMobile")}
+              label={t("contactPersonMobile")}
             />
             <InputField
               type="text"
               name="bcdAccountNumber"
               value={form.bcdAccountNumber}
               onChange={handleInputChange}
-              placeholder="BCD Account Number (optional)"
-              label="BCD Account Number (optional)"
+              placeholder={t("bcd")}
+              label={t("bcd")}
             />
             <div className="mb-4">
               <label className="block text-gray-700 font-bold mb-2">
-                Document
+              {t("document")}
               </label>
               <input
                 type="file"
@@ -214,7 +217,7 @@ const NewContractPage = () => {
             type="submit"
             className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            Create Contract
+            {t("button")}
           </button>
         </form>
       </div>

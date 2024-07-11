@@ -6,6 +6,7 @@ import axios from "axios";
 import InputField from "../../../../components/reusables/InputField";
 import { UserRole } from "@prisma/client";
 import useRequireAuth from "@/app/[locale]/hooks/useRequireAuth";
+import { useTranslations } from "next-intl";
 
 const NewUserPage = () => {
   const [form, setForm] = useState({
@@ -100,11 +101,13 @@ const NewUserPage = () => {
     }
   };
 
+  const t = useTranslations("newUser");
+
   return (
     <div className="min-h-screen w-full flex items-center justify-center">
       <div className="w-full bg-white p-8 rounded-lg shadow-md mx-8 my-4">
         <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
-          New User
+          {t("title")}
         </h1>
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-4">
@@ -115,12 +118,18 @@ const NewUserPage = () => {
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {user && user.role === "Admin" && (
-                <option value={UserRole.Admin}>Admin</option>
+                <option value={UserRole.Admin}>
+                  {t("userTypeSelect.admin")}
+                </option>
               )}
               {user && user.role === "Admin" && (
-                <option value={UserRole.SalesManager}>Sales Manager</option>
+                <option value={UserRole.SalesManager}>
+                  {t("userTypeSelect.manager")}
+                </option>
               )}
-              <option value={UserRole.Salesman}>Salesman</option>
+              <option value={UserRole.Salesman}>
+                {t("userTypeSelect.salesman")}
+              </option>
             </select>
             {form.role === UserRole.SalesManager && (
               <div className="w-full p-2 border border-gray-300 rounded-md">
@@ -149,7 +158,7 @@ const NewUserPage = () => {
                 onChange={handleSingleSelectChange}
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">Select Team</option>
+                <option value="">{t("selectTeam")}</option>
                 {teams.map((team) => (
                   <option key={team.id} value={team.id}>
                     {team.name}
@@ -162,40 +171,40 @@ const NewUserPage = () => {
               name="username"
               value={form.username}
               onChange={handleInputChange}
-              placeholder="Username"
-              label="Username"
+              placeholder={t("username")}
+              label={t("username")}
             />
             <InputField
               type="password"
               name="password"
               value={form.password}
               onChange={handleInputChange}
-              placeholder="Password"
-              label="Password"
+              placeholder={t("pass")}
+              label={t("pass")}
             />
             <InputField
               type="text"
               name="name"
               value={form.name}
               onChange={handleInputChange}
-              placeholder="Name"
-              label="Name"
+              placeholder={t("name")}
+              label={t("name")}
             />
             <InputField
               type="text"
               name="mobileNumber"
               value={form.mobileNumber}
               onChange={handleInputChange}
-              placeholder="Mobile Number"
-              label="Mobile Number"
+              placeholder={t("mobile")}
+              label={t("mobile")}
             />
             <InputField
               type="text"
               name="bcdAccount"
               value={form.bcdAccount}
               onChange={handleInputChange}
-              placeholder="BCD Account (optional)"
-              label="BCD Account (optional)"
+              placeholder={t("bcd")}
+              label={t("bcd")}
               required={false}
             />
             <InputField
@@ -203,16 +212,16 @@ const NewUserPage = () => {
               name="evoAppId"
               value={form.evoAppId}
               onChange={handleInputChange}
-              placeholder="EVO App ID"
-              label="EVO App ID"
+              placeholder={t("evo")}
+              label={t("evo")}
             />
             <InputField
               type="text"
               name="nationalId"
               value={form.nationalId}
               onChange={handleInputChange}
-              placeholder="National ID"
-              label="National ID"
+              placeholder={t("nationalID")}
+              label={t("nationalID")}
             />
           </div>
 
@@ -220,7 +229,7 @@ const NewUserPage = () => {
             type="submit"
             className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            Create User
+            {t("button")}
           </button>
         </form>
       </div>

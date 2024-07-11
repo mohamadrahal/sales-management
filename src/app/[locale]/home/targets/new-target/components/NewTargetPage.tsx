@@ -5,6 +5,7 @@ import { useRouter } from "@/navigation";
 import axios from "axios";
 import { TargetType } from "@prisma/client";
 import InputField from "../../../../components/reusables/InputField";
+import { useTranslations } from "next-intl";
 
 const NewTargetPage: React.FC = () => {
   const router = useRouter();
@@ -57,11 +58,13 @@ const NewTargetPage: React.FC = () => {
     }
   };
 
+  const t = useTranslations("newTarget");
+
   return (
     <div className="min-h-screen w-full flex items-center justify-center">
       <div className="w-full bg-white p-8 rounded-lg shadow-md mx-8 my-4">
         <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
-          New Target
+          {t("title")}
         </h1>
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-4">
@@ -79,8 +82,8 @@ const NewTargetPage: React.FC = () => {
               name="targetOwnerId"
               value={form.targetOwnerId || ""}
               onChange={handleInputChange}
-              placeholder="Owner ID"
-              label="Owner ID"
+              placeholder={t("ownerID")}
+              label={t("ownerID")}
               error={errors.targetOwnerId}
             />
             <InputField
@@ -88,8 +91,8 @@ const NewTargetPage: React.FC = () => {
               name="periodFrom"
               value={form.periodFrom}
               onChange={handleInputChange}
-              placeholder="Period From"
-              label="Period From"
+              placeholder={t("from")}
+              label={t("from")}
               error={errors.periodFrom}
             />
             <InputField
@@ -97,8 +100,8 @@ const NewTargetPage: React.FC = () => {
               name="periodTo"
               value={form.periodTo}
               onChange={handleInputChange}
-              placeholder="Period To"
-              label="Period To"
+              placeholder={t("to")}
+              label={t("to")}
               error={errors.periodTo}
             />
             <InputField
@@ -106,8 +109,8 @@ const NewTargetPage: React.FC = () => {
               name="numberOfContracts"
               value={form.numberOfContracts || ""}
               onChange={handleInputChange}
-              placeholder="Number of Contracts"
-              label="Number of Contracts"
+              placeholder={t("numberOfContracts")}
+              label={t("numberOfContracts")}
               error={errors.numberOfContracts}
             />
             <InputField
@@ -115,8 +118,8 @@ const NewTargetPage: React.FC = () => {
               name="totalAmountLYD"
               value={form.totalAmountLYD || ""}
               onChange={handleInputChange}
-              placeholder="Total Amount (LYD)"
-              label="Total Amount (LYD)"
+              placeholder={t("total")}
+              label={t("total")}
               error={errors.totalAmountLYD}
             />
             {form.targetType === TargetType.Team && (
@@ -125,8 +128,8 @@ const NewTargetPage: React.FC = () => {
                 name="bonusAmount"
                 value={form.bonusAmount || ""}
                 onChange={handleInputChange}
-                placeholder="Bonus Amount"
-                label="Bonus Amount"
+                placeholder={t("bonus")}
+                label={t("bonus")}
                 error={errors.bonusAmount}
               />
             )}
@@ -136,7 +139,7 @@ const NewTargetPage: React.FC = () => {
             type="submit"
             className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            Create Target
+            {t("button")}
           </button>
         </form>
       </div>

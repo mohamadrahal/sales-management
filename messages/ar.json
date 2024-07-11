@@ -90,7 +90,7 @@
   },
   "reportHeader": {
     "title": "التقارير",
-    "issueReport": "Issue Report",
+    "issueReport": "إصدار تقرير",
     "filter": {
       "perPeriod": "لكل فترة",
       "perBranch": "لكل فرع",
@@ -138,5 +138,78 @@
     "selectOption": "اختر خيار",
     "cancel": "إلغاء",
     "issue": "إصدار"
+  },
+  "newTeam": {
+    "newTitle": "إضافة فريق جديد",
+    "editTitle": "تعديل الفريق",
+    "name": "الاسم",
+    "location": "الموقع",
+    "addButton":"إضافة فريق",
+    "updateButton":"تحديث الفريق"
+  },
+  "newUser": {
+    "title": "مستخدم جديد",
+    "userTypeSelect": {
+      "admin": "مسؤول",
+      "manager": "مدير المبيعات",
+      "salesman": "مندوب المبيعات"
+    },
+    "selectTeam": "اختر الفريق",
+    "username": "اسم المستخدم",
+    "pass": "كلمة المرور",
+    "name": "الاسم",
+    "mobile": "رقم الهاتف المحمول",
+    "evo": "معرف تطبيق Evo",
+    "bcd": "حساب BCD (اختياري)",
+    "nationalID": "الرقم الوطني",
+    "button": "إنشاء مستخدم"
+  },
+  "newContract": {
+    "title": "عقد جديد",
+    "id": "رقم مندوب المبيعات",
+    "contractType": {
+      "contractTitle":"نوع العقد",
+      "subagent": "وكيل فرعي",
+      "merchant": "تاجر",
+      "both": "كلاهما"
+    },
+    "companyName": "اسم الشركة",
+    "businessType": "نوع العمل",
+    "ownerName": "اسم المالك",
+    "ownerMobile": "رقم هاتف المالك",
+    "companyMobile": "رقم هاتف الشركة",
+    "contactPersonName": "اسم الشخص المسؤول",
+    "contactPersonMobile": "رقم هاتف الشخص المسؤول",
+    "bcd": "رقم حساب BCD (اختياري)",
+    "document": "وثيقة",
+    "button": "إنشاء عقد"
+  },
+  "newBranch": {
+    "title": "فرع جديد",
+    "contractID": "رقم العقد",
+    "selectContract":"حدد العقد",
+    "branchName": "اسم الفرع",
+    "phone": "رقم الهاتف",
+    "locationx": "الموقع X",
+    "locationy": "الموقع Y",
+    "button": "إنشاء فرع"
+  },
+  "newTarget": {
+    "title": "هدف جديد",
+    "ownerID": "رقم المالك",
+    "from": "الفترة من",
+    "to": "الفترة إلى",
+    "numberOfContracts": "عدد العقود",
+    "total": "المبلغ الإجمالي (دينار ليبي)",
+    "bonus": "مبلغ المكافأة",
+    "button": "إنشاء هدف"
+  },
+  "salesmanSideBar": {
+    "contracts": "العقود",
+    "branches": "الفروع",
+    "targets": "الأهداف"
   }
+
+
+
 }

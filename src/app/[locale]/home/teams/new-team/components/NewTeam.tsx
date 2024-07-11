@@ -6,6 +6,7 @@ import axios from "axios";
 import { teamSchema, cityEnum, City } from "@/app/schemas/teamSchema";
 import { useTeams } from "@/app/[locale]/context/TeamsContext";
 import useRequireAuth from "@/app/[locale]/hooks/useRequireAuth";
+import { useTranslations } from "next-intl";
 
 const NewTeam: React.FC = () => {
   const [name, setName] = useState("");
@@ -73,15 +74,17 @@ const NewTeam: React.FC = () => {
     }
   };
 
+  const t = useTranslations("newTeam");
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-semibold mb-4">
-        {isEditing ? "Edit Team" : "Add New Team"}
+        {isEditing ? t("editTitle") : t("newTitle")}
       </h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">
-            Name
+            {t("name")}
           </label>
           <input
             type="text"
@@ -93,7 +96,7 @@ const NewTeam: React.FC = () => {
         </div>
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">
-            Location
+            {t("location")}
           </label>
           <select
             value={location}
@@ -112,7 +115,7 @@ const NewTeam: React.FC = () => {
           type="submit"
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
-          {isEditing ? "Update Team" : "Add Team"}
+          {isEditing ? t("updateButton") : t("addButton")}
         </button>
       </form>
     </div>

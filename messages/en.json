@@ -139,5 +139,76 @@
     "selectOption": "Select Option",
     "cancel": "Cancel",
     "issue": "Issue"
+  },
+  "newTeam":{
+    "newTitle":"Add New Team",
+    "editTitle":"Edit Team",
+    "name":"Name",
+    "location":"Location",
+    "addButton":"Add team",
+    "updateButton":"Update team"
+  },
+  "newUser":{
+    "title":"New User",
+    "userTypeSelect":{
+      "admin":"Admin",
+      "manager":"Sales Manager",
+      "salesman":"Salesman"
+    },
+    "selectTeam":"Select Teams",
+    "username":"Username",
+    "pass":"Password",
+    "name":"Name",
+    "mobile":"Mobile number",
+    "evo":"Evo App ID",
+    "bcd":"BCD Account (optional)",
+    "nationalID":"National ID",
+    "button":"Create User"
+    
+  },
+  "newContract":{
+    "title":"New Contract",
+    "id":"Salesman ID",
+    "contractType":{
+      "contractTitle":"Contract Type",
+      "subagent":"Subagent",
+      "merchant":"Merchant",
+      "both":"Both"
+    },
+    "companyName":"Company Name",
+    "businessType":"Business Type",
+    "ownerName":"Owner Name",
+    "ownerMobile":"Owner Mobile Number",
+    "companyMobile":"Company Mobile Number",
+    "contactPersonName":"Contact Person Name",
+    "contactPersonMobile":"Contact Person Mobile Number",
+    "bcd":"BCD Account Number (optional)",
+    "document":"Document",
+    "button":"Create Contract"
+  },
+  "newBranch":{
+    "title":"New Branch",
+    "contractID":"Contract ID",
+    "selectContract":"Select Contract",
+    "branchName":"Branch Name",
+    "phone":"Phone",
+    "locationx":"Location X",
+    "locationy":"Location Y",
+    "button":"Create Branch"
+  },
+  "newTarget":{
+    "title":"New Target",
+    "ownerID":"Owner ID",
+    "from":"Period From",
+    "to":"Period To",
+    "numberOfContracts":"Number of Contracts",
+    "total":"Total Amount (LYD)",
+    "bonus":"Bonus Ammount",
+    "button":"Create Target"
+  },
+  "salesmanSideBar":{
+    "contracts":"Contracts",
+    "branches":"Branches",
+    "targets":"Targets"
   }
 }
