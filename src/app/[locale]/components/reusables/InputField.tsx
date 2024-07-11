@@ -10,6 +10,7 @@ type InputFieldProps = {
   readOnly?: boolean;
   label: string;
   error?: string; // Change Error to string
+  required?: boolean; // Add the required prop
 };
 
 const InputField = ({
@@ -21,6 +22,7 @@ const InputField = ({
   readOnly = false,
   label,
   error,
+  required = true, // Default to true if not specified
 }: InputFieldProps) => {
   return (
     <div className="mb-4">
@@ -35,7 +37,7 @@ const InputField = ({
         className={`w-full p-2 border ${
           error ? "border-red-500" : "border-gray-300"
         } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
-        required
+        required={required}
       />
       {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
     </div>

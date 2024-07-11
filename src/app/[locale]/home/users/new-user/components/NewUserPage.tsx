@@ -196,6 +196,7 @@ const NewUserPage = () => {
               onChange={handleInputChange}
               placeholder="BCD Account (optional)"
               label="BCD Account (optional)"
+              required={false}
             />
             <InputField
               type="text"

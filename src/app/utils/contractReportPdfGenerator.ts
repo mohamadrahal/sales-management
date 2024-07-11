@@ -1,27 +1,38 @@
-import { Contract } from "@prisma/client";
-import { createWriteStream, existsSync, mkdirSync } from "fs";
-import PDFDocument from "pdfkit";
+import fs from "fs";
 import path from "path";
-
-// Extend the Contract type to include related properties
-interface ExtendedContract extends Contract {
-  salesman?: {
-    id: number;
-    name: string;
-    teamId: number | null; // Adjust teamId to be number | null
-  };
-  branches: {
-    id: number;
-    name: string;
-    city: string;
-  }[];
-}
+import { PDFDocument, rgb } from "pdf-lib";
+import { Contract } from "@prisma/client";
 
 interface ReportDetails {
   secondSelect: string;
   lastSelect: string;
   periodFrom: string;
   periodTo: string;
+}
+
+// Extend the Contract type to include relations
+interface ExtendedContract extends Contract {
+  branches: {
+    id: number;
+    contractId: number;
+    name: string;
+    phone: string;
+    city: string;
+    locationX: number;
+    locationY: number;
+  }[];
+  salesman: {
+    id: number;
+    role: string;
+    username: string;
+    password: string;
+    name: string;
+    mobileNumber: string;
+    bcdAccount: string | null;
+    evoAppId: string;
+    nationalId: string;
+    teamId: number | null;
+  };
 }
 
 export const generateContractReportPDF = async (
@@ -31,78 +42,127 @@ export const generateContractReportPDF = async (
   const pdfDirectory = path.join(process.cwd(), "public", "reports");
   const pdfPath = path.join(pdfDirectory, `contract-report-${Date.now()}.pdf`);
 
-  if (!existsSync(pdfDirectory)) {
-    mkdirSync(pdfDirectory, { recursive: true });
+  if (!fs.existsSync(pdfDirectory)) {
+    fs.mkdirSync(pdfDirectory, { recursive: true });
   }
 
-  const doc = new PDFDocument();
-  const stream = createWriteStream(pdfPath);
+  const pdfDoc = await PDFDocument.create();
+  const page = pdfDoc.addPage();
+  const { width, height } = page.getSize();
+  const fontSize = 12;
 
-  doc.pipe(stream);
+  // Add period range at the top of the PDF
+  page.drawText(
+    `Period: ${reportDetails.periodFrom} to ${reportDetails.periodTo}`,
+    {
+      x: 50,
+      y: height - 30,
+      size: 14,
+      color: rgb(0, 0, 0),
+    }
+  );
 
-  // Use built-in font "Times-Roman"
-  doc
-    .font("Times-Roman")
-    .fontSize(25)
-    .text("Contract Report", { align: "center" });
+  page.drawText("Contract Report", {
+    x: 50,
+    y: height - 50,
+    size: 25,
+    color: rgb(0, 0, 0),
+  });
+
+  let yPosition = height - 80;
 
   contracts.forEach((contract, index) => {
-    doc
-      .font("Times-Roman")
-      .fontSize(18)
-      .text(`Contract ${index + 1}`, { align: "left" });
-    doc
-      .font("Times-Roman")
-      .fontSize(16)
-      .text(`Company Name: ${contract.companyName}`, { align: "left" });
-    doc
-      .font("Times-Roman")
-      .fontSize(16)
-      .text(`Business Type: ${contract.businessType}`, { align: "left" });
-    doc
-      .font("Times-Roman")
-      .fontSize(16)
-      .text(`Status: ${contract.status}`, { align: "left" });
-    doc
-      .font("Times-Roman")
-      .fontSize(16)
-      .text(`Created At: ${contract.createdAt.toDateString()}`, {
-        align: "left",
-      });
+    if (yPosition < 50) {
+      yPosition = height - 50;
+      pdfDoc.addPage();
+    }
+
+    page.drawText(`Contract ${index + 1}`, {
+      x: 50,
+      y: yPosition,
+      size: 18,
+      color: rgb(0, 0, 0),
+    });
+    yPosition -= fontSize;
+
+    page.drawText(`Company Name: ${contract.companyName}`, {
+      x: 50,
+      y: yPosition,
+      size: fontSize,
+      color: rgb(0, 0, 0),
+    });
+    yPosition -= fontSize;
+
+    page.drawText(`Business Type: ${contract.businessType}`, {
+      x: 50,
+      y: yPosition,
+      size: fontSize,
+      color: rgb(0, 0, 0),
+    });
+    yPosition -= fontSize;
+
+    page.drawText(`Status: ${contract.status}`, {
+      x: 50,
+      y: yPosition,
+      size: fontSize,
+      color: rgb(0, 0, 0),
+    });
+    yPosition -= fontSize;
+
+    page.drawText(
+      `Created At: ${new Date(contract.createdAt).toDateString()}`,
+      {
+        x: 50,
+        y: yPosition,
+        size: fontSize,
+        color: rgb(0, 0, 0),
+      }
+    );
+    yPosition -= fontSize;
 
     if (contract.salesman) {
-      doc
-        .font("Times-Roman")
-        .fontSize(16)
-        .text(`Salesman ID: ${contract.salesman.id}`, { align: "left" });
-      doc
-        .font("Times-Roman")
-        .fontSize(16)
-        .text(`Salesman Name: ${contract.salesman.name}`, { align: "left" });
+      page.drawText(`Salesman ID: ${contract.salesman.id}`, {
+        x: 50,
+        y: yPosition,
+        size: fontSize,
+        color: rgb(0, 0, 0),
+      });
+      yPosition -= fontSize;
+
+      page.drawText(`Salesman Name: ${contract.salesman.name}`, {
+        x: 50,
+        y: yPosition,
+        size: fontSize,
+        color: rgb(0, 0, 0),
+      });
+      yPosition -= fontSize;
     }
 
     if (contract.branches.length > 0) {
-      doc.font("Times-Roman").fontSize(16).text("Branches:", { align: "left" });
+      page.drawText("Branches:", {
+        x: 50,
+        y: yPosition,
+        size: fontSize,
+        color: rgb(0, 0, 0),
+      });
+      yPosition -= fontSize;
+
       contract.branches.forEach((branch) => {
-        doc
-          .font("Times-Roman")
-          .fontSize(14)
-          .text(`- ${branch.name} (${branch.city})`, { align: "left" });
+        page.drawText(`- ${branch.name} (${branch.city})`, {
+          x: 70,
+          y: yPosition,
+          size: fontSize,
+          color: rgb(0, 0, 0),
+        });
+        yPosition -= fontSize;
       });
     }
 
-    doc.moveDown();
+    yPosition -= fontSize;
   });
 
-  doc.end();
+  const pdfBytes = await pdfDoc.save();
+  fs.writeFileSync(pdfPath, pdfBytes);
 
-  return new Promise<string>((resolve, reject) => {
-    stream.on("finish", () => {
-      resolve(pdfPath);
-    });
-
-    stream.on("error", (err) => {
-      reject(err);
-    });
-  });
+  return pdfPath;
 };

@@ -7,7 +7,7 @@ export const userSchema = z.object({
   teamIds: z.array(z.number()).optional(),
   name: z.string().min(1),
   mobileNumber: z.string().min(10),
-  bcdAccount: z.string().optional(),
+  bcdAccount: z.string().nullable().optional(),
   evoAppId: z.string().min(1),
   nationalId: z.string().min(1),
 });

@@ -21,6 +21,15 @@ type TargetsPageProps = {
   targets: Target[];
 };
 
+const formatDate = (dateString: string) => {
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+  return new Date(dateString).toLocaleDateString(undefined, options);
+};
+
 const TargetsPage: React.FC<TargetsPageProps> = ({ targets }) => {
   const { token, user, loading } = useRequireAuth();
   const router = useRouter();
@@ -69,11 +78,6 @@ const TargetsPage: React.FC<TargetsPageProps> = ({ targets }) => {
       onClick: () => router.push(`/home/targets/new-target?id=${row.id}`),
       className: "bg-gray-400 hover:bg-gray-500",
     },
-    // {
-    //   icon: FaEye,
-    //   onClick: () => router.push(`/home/targets/${row.id}`),
-    //   className: "bg-gray-400 hover:bg-gray-600",
-    // },
     {
       icon: FaTrash,
       onClick: () => {
@@ -86,7 +90,15 @@ const TargetsPage: React.FC<TargetsPageProps> = ({ targets }) => {
 
   const filterOptions = getFilterOptions(t2);
 
-  const targetsColumns = getTargetsColumns(t2, filter);
+  const targetsColumns = getTargetsColumns(t2, filter).map((column) => {
+    if (column.accessor === "periodFrom" || column.accessor === "periodTo") {
+      return {
+        ...column,
+        Cell: ({ value }: { value: string }) => formatDate(value),
+      };
+    }
+    return column;
+  });
 
   const filteredTargets = targets.filter((target) => {
     if (filter === "team") {

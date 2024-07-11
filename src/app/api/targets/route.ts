@@ -15,6 +15,15 @@ const verifyToken = (token: string) => {
   }
 };
 
+const formatDate = (date: Date) => {
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+  return new Date(date).toLocaleDateString(undefined, options);
+};
+
 export async function GET(req: NextRequest) {
   const token = req.headers.get("Authorization")?.split(" ")[1];
 
@@ -77,9 +86,15 @@ export async function GET(req: NextRequest) {
       },
     });
 
+    const formattedTargets = targets.map((target) => ({
+      ...target,
+      periodFrom: formatDate(target.periodFrom),
+      periodTo: formatDate(target.periodTo),
+    }));
+
     const totalCount = await prisma.target.count({ where: whereClause });
 
-    return NextResponse.json({ targets, totalCount });
+    return NextResponse.json({ targets: formattedTargets, totalCount });
   } catch (error) {
     console.error("Failed to fetch targets:", error);
     return NextResponse.json(

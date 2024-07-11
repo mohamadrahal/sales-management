@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../../prisma/client";
 import jwt from "jsonwebtoken";
-import { generatePDF } from "../../../utils/pdfGenerator"; // Utility function to generate PDF
+import { generatePDF } from "../../../utils/compensationReportPdfGenerator"; // Utility function to generate PDF
 import { Target } from "@prisma/client";
 
 const SECRET_KEY = process.env.NEXT_PUBLIC_JWT_SECRET || "your_secret_key";
@@ -39,22 +39,57 @@ export async function POST(req: NextRequest) {
     const periodStart = new Date(periodFrom);
     const periodEnd = new Date(periodTo);
 
-    console.log("Selected Period Start:", periodStart);
-    console.log("Selected Period End:", periodEnd);
+    let target;
+    let contracts;
 
-    // Verify if the salesman has achieved the target
-    const target = await prisma.target.findFirst({
-      where: {
-        userId: Number(lastSelect),
-        periodFrom: periodStart,
-        periodTo: periodEnd,
-      },
-      include: {
-        individual: true, // Include the individual property
-      },
-    });
+    if (secondSelect === "team") {
+      target = await prisma.target.findFirst({
+        where: {
+          teamId: Number(lastSelect),
+          periodFrom: periodStart,
+          periodTo: periodEnd,
+        },
+      });
 
-    console.log("Found Target:", target);
+      contracts = await prisma.contract.findMany({
+        where: {
+          salesman: {
+            teamId: Number(lastSelect),
+          },
+          createdAt: {
+            gte: periodStart,
+            lte: periodEnd,
+          },
+        },
+        include: {
+          salesman: true,
+        },
+      });
+    } else {
+      target = await prisma.target.findFirst({
+        where: {
+          userId: Number(lastSelect),
+          periodFrom: periodStart,
+          periodTo: periodEnd,
+        },
+        include: {
+          individual: true, // Include the individual property
+        },
+      });
+
+      contracts = await prisma.contract.findMany({
+        where: {
+          salesmanId: Number(lastSelect),
+          createdAt: {
+            gte: periodStart,
+            lte: periodEnd,
+          },
+        },
+        include: {
+          salesman: true,
+        },
+      });
+    }
 
     if (!target) {
       return NextResponse.json(
@@ -63,47 +98,35 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const contracts = await prisma.contract.findMany({
-      where: {
-        salesmanId: Number(lastSelect),
-        createdAt: {
-          gte: periodStart,
-          lte: periodEnd,
-        },
-      },
-    });
-
-    console.log("Contracts Found:", contracts);
-
-    if (contracts.length < target.numberOfContracts) {
-      return NextResponse.json(
-        { error: "Target not achieved" },
-        { status: 400 }
-      );
-    }
+    // Check if target is achieved
+    const targetAchieved = contracts.length >= target.numberOfContracts;
 
     // Generate the PDF report
-    const pdfPath = await generatePDF(contracts, target as Target);
+    const pdfPath = await generatePDF(contracts, target, targetAchieved);
+
+    // Prepare data for compensation report creation
+    const compensationReportData: any = {
+      report: {
+        create: {
+          type: "Compensation",
+          periodFrom: periodStart,
+          periodTo: periodEnd,
+        },
+      },
+      amountPaid: target.totalAmountLYD,
+      bonusAmount: target.bonusAmount,
+      pdfPath,
+    };
+
+    if (secondSelect === "team") {
+      compensationReportData.team = { connect: { id: Number(lastSelect) } };
+    } else {
+      compensationReportData.salesman = { connect: { id: Number(lastSelect) } };
+    }
 
     // Save the report in the database
     const report = await prisma.compensationReport.create({
-      data: {
-        report: {
-          create: {
-            type: "Compensation",
-            periodFrom: periodStart,
-            periodTo: periodEnd,
-          },
-        },
-        salesman: {
-          connect: {
-            id: Number(lastSelect),
-          },
-        },
-        amountPaid: target.totalAmountLYD,
-        bonusAmount: target.bonusAmount,
-        pdfPath,
-      },
+      data: compensationReportData,
     });
 
     return NextResponse.json({ report }, { status: 201 });

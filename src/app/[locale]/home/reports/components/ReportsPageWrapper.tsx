@@ -19,7 +19,7 @@ const ReportsPageWithContext: React.FC = () => {
   useRequireAuth();
   const { reports } = useReports();
 
-  return <ReportsPage reports={reports} />;
+  return <ReportsPage />;
 };
 
 export default ReportsPageWrapper;
