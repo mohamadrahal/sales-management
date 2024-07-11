@@ -1,3 +1,4 @@
+// src/app/home/reports/ReportsPage.tsx
 "use client";
 
 import React, { useState } from "react";
@@ -7,7 +8,7 @@ import Table from "../../../components/reusables/Table";
 import Pagination from "../../../components/reusables/Pagination";
 import ConfirmationModal from "../../../components/reusables/ConfirmationModal";
 import { Report } from "../../../../../types/types"; // Adjust the path to where your types file is located
-import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
+import { FaDownload, FaTrash } from "react-icons/fa";
 import axios from "axios";
 import { useTranslations } from "next-intl";
 import { getReportsColumns } from "../data/translations"; // Adjust the path as needed
@@ -48,16 +49,33 @@ const ReportsPage: React.FC = () => {
     }
   };
 
+  const handleDownload = async (reportId: number) => {
+    try {
+      const response = await axios.get(`/api/reports/${reportId}/download`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `report-${reportId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      if (link.parentNode) {
+        link.parentNode.removeChild(link);
+      }
+    } catch (error) {
+      console.error("Failed to download report:", error);
+    }
+  };
+
   const getActions = (row: Report) => [
     {
-      icon: FaEdit,
-      onClick: () => router.push(`/home/reports/edit-report?id=${row.id}`),
-      className: "bg-secondary hover:bg-primary",
-    },
-    {
-      icon: FaEye,
-      onClick: () => router.push(`/home/reports/view-report?id=${row.id}`),
-      className: "bg-gray-400 hover:bg-gray-600",
+      icon: FaDownload,
+      onClick: () => handleDownload(row.id),
+      className: "bg-gray-400 hover:bg-gray-500",
     },
     {
       icon: FaTrash,
@@ -65,7 +83,7 @@ const ReportsPage: React.FC = () => {
         setSelectedReport(row);
         setShowModal(true);
       },
-      className: "bg-red-400 hover:bg-red-600",
+      className: "bg-gray-400 hover:bg-gray-500",
     },
   ];
 

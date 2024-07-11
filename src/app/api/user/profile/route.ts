@@ -1,3 +1,4 @@
+// src/app/api/user/profile/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../../prisma/client";
 import jwt from "jsonwebtoken";
@@ -25,7 +26,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { userId } = decoded as { userId: number };
+  const { userId: authUserId } = decoded as { userId: number };
+  const url = new URL(req.url);
+  const userIdParam = url.searchParams.get("userId");
+
+  const userId = userIdParam ? parseInt(userIdParam, 10) : authUserId;
 
   try {
     const user = await prisma.user.findUnique({
