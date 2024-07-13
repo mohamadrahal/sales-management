@@ -1,9 +1,8 @@
-// src/app/api/reports/[id]/download/route.ts
+// src/app/api/reports/[id]/download/pdf/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "../../../../../../prisma/client";
+import prisma from "../../../../../../../prisma/client";
 import jwt from "jsonwebtoken";
 import fs from "fs";
-import path from "path";
 
 const SECRET_KEY = process.env.NEXT_PUBLIC_JWT_SECRET || "your_secret_key";
 
@@ -47,7 +46,7 @@ export async function GET(
       return NextResponse.json({ error: "Report not found" }, { status: 404 });
     }
 
-    // Determine which type of report it is
+    // Determine the PDF path
     let pdfPath: string | undefined;
     if (report.compensationReports.length > 0) {
       pdfPath = report.compensationReports[0].pdfPath;

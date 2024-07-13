@@ -44,7 +44,7 @@ export async function DELETE(
   }
 
   try {
-    // Find the report to get the PDF path
+    // Find the report to get the PDF and Excel paths
     const contractReports = await prisma.contractReport.findMany({
       where: {
         reportId: reportId,
@@ -60,6 +60,11 @@ export async function DELETE(
     const pdfPaths = [
       ...contractReports.map((report) => report.pdfPath),
       ...compensationReports.map((report) => report.pdfPath),
+    ];
+
+    const excelPaths = [
+      ...contractReports.map((report) => report.excelPath),
+      ...compensationReports.map((report) => report.excelPath),
     ];
 
     // Delete related contract and compensation reports
@@ -82,11 +87,11 @@ export async function DELETE(
       },
     });
 
-    // Delete the PDF files from the filesystem
-    pdfPaths.forEach((pdfPath) => {
-      const fullPath = path.isAbsolute(pdfPath)
-        ? pdfPath
-        : path.join(process.cwd(), "public", pdfPath);
+    // Delete the PDF and Excel files from the filesystem
+    [...pdfPaths, ...excelPaths].forEach((filePath) => {
+      const fullPath = path.isAbsolute(filePath)
+        ? filePath
+        : path.join(process.cwd(), "public", filePath);
       if (fs.existsSync(fullPath)) {
         try {
           fs.unlinkSync(fullPath);

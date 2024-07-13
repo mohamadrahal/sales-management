@@ -8,7 +8,7 @@ import Table from "../../../components/reusables/Table";
 import Pagination from "../../../components/reusables/Pagination";
 import ConfirmationModal from "../../../components/reusables/ConfirmationModal";
 import { Report } from "../../../../../types/types"; // Adjust the path to where your types file is located
-import { FaDownload, FaTrash } from "react-icons/fa";
+import { FaDownload, FaFileExcel, FaTrash } from "react-icons/fa";
 import axios from "axios";
 import { useTranslations } from "next-intl";
 import { getReportsColumns } from "../data/translations"; // Adjust the path as needed
@@ -49,33 +49,47 @@ const ReportsPage: React.FC = () => {
     }
   };
 
-  const handleDownload = async (reportId: number) => {
+  const handleDownload = async (
+    reportId: number,
+    fileType: "pdf" | "excel"
+  ) => {
     try {
-      const response = await axios.get(`/api/reports/${reportId}/download`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        responseType: "blob",
-      });
+      const response = await axios.get(
+        `/api/reports/${reportId}/download/${fileType}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          responseType: "blob",
+        }
+      );
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `report-${reportId}.pdf`);
+      link.setAttribute(
+        "download",
+        `report-${reportId}.${fileType === "pdf" ? "pdf" : "xlsx"}`
+      );
       document.body.appendChild(link);
       link.click();
       if (link.parentNode) {
         link.parentNode.removeChild(link);
       }
     } catch (error) {
-      console.error("Failed to download report:", error);
+      console.error(`Failed to download report ${fileType}:`, error);
     }
   };
 
   const getActions = (row: Report) => [
     {
       icon: FaDownload,
-      onClick: () => handleDownload(row.id),
+      onClick: () => handleDownload(row.id, "pdf"),
       className: "bg-gray-400 hover:bg-gray-500",
+    },
+    {
+      icon: FaFileExcel,
+      onClick: () => handleDownload(row.id, "excel"),
+      className: "bg-green-400 hover:bg-green-500",
     },
     {
       icon: FaTrash,

@@ -78,7 +78,7 @@ model Team {
   id                 Int                  @id @default(autoincrement())
   name               String
   location           City
-  managerId          Int?                 
+  managerId          Int?
   manager            User?                @relation("TeamManager", fields: [managerId], references: [id])
   salesmen           User[]
   targets            Target[] // Targets related to the team as a whole
@@ -155,6 +155,7 @@ model ContractReport {
   contractId Int
   reportId   Int
   pdfPath    String // Path to the saved PDF file
+  excelPath  String // Path to the saved Excel file
   contract   Contract @relation(fields: [contractId], references: [id])
   report     Report   @relation(fields: [reportId], references: [id])
 
@@ -169,6 +170,7 @@ model CompensationReport {
   amountPaid  Float // Amount paid to the salesman or team
   bonusAmount Float? // Bonus amount for the number 1 salesman
   pdfPath     String // Path to the saved PDF file
+  excelPath   String // Path to the saved Excel file
   report      Report @relation(fields: [reportId], references: [id])
   team        Team?  @relation(fields: [teamId], references: [id])
   salesman    User?  @relation(fields: [salesmanId], references: [id])

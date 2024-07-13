@@ -1,8 +1,11 @@
+// src/app/api/reports/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../../prisma/client";
 import jwt from "jsonwebtoken";
-import { generatePDF } from "../../../utils/compensationReportPdfGenerator"; // Utility function to generate PDF
-import { Target } from "@prisma/client";
+import {
+  generatePDF,
+  generateExcel,
+} from "../../../utils/compensationReportGenerator"; // Utility functions to generate PDF and Excel
 
 const SECRET_KEY = process.env.NEXT_PUBLIC_JWT_SECRET || "your_secret_key";
 
@@ -104,6 +107,9 @@ export async function POST(req: NextRequest) {
     // Generate the PDF report
     const pdfPath = await generatePDF(contracts, target, targetAchieved);
 
+    // Generate the Excel report
+    const excelPath = await generateExcel(contracts, target, targetAchieved);
+
     // Prepare data for compensation report creation
     const compensationReportData: any = {
       report: {
@@ -116,6 +122,7 @@ export async function POST(req: NextRequest) {
       amountPaid: target.totalAmountLYD,
       bonusAmount: target.bonusAmount,
       pdfPath,
+      excelPath,
     };
 
     if (secondSelect === "team") {
