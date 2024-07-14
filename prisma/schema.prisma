@@ -106,12 +106,13 @@ model User {
 model Target {
   id                Int        @id @default(autoincrement())
   teamId            Int? // Foreign key for Team
-  userId            Int? // Foreign key for User  periodFrom        DateTime
+  userId            Int? // Foreign key for User
   periodFrom        DateTime
   periodTo          DateTime
   targetType        TargetType // Enum to distinguish between 'Team' and 'Salesman'
   numberOfContracts Int
-  totalAmountLYD    Float
+  totalAmountLYD    Float // For Team targets
+  amountPerContract Float? // For Salesman targets
   bonusAmount       Float? // Bonus amount
   team              Team?      @relation(fields: [teamId], references: [id])
   individual        User?      @relation(fields: [userId], references: [id])

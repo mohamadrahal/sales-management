@@ -145,15 +145,18 @@ export async function POST(request: NextRequest) {
       periodTo: new Date(parsedBody.periodTo),
       targetType: parsedBody.targetType,
       numberOfContracts: parsedBody.numberOfContracts,
-      totalAmountLYD: parsedBody.totalAmountLYD,
       bonusAmount: parsedBody.bonusAmount || null,
     };
 
     if (parsedBody.targetType === TargetType.Team) {
       data.teamId = parsedBody.targetOwnerId;
+      data.totalAmountLYD = parsedBody.totalAmountLYD;
       console.log("Assigning to team:", data.teamId);
     } else if (parsedBody.targetType === TargetType.Salesman) {
       data.userId = parsedBody.targetOwnerId;
+      data.amountPerContract = parsedBody.amountPerContract!;
+      data.totalAmountLYD =
+        parsedBody.amountPerContract! * parsedBody.numberOfContracts;
       console.log("Assigning to salesman:", data.userId);
     }
 

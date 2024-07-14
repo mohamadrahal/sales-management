@@ -1,24 +1,58 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "@/navigation";
 import axios from "axios";
 import { TargetType } from "@prisma/client";
 import InputField from "../../../../components/reusables/InputField";
 import { useTranslations } from "next-intl";
+import useRequireAuth from "@/app/[locale]/hooks/useRequireAuth";
 
 const NewTargetPage: React.FC = () => {
   const router = useRouter();
-  const [form, setForm] = useState({
-    targetType: TargetType.Team as TargetType,
+  const [form, setForm] = useState<{
+    targetType: TargetType;
+    targetOwnerId: number;
+    periodFrom: string;
+    periodTo: string;
+    numberOfContracts: number;
+    totalAmountLYD?: number;
+    bonusAmount: number;
+    amountPerContract?: number;
+  }>({
+    targetType: TargetType.Team,
     targetOwnerId: 0,
     periodFrom: "",
     periodTo: "",
     numberOfContracts: 0,
-    totalAmountLYD: 0,
-    bonusAmount: 0, // Optional field
+    bonusAmount: 0,
   });
+
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [teams, setTeams] = useState<{ id: number; name: string }[]>([]);
+  const [salesmen, setSalesmen] = useState<{ id: number; name: string }[]>([]);
+
+  const { token } = useRequireAuth();
+
+  useEffect(() => {
+    const fetchAvailableTargets = async () => {
+      try {
+        const response = await axios.get(`/api/targets/available`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setTeams(response.data.teams);
+        setSalesmen(response.data.salesmen);
+      } catch (error) {
+        console.error("Failed to fetch available targets:", error);
+      }
+    };
+
+    if (token) {
+      fetchAvailableTargets();
+    }
+  }, [token]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -30,7 +64,8 @@ const NewTargetPage: React.FC = () => {
         name === "targetOwnerId" ||
         name === "numberOfContracts" ||
         name === "totalAmountLYD" ||
-        name === "bonusAmount"
+        name === "bonusAmount" ||
+        name === "amountPerContract" // Added for Salesman targets
           ? Number(value)
           : value,
     }));
@@ -39,8 +74,17 @@ const NewTargetPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const data = { ...form };
+    if (form.targetType === TargetType.Salesman) {
+      delete data.totalAmountLYD; // Remove totalAmountLYD for Salesman targets
+    }
+
     try {
-      await axios.post("/api/targets", form);
+      await axios.post("/api/targets", data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       router.push(`/home/targets`);
     } catch (error) {
       console.error("Failed to create target:", error);
@@ -77,15 +121,26 @@ const NewTargetPage: React.FC = () => {
               <option value={TargetType.Team}>Team</option>
               <option value={TargetType.Salesman}>Salesman</option>
             </select>
-            <InputField
-              type="number"
+            <select
               name="targetOwnerId"
-              value={form.targetOwnerId || ""}
+              value={form.targetOwnerId}
               onChange={handleInputChange}
-              placeholder={t("ownerID")}
-              label={t("ownerID")}
-              error={errors.targetOwnerId}
-            />
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value={0}>{t("selectOwner")}</option>
+              {form.targetType === TargetType.Team &&
+                teams.map((team) => (
+                  <option key={team.id} value={team.id}>
+                    {team.name}
+                  </option>
+                ))}
+              {form.targetType === TargetType.Salesman &&
+                salesmen.map((salesman) => (
+                  <option key={salesman.id} value={salesman.id}>
+                    {salesman.name}
+                  </option>
+                ))}
+            </select>
             <InputField
               type="date"
               name="periodFrom"
@@ -113,15 +168,28 @@ const NewTargetPage: React.FC = () => {
               label={t("numberOfContracts")}
               error={errors.numberOfContracts}
             />
-            <InputField
-              type="number"
-              name="totalAmountLYD"
-              value={form.totalAmountLYD || ""}
-              onChange={handleInputChange}
-              placeholder={t("total")}
-              label={t("total")}
-              error={errors.totalAmountLYD}
-            />
+            {form.targetType === TargetType.Team && (
+              <InputField
+                type="number"
+                name="totalAmountLYD"
+                value={form.totalAmountLYD || ""}
+                onChange={handleInputChange}
+                placeholder={t("total")}
+                label={t("total")}
+                error={errors.totalAmountLYD}
+              />
+            )}
+            {form.targetType === TargetType.Salesman && (
+              <InputField
+                type="number"
+                name="amountPerContract"
+                value={form.amountPerContract || ""}
+                onChange={handleInputChange}
+                placeholder={t("amountPerContract")}
+                label={t("amountPerContract")}
+                error={errors.amountPerContract}
+              />
+            )}
             {form.targetType === TargetType.Team && (
               <InputField
                 type="number"
