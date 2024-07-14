@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../../prisma/client";
-import { generateContractReportPDF } from "../../../utils/contractReportPdfGenerator";
+import {
+  generateContractReportPDF,
+  generateContractReportExcel,
+} from "../../../utils/contractReportGenerator";
 import jwt from "jsonwebtoken";
 
 const SECRET_KEY = process.env.NEXT_PUBLIC_JWT_SECRET || "your_secret_key";
@@ -114,6 +117,13 @@ export async function POST(req: NextRequest) {
       periodTo,
     });
 
+    const excelPath = await generateContractReportExcel(contracts, {
+      secondSelect,
+      lastSelect,
+      periodFrom,
+      periodTo,
+    });
+
     // Create a new report entry
     const report = await prisma.report.create({
       data: {
@@ -131,12 +141,13 @@ export async function POST(req: NextRequest) {
             contractId: contract.id,
             reportId: report.id,
             pdfPath,
+            excelPath,
           },
         })
       )
     );
 
-    return NextResponse.json({ pdfPath }, { status: 201 });
+    return NextResponse.json({ pdfPath, excelPath }, { status: 201 });
   } catch (error) {
     console.error("Error issuing report:", error);
     return NextResponse.json(

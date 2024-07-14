@@ -1,5 +1,3 @@
-// components/TargetsPage.tsx
-
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -52,6 +50,7 @@ const TargetsPage: React.FC<TargetsPageProps> = ({ targets }) => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    fetchTargets(page, pageSize);
   };
 
   const handleDelete = async () => {
@@ -62,7 +61,7 @@ const TargetsPage: React.FC<TargetsPageProps> = ({ targets }) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        fetchTargets(currentPage, pageSize);
+        fetchTargets(currentPage, pageSize); // Fetch the updated list
       } catch (error) {
         console.error("Failed to delete target:", error);
       } finally {
