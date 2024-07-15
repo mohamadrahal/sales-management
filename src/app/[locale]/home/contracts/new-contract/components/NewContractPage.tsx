@@ -22,7 +22,7 @@ const NewContractPage = () => {
     bcdAccountNumber: "",
     status: "Pending",
   });
-  const [document, setDocument] = useState<File | null>(null);
+  const [documents, setDocuments] = useState<File[]>([]);
 
   const router = useRouter();
 
@@ -49,7 +49,7 @@ const NewContractPage = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setDocument(e.target.files[0]);
+      setDocuments(Array.from(e.target.files));
     }
   };
 
@@ -60,9 +60,9 @@ const NewContractPage = () => {
     Object.entries(form).forEach(([key, value]) => {
       formData.append(key, value);
     });
-    if (document) {
-      formData.append("document", document);
-    }
+    documents.forEach((document) => {
+      formData.append("documents", document);
+    });
 
     try {
       await axios.post("/api/contracts", formData, {
@@ -81,7 +81,7 @@ const NewContractPage = () => {
   const t = useTranslations("newContract");
 
   return (
-    <div className=" w-full flex">
+    <div className="w-full flex">
       <div className="w-full bg-white p-8 rounded-lg shadow-md mx-8 my-8">
         <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
           {t("title")}
@@ -202,11 +202,13 @@ const NewContractPage = () => {
             />
             <div className="mb-4">
               <label className="block text-gray-700 font-bold mb-2">
-              {t("document")}
+                {t("documents")}
               </label>
               <input
                 type="file"
-                name="document"
+                name="documents"
+                multiple
+                accept=".pdf,.docx,.jpg,.jpeg,.png"
                 onChange={handleFileChange}
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />

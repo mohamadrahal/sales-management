@@ -15,11 +15,25 @@ const verifyToken = (token: string) => {
   }
 };
 
-const deleteFiles = (paths: string[]) => {
+const deleteReportFiles = (paths: string[]) => {
   paths.forEach((filePath) => {
-    const fullPath = path.isAbsolute(filePath)
-      ? filePath
-      : path.join(process.cwd(), "public", "reports", filePath);
+    const fullPath = path.join(process.cwd(), "public", "reports", filePath);
+    if (fs.existsSync(fullPath)) {
+      try {
+        fs.unlinkSync(fullPath);
+      } catch (error) {
+        console.error(`Failed to delete file: ${fullPath}`, error);
+      }
+    } else {
+      console.warn(`File not found: ${fullPath}`);
+    }
+  });
+};
+
+const deleteUploadedFiles = (paths: string[]) => {
+  paths.forEach((filePath) => {
+    console.log(`Attempting to delete file: ${filePath}`);
+    const fullPath = path.join(process.cwd(), "public", filePath);
     if (fs.existsSync(fullPath)) {
       try {
         fs.unlinkSync(fullPath);
@@ -62,7 +76,7 @@ export async function DELETE(
     // Get the contract details
     const contract = await prisma.contract.findUnique({
       where: { id: contractId },
-      include: { salesman: true },
+      include: { salesman: true, documents: true },
     });
 
     if (!contract) {
@@ -115,8 +129,12 @@ export async function DELETE(
       }
     }
 
+    // Collect paths of uploaded files to delete
+    const uploadedFilePaths = contract.documents.map((doc) => doc.path);
+
     // Delete the files before deleting the reports
-    deleteFiles([...pdfPaths, ...excelPaths]);
+    deleteReportFiles([...pdfPaths, ...excelPaths]);
+    deleteUploadedFiles(uploadedFilePaths);
 
     // Delete related records in the `ContractReport` and `CompensationReport` tables
     await prisma.contractReport.deleteMany({
@@ -134,6 +152,10 @@ export async function DELETE(
 
     // Delete the contract and related branches
     await prisma.branch.deleteMany({
+      where: { contractId },
+    });
+
+    await prisma.contractDocument.deleteMany({
       where: { contractId },
     });
 

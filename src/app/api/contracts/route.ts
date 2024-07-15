@@ -30,11 +30,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  console.log(decoded);
-
   const { userId: salesmanId } = decoded as { userId: number };
-
-  console.log(salesmanId);
 
   if (!salesmanId) {
     console.error("Salesman ID is missing from the token.");
@@ -57,16 +53,16 @@ export async function POST(req: NextRequest) {
     "contactPersonMobileNumber"
   ) as string;
   const bcdAccountNumber = formData.get("bcdAccountNumber") as string;
-  const document = formData.get("document") as File | null;
 
-  if (!document) {
+  const files = formData.getAll("documents") as File[];
+
+  if (files.length === 0) {
     return NextResponse.json(
-      { error: "Document file is required." },
+      { error: "At least one document file is required." },
       { status: 400 }
     );
   }
 
-  const buffer = Buffer.from(await document.arrayBuffer());
   const relativeUploadDir = `/uploads/${new Date(Date.now())
     .toLocaleDateString("id-ID", {
       day: "2-digit",
@@ -100,14 +96,6 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    const filename = `${document.name.replace(
-      /\.[^/.]+$/,
-      ""
-    )}-${uniqueSuffix}.${mime.getExtension(document.type)}`;
-    await writeFile(`${uploadDir}/${filename}`, buffer);
-    const fileUrl = `${relativeUploadDir}/${filename}`;
-
     const newContract = await prisma.contract.create({
       data: {
         salesmanId,
@@ -120,15 +108,34 @@ export async function POST(req: NextRequest) {
         contactPersonName,
         contactPersonMobileNumber,
         bcdAccountNumber,
-        documentPath: fileUrl,
         status: "Pending",
       },
     });
 
+    const documentPromises = files.map(async (file) => {
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+      const filename = `${file.name.replace(
+        /\.[^/.]+$/,
+        ""
+      )}-${uniqueSuffix}.${mime.getExtension(file.type)}`;
+      await writeFile(`${uploadDir}/${filename}`, buffer);
+      const fileUrl = `${relativeUploadDir}/${filename}`;
+
+      await prisma.contractDocument.create({
+        data: {
+          contractId: newContract.id,
+          path: fileUrl,
+        },
+      });
+    });
+
+    await Promise.all(documentPromises);
+
     return NextResponse.json(newContract, { status: 201 });
   } catch (e) {
     console.error(
-      "Error while trying to upload a file or create a contract:",
+      "Error while trying to upload files or create a contract:",
       e
     );
     return NextResponse.json(
@@ -168,6 +175,7 @@ export async function GET(req: NextRequest) {
           take: limit,
           include: {
             salesman: true,
+            documents: true,
           },
         }),
         prisma.contract.count(),
@@ -191,6 +199,7 @@ export async function GET(req: NextRequest) {
           take: limit,
           include: {
             salesman: true,
+            documents: true,
           },
         }),
         prisma.contract.count({
@@ -209,12 +218,11 @@ export async function GET(req: NextRequest) {
           take: limit,
           include: {
             salesman: true,
+            documents: true,
           },
         }),
         prisma.contract.count({ where: { salesmanId: userId } }),
       ]);
-
-      console.log(userId);
     } else {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
