@@ -26,14 +26,26 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const { userId, role } = decoded as { userId: number; role: string };
+
   try {
-    const salesmen = await prisma.user.findMany({
-      where: {
-        role: "Salesman",
-        targets: { some: {} },
-      },
-      select: { id: true, name: true },
-    });
+    let salesmen;
+    if (role === "Admin") {
+      salesmen = await prisma.user.findMany({
+        where: { role: "Salesman" },
+        select: { id: true, name: true },
+      });
+    } else if (role === "SalesManager") {
+      salesmen = await prisma.user.findMany({
+        where: {
+          role: "Salesman",
+          team: { managerId: userId },
+        },
+        select: { id: true, name: true },
+      });
+    } else {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
     return NextResponse.json(salesmen, { status: 200 });
   } catch (error) {

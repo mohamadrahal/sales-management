@@ -1,6 +1,6 @@
-// src/pages/api/teams/index.ts
+// src/pages/api/salesmen/index.ts
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "../../../../../prisma/client";
+import prisma from "../../../../../../prisma/client";
 import jwt from "jsonwebtoken";
 
 const SECRET_KEY = process.env.NEXT_PUBLIC_JWT_SECRET || "your_secret_key";
@@ -29,25 +29,33 @@ export async function GET(req: NextRequest) {
   const { userId, role } = decoded as { userId: number; role: string };
 
   try {
-    let teams;
+    let salesmen;
     if (role === "Admin") {
-      teams = await prisma.team.findMany({
+      salesmen = await prisma.user.findMany({
+        where: {
+          role: "Salesman",
+          targets: { some: {} },
+        },
         select: { id: true, name: true },
       });
     } else if (role === "SalesManager") {
-      teams = await prisma.team.findMany({
-        where: { managerId: userId },
+      salesmen = await prisma.user.findMany({
+        where: {
+          role: "Salesman",
+          team: { managerId: userId },
+          targets: { some: {} },
+        },
         select: { id: true, name: true },
       });
     } else {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    return NextResponse.json(teams, { status: 200 });
+    return NextResponse.json(salesmen, { status: 200 });
   } catch (error) {
-    console.error("Failed to fetch teams:", error);
+    console.error("Failed to fetch salesmen:", error);
     return NextResponse.json(
-      { error: "Failed to fetch teams" },
+      { error: "Failed to fetch salesmen" },
       { status: 500 }
     );
   }

@@ -91,7 +91,7 @@ export async function DELETE(
     [...pdfPaths, ...excelPaths].forEach((filePath) => {
       const fullPath = path.isAbsolute(filePath)
         ? filePath
-        : path.join(process.cwd(), "public", filePath);
+        : path.join(process.cwd(), "public", "reports", filePath);
       if (fs.existsSync(fullPath)) {
         try {
           fs.unlinkSync(fullPath);

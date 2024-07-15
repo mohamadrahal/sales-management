@@ -1,8 +1,6 @@
-// src/app/home/reports/ReportsPage.tsx
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "@/navigation";
 import { useReports } from "../../../context/ReportsContext";
 import Table from "../../../components/reusables/Table";
 import Pagination from "../../../components/reusables/Pagination";
@@ -16,8 +14,7 @@ import useRequireAuth from "@/app/[locale]/hooks/useRequireAuth";
 import IssueReportModal from "./IssueReportModal";
 
 const ReportsPage: React.FC = () => {
-  const { token, user, loading } = useRequireAuth();
-  const router = useRouter();
+  const { token, loading } = useRequireAuth();
   const { reports, fetchReports, totalCount, currentPage, setCurrentPage } =
     useReports();
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
@@ -134,7 +131,10 @@ const ReportsPage: React.FC = () => {
         />
       )}
       {showIssueModal && (
-        <IssueReportModal onClose={() => setShowIssueModal(false)} />
+        <IssueReportModal
+          onClose={() => setShowIssueModal(false)}
+          fetchReports={() => fetchReports(currentPage, pageSize)}
+        />
       )}
     </div>
   );

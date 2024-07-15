@@ -1,6 +1,6 @@
 // src/pages/api/teams/index.ts
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "../../../../../prisma/client";
+import prisma from "../../../../../../prisma/client";
 import jwt from "jsonwebtoken";
 
 const SECRET_KEY = process.env.NEXT_PUBLIC_JWT_SECRET || "your_secret_key";
@@ -32,11 +32,12 @@ export async function GET(req: NextRequest) {
     let teams;
     if (role === "Admin") {
       teams = await prisma.team.findMany({
+        where: { targets: { some: {} } },
         select: { id: true, name: true },
       });
     } else if (role === "SalesManager") {
       teams = await prisma.team.findMany({
-        where: { managerId: userId },
+        where: { managerId: userId, targets: { some: {} } },
         select: { id: true, name: true },
       });
     } else {

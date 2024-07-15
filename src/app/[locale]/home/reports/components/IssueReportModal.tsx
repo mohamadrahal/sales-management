@@ -1,15 +1,25 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useTranslations } from "next-intl";
 import Cookies from "js-cookie";
 import useRequireAuth from "@/app/[locale]/hooks/useRequireAuth";
+import InputField from "@/app/[locale]/components/reusables/InputField";
 
 interface Option {
   id: number;
   name: string;
 }
 
-const IssueReportModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+interface IssueReportModalProps {
+  onClose: () => void;
+  fetchReports: () => void;
+}
+
+const IssueReportModal: React.FC<IssueReportModalProps> = ({
+  onClose,
+  fetchReports,
+}) => {
   const t = useTranslations("reports");
   const [reportType, setReportType] = useState("Contract Report");
   const [secondSelect, setSecondSelect] = useState("");
@@ -32,18 +42,23 @@ const IssueReportModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   useEffect(() => {
     const fetchOptions = async () => {
-      if (secondSelect === "salesman") {
-        const response = await axios.get<Option[]>("/api/reports/salesmen", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setLastOptions(response.data);
-      } else if (secondSelect === "branch") {
-        const response = await axios.get<Option[]>("/api/reports/branches", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setLastOptions(response.data);
-      } else if (secondSelect === "team") {
-        const response = await axios.get<Option[]>("/api/reports/teams", {
+      let apiUrl = "";
+      if (reportType === "Contract Report") {
+        if (secondSelect === "salesman") {
+          apiUrl = "/api/reports/salesmen";
+        } else if (secondSelect === "team") {
+          apiUrl = "/api/reports/teams";
+        }
+      } else if (reportType === "Compensation Report") {
+        if (secondSelect === "salesman") {
+          apiUrl = "/api/reports/salesmen/target";
+        } else if (secondSelect === "team") {
+          apiUrl = "/api/reports/teams/target";
+        }
+      }
+
+      if (apiUrl) {
+        const response = await axios.get<Option[]>(apiUrl, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setLastOptions(response.data);
@@ -53,7 +68,20 @@ const IssueReportModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     };
 
     fetchOptions();
-  }, [secondSelect, token]);
+  }, [secondSelect, reportType, token]);
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    if (name === "periodFrom") {
+      setPeriodFrom(value);
+    } else if (name === "periodTo") {
+      setPeriodTo(value);
+    } else {
+      // Handle other input changes if needed
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,6 +106,7 @@ const IssueReportModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           },
         }
       );
+      fetchReports(); // Fetch reports after issuing a new report
       onClose();
     } catch (error) {
       console.error("Failed to issue report:", error);
@@ -134,24 +163,24 @@ const IssueReportModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               </select>
             </div>
           )}
-          <div className="mb-4">
-            <label className="block mb-2">{t("periodFrom")}</label>
-            <input
-              type="date"
-              value={periodFrom}
-              onChange={(e) => setPeriodFrom(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-2">{t("periodTo")}</label>
-            <input
-              type="date"
-              value={periodTo}
-              onChange={(e) => setPeriodTo(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
+          <InputField
+            type="date"
+            name="periodFrom"
+            value={periodFrom}
+            onChange={handleInputChange}
+            placeholder={t("from")}
+            label={t("periodFrom")}
+            error={undefined}
+          />
+          <InputField
+            type="date"
+            name="periodTo"
+            value={periodTo}
+            onChange={handleInputChange}
+            placeholder={t("to")}
+            label={t("periodTo")}
+            error={undefined}
+          />
           <div className="flex justify-end">
             <button
               type="button"

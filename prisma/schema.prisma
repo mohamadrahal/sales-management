@@ -132,7 +132,7 @@ model Report {
 }
 
 model Contract {
-  id                        Int              @id @default(autoincrement())
+  id                        Int                @id @default(autoincrement())
   salesmanId                Int
   type                      ContractType
   companyName               String
@@ -144,19 +144,26 @@ model Contract {
   contactPersonMobileNumber String
   bcdAccountNumber          String? // Optional
   branches                  Branch[]
-  documentPath              String
-  status                    Status           @default(Pending) // "Pending", "Approved", "Declined"
-  salesman                  User             @relation(fields: [salesmanId], references: [id])
+  documents                 ContractDocument[] // Change from single document path to related documents
+  status                    Status             @default(Pending) // "Pending", "Approved", "Declined"
+  salesman                  User               @relation(fields: [salesmanId], references: [id])
   contractReports           ContractReport[]
-  createdAt                 DateTime         @default(now())
-  updatedAt                 DateTime         @updatedAt
+  createdAt                 DateTime           @default(now())
+  updatedAt                 DateTime           @updatedAt
+}
+
+model ContractDocument {
+  id         Int      @id @default(autoincrement())
+  contractId Int
+  path       String
+  contract   Contract @relation(fields: [contractId], references: [id])
 }
 
 model ContractReport {
   contractId Int
   reportId   Int
-  pdfPath    String // Path to the saved PDF file
-  excelPath  String // Path to the saved Excel file
+  pdfPath    String
+  excelPath  String
   contract   Contract @relation(fields: [contractId], references: [id])
   report     Report   @relation(fields: [reportId], references: [id])
 
@@ -165,13 +172,13 @@ model ContractReport {
 
 model CompensationReport {
   id          Int    @id @default(autoincrement())
-  reportId    Int // Reference to the report
-  teamId      Int? // Reference to the team, if applicable
-  salesmanId  Int? // Reference to the salesman, if applicable
-  amountPaid  Float // Amount paid to the salesman or team
-  bonusAmount Float? // Bonus amount for the number 1 salesman
-  pdfPath     String // Path to the saved PDF file
-  excelPath   String // Path to the saved Excel file
+  reportId    Int
+  teamId      Int?
+  salesmanId  Int?
+  amountPaid  Float
+  bonusAmount Float?
+  pdfPath     String
+  excelPath   String
   report      Report @relation(fields: [reportId], references: [id])
   team        Team?  @relation(fields: [teamId], references: [id])
   salesman    User?  @relation(fields: [salesmanId], references: [id])
