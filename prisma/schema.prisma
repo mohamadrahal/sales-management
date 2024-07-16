@@ -160,14 +160,12 @@ model ContractDocument {
 }
 
 model ContractReport {
-  contractId Int
-  reportId   Int
-  pdfPath    String
-  excelPath  String
-  contract   Contract @relation(fields: [contractId], references: [id])
-  report     Report   @relation(fields: [reportId], references: [id])
-
-  @@id([contractId, reportId])
+  id        Int        @id @default(autoincrement())
+  reportId  Int
+  pdfPath   String
+  excelPath String
+  report    Report     @relation(fields: [reportId], references: [id])
+  contracts Contract[]
 }
 
 model CompensationReport {

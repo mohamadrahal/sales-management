@@ -15,9 +15,11 @@ const verifyToken = (token: string) => {
   }
 };
 
-const deleteFiles = (paths: string[], baseDir: string) => {
+const deleteFiles = (paths: string[]) => {
   paths.forEach((filePath) => {
-    const fullPath = path.join(process.cwd(), "public", baseDir, filePath);
+    const fullPath = path.isAbsolute(filePath)
+      ? filePath
+      : path.join(process.cwd(), "public", filePath);
     console.log(`Attempting to delete file: ${fullPath}`);
     if (fs.existsSync(fullPath)) {
       try {
@@ -114,30 +116,28 @@ export async function DELETE(
     // Ensure the arrays are not empty before attempting to delete files
     if (pdfPaths.length > 0) {
       console.log("Deleting PDF files...");
-      deleteFiles(pdfPaths, "reports");
+      deleteFiles(pdfPaths);
     } else {
       console.log("No PDF files to delete.");
     }
 
     if (excelPaths.length > 0) {
       console.log("Deleting Excel files...");
-      deleteFiles(excelPaths, "reports");
+      deleteFiles(excelPaths);
     } else {
       console.log("No Excel files to delete.");
     }
 
     // Ensure the files are deleted before proceeding
     pdfPaths.forEach((filePath) => {
-      const fullPath = path.join(process.cwd(), "public", "reports", filePath);
-      if (fs.existsSync(fullPath)) {
-        throw new Error(`Failed to delete PDF file: ${fullPath}`);
+      if (fs.existsSync(filePath)) {
+        throw new Error(`Failed to delete PDF file: ${filePath}`);
       }
     });
 
     excelPaths.forEach((filePath) => {
-      const fullPath = path.join(process.cwd(), "public", "reports", filePath);
-      if (fs.existsSync(fullPath)) {
-        throw new Error(`Failed to delete Excel file: ${fullPath}`);
+      if (fs.existsSync(filePath)) {
+        throw new Error(`Failed to delete Excel file: ${filePath}`);
       }
     });
 

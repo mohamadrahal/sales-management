@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
           include: {
             contractReports: {
               include: {
-                contract: true,
+                contracts: true,
               },
             },
             compensationReports: {
@@ -77,9 +77,11 @@ export async function GET(req: NextRequest) {
               {
                 contractReports: {
                   some: {
-                    contract: {
-                      salesman: {
-                        teamId: { in: teamIds },
+                    contracts: {
+                      some: {
+                        salesman: {
+                          teamId: { in: teamIds },
+                        },
                       },
                     },
                   },
@@ -92,7 +94,7 @@ export async function GET(req: NextRequest) {
           include: {
             contractReports: {
               include: {
-                contract: true,
+                contracts: true,
               },
             },
             compensationReports: {
@@ -116,9 +118,11 @@ export async function GET(req: NextRequest) {
               {
                 contractReports: {
                   some: {
-                    contract: {
-                      salesman: {
-                        teamId: { in: teamIds },
+                    contracts: {
+                      some: {
+                        salesman: {
+                          teamId: { in: teamIds },
+                        },
                       },
                     },
                   },
@@ -143,8 +147,10 @@ export async function GET(req: NextRequest) {
               {
                 contractReports: {
                   some: {
-                    contract: {
-                      salesmanId: userId,
+                    contracts: {
+                      some: {
+                        salesmanId: userId,
+                      },
                     },
                   },
                 },
@@ -156,7 +162,7 @@ export async function GET(req: NextRequest) {
           include: {
             contractReports: {
               include: {
-                contract: true,
+                contracts: true,
               },
             },
             compensationReports: {
@@ -179,8 +185,10 @@ export async function GET(req: NextRequest) {
               {
                 contractReports: {
                   some: {
-                    contract: {
-                      salesmanId: userId,
+                    contracts: {
+                      some: {
+                        salesmanId: userId,
+                      },
                     },
                   },
                 },

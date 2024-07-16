@@ -12,6 +12,7 @@ const verifyToken = (token: string) => {
   try {
     return jwt.verify(token, SECRET_KEY);
   } catch (error) {
+    console.error("Invalid token:", error);
     return null;
   }
 };
@@ -128,24 +129,22 @@ export async function POST(req: NextRequest) {
     const report = await prisma.report.create({
       data: {
         type: "Contract",
-        periodFrom: new Date(periodFrom),
-        periodTo: new Date(periodTo),
+        periodFrom: periodStart,
+        periodTo: periodEnd,
+        contractReports: {
+          create: {
+            pdfPath,
+            excelPath,
+            contracts: {
+              connect: contracts.map((contract) => ({ id: contract.id })),
+            },
+          },
+        },
       },
     });
 
-    // Create contract reports for each contract
-    await Promise.all(
-      contracts.map((contract) =>
-        prisma.contractReport.create({
-          data: {
-            contractId: contract.id,
-            reportId: report.id,
-            pdfPath,
-            excelPath,
-          },
-        })
-      )
-    );
+    console.log("Generated PDF Path:", pdfPath);
+    console.log("Generated Excel Path:", excelPath);
 
     return NextResponse.json({ pdfPath, excelPath }, { status: 201 });
   } catch (error) {
