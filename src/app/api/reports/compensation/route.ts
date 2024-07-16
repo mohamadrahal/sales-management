@@ -1,4 +1,3 @@
-// src/app/api/reports/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../../prisma/client";
 import jwt from "jsonwebtoken";
@@ -13,6 +12,7 @@ const verifyToken = (token: string) => {
   try {
     return jwt.verify(token, SECRET_KEY);
   } catch (error) {
+    console.error("Invalid token:", error);
     return null;
   }
 };
@@ -40,7 +40,10 @@ export async function POST(req: NextRequest) {
 
   try {
     const periodStart = new Date(periodFrom);
+    periodStart.setUTCHours(0, 0, 0, 0); // Set time to 00:00:00
+
     const periodEnd = new Date(periodTo);
+    periodEnd.setUTCHours(23, 59, 59, 999); // Set time to 23:59:59
 
     let target;
     let contracts;
@@ -49,8 +52,12 @@ export async function POST(req: NextRequest) {
       target = await prisma.target.findFirst({
         where: {
           teamId: Number(lastSelect),
-          periodFrom: periodStart,
-          periodTo: periodEnd,
+          periodFrom: {
+            gte: periodStart,
+          },
+          periodTo: {
+            lte: periodEnd,
+          },
         },
       });
 
@@ -72,8 +79,12 @@ export async function POST(req: NextRequest) {
       target = await prisma.target.findFirst({
         where: {
           userId: Number(lastSelect),
-          periodFrom: periodStart,
-          periodTo: periodEnd,
+          periodFrom: {
+            gte: periodStart,
+          },
+          periodTo: {
+            lte: periodEnd,
+          },
         },
         include: {
           individual: true, // Include the individual property
@@ -104,11 +115,29 @@ export async function POST(req: NextRequest) {
     // Check if target is achieved
     const targetAchieved = contracts.length >= target.numberOfContracts;
 
+    // Calculate amount paid for salesman reports
+    let amountPaid;
+    if (secondSelect === "team") {
+      amountPaid = target.totalAmountLYD;
+    } else {
+      amountPaid = contracts.length * (target.amountPerContract || 0);
+    }
+
     // Generate the PDF report
-    const pdfPath = await generatePDF(contracts, target, targetAchieved);
+    const pdfPath = await generatePDF(
+      contracts,
+      target,
+      targetAchieved,
+      amountPaid
+    );
 
     // Generate the Excel report
-    const excelPath = await generateExcel(contracts, target, targetAchieved);
+    const excelPath = await generateExcel(
+      contracts,
+      target,
+      targetAchieved,
+      amountPaid
+    );
 
     // Prepare data for compensation report creation
     const compensationReportData: any = {
@@ -119,10 +148,10 @@ export async function POST(req: NextRequest) {
           periodTo: periodEnd,
         },
       },
-      amountPaid: target.totalAmountLYD,
       bonusAmount: target.bonusAmount,
       pdfPath,
       excelPath,
+      amountPaid,
     };
 
     if (secondSelect === "team") {

@@ -18,7 +18,8 @@ interface ExtendedContract extends Contract {
 export const generatePDF = async (
   contracts: ExtendedContract[],
   target: ExtendedTarget,
-  targetAchieved: boolean
+  targetAchieved: boolean,
+  amountPaid: number
 ): Promise<string> => {
   const pdfDirectory = path.join(process.cwd(), "public", "reports");
   const pdfPath = path.join(
@@ -97,6 +98,15 @@ export const generatePDF = async (
     size: 18,
     color: rgb(0, 0, 0),
   });
+  yPosition -= 20;
+
+  // Add amount paid
+  page.drawText(`Amount Paid: ${amountPaid}`, {
+    x: margin,
+    y: yPosition,
+    size: 18,
+    color: rgb(0, 0, 0),
+  });
   yPosition -= 40;
 
   // Add contracts achieved table header
@@ -107,13 +117,7 @@ export const generatePDF = async (
     color: rgb(0, 0, 0),
   });
 
-  const tableColumnHeaders = [
-    "#",
-    "Company Name",
-    "Status",
-    "Salesman ID",
-    "Salesman Name",
-  ];
+  const tableColumnHeaders = ["#", "Company Name", "Status", "Salesman ID"];
   const tableColumnWidths = [30, 150, 80, 100, 100];
 
   let currentX = margin;
@@ -168,7 +172,8 @@ export const generatePDF = async (
 export const generateExcel = async (
   contracts: ExtendedContract[],
   target: ExtendedTarget,
-  targetAchieved: boolean
+  targetAchieved: boolean,
+  amountPaid: number
 ): Promise<string> => {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Compensation Report");
@@ -195,6 +200,7 @@ export const generateExcel = async (
     row = worksheet.addRow(["Bonus Amount:", target.bonusAmount]);
   }
   row = worksheet.addRow(["Target Achieved:", targetAchieved ? "Yes" : "No"]);
+  row = worksheet.addRow(["Amount Paid:", amountPaid]);
 
   // Add contracts achieved table
   worksheet.addRow([]);
@@ -203,7 +209,6 @@ export const generateExcel = async (
     "Company Name",
     "Status",
     "Salesman ID",
-    "Salesman Name",
   ]);
 
   // Style header
