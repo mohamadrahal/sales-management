@@ -15,9 +15,9 @@ const verifyToken = (token: string) => {
   }
 };
 
-const deleteFiles = (paths: string[], baseDir: string) => {
+const deleteUploadedFiles = (paths: string[]) => {
   paths.forEach((filePath) => {
-    const fullPath = path.join(process.cwd(), "public", baseDir, filePath);
+    const fullPath = path.join(process.cwd(), "public", filePath);
     console.log(`Attempting to delete file: ${fullPath}`);
     if (fs.existsSync(fullPath)) {
       try {
@@ -31,6 +31,62 @@ const deleteFiles = (paths: string[], baseDir: string) => {
     }
   });
 };
+
+const deleteReportFiles = (paths: string[]) => {
+  paths.forEach((filePath) => {
+    const fullPath = path.join(process.cwd(), "public", filePath);
+    console.log(`Attempting to delete file: ${fullPath}`);
+    if (fs.existsSync(fullPath)) {
+      try {
+        fs.unlinkSync(fullPath);
+        console.log(`Deleted file: ${fullPath}`);
+      } catch (error) {
+        console.error(`Failed to delete file: ${fullPath}`, error);
+      }
+    } else {
+      console.warn(`File not found: ${fullPath}`);
+    }
+  });
+};
+
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const { id } = params;
+  const contractId = parseInt(id, 10);
+
+  if (!contractId) {
+    return NextResponse.json({ error: "Invalid contract ID" }, { status: 400 });
+  }
+
+  try {
+    const contract = await prisma.contract.findUnique({
+      where: { id: contractId },
+      include: {
+        branches: true,
+        salesman: true,
+        contractReports: true,
+        documents: true,
+      },
+    });
+
+    if (!contract) {
+      return NextResponse.json(
+        { error: "Contract not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(contract, { status: 200 });
+  } catch (error) {
+    console.error("Failed to fetch contract:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
 
 export async function DELETE(
   req: NextRequest,
@@ -108,21 +164,25 @@ export async function DELETE(
 
     for (const report of relatedReports) {
       for (const contractReport of report.contractReports) {
-        pdfPaths.push(contractReport.pdfPath);
-        excelPaths.push(contractReport.excelPath);
+        if (contractReport.pdfPath)
+          pdfPaths.push(`reports/${contractReport.pdfPath}`);
+        if (contractReport.excelPath)
+          excelPaths.push(`reports/${contractReport.excelPath}`);
         reportIdsToDelete.add(contractReport.reportId);
       }
       for (const compensationReport of report.compensationReports) {
-        pdfPaths.push(compensationReport.pdfPath);
-        excelPaths.push(compensationReport.excelPath);
+        if (compensationReport.pdfPath)
+          pdfPaths.push(`reports/${compensationReport.pdfPath}`);
+        if (compensationReport.excelPath)
+          excelPaths.push(`reports/${compensationReport.excelPath}`);
         reportIdsToDelete.add(compensationReport.reportId);
       }
     }
 
     const uploadedFilePaths = contract.documents.map((doc) => doc.path);
 
-    deleteFiles([...pdfPaths, ...excelPaths], "reports");
-    deleteFiles(uploadedFilePaths, "uploads");
+    deleteReportFiles([...pdfPaths, ...excelPaths]);
+    deleteUploadedFiles(uploadedFilePaths);
 
     await prisma.contractReport.deleteMany({
       where: { contracts: { some: { id: contractId } } },

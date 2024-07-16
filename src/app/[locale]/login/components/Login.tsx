@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 
 const Login = () => {
   const [usernameOrMobile, setUsernameOrMobile] = useState("");

@@ -128,11 +128,29 @@ export interface Target extends PrismaTarget {
   individual?: User;
 }
 
-export type ContractWithBranches = Contract & {
-  branches: Branch[];
-  salesman: User;
-  contractReports: ContractReport[];
-};
+export interface ContractWithBranches {
+  id: number;
+  companyName: string;
+  ownerName: string;
+  businessType: BusinessType;
+  salesman: {
+    name: string;
+  };
+  status: Status;
+  createdAt: Date; // Update this to Date
+  branches: {
+    id: number;
+    contractId: number;
+    name: string;
+    phone: string;
+    city: City;
+    locationX: number;
+    locationY: number;
+  }[];
+  documents: {
+    path: string;
+  }[];
+}
 
 // types/types.ts
 

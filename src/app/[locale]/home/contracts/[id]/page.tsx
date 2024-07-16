@@ -1,25 +1,41 @@
-// app/[locale]/home/contracts/[id]/page.tsx
-import React from "react";
-import { notFound } from "next/navigation";
-import prisma from "../../../../../../prisma/client";
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { useRouter } from "@/navigation";
+import axios from "axios";
 import ContractDetails from "../components/ContractDetails";
 import { ContractWithBranches } from "../../../../../types/types";
 
-const ContractPage = async ({ params }: { params: { id: string } }) => {
-  const contract = await prisma.contract.findUnique({
-    where: { id: parseInt(params.id) },
-    include: {
-      branches: true,
-      salesman: true,
-      contractReports: true,
-    },
-  });
+const ContractPage = ({ params }: { params: { id: string } }) => {
+  const [contract, setContract] = useState<ContractWithBranches | null>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
-  if (!contract) {
-    notFound();
+  useEffect(() => {
+    const fetchContract = async () => {
+      try {
+        const response = await axios.get(`/api/contracts/${params.id}`);
+        setContract(response.data);
+      } catch (error) {
+        console.error("Failed to fetch contract:", error);
+        router.push("/404"); // Redirect to 404 page if not found
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContract();
+  }, [params.id]);
+
+  if (loading) {
+    return <p>Loading...</p>;
   }
 
-  return <ContractDetails contract={contract as ContractWithBranches} />;
+  if (!contract) {
+    return <p>Contract not found</p>;
+  }
+
+  return <ContractDetails contract={contract} />;
 };
 
 export default ContractPage;
