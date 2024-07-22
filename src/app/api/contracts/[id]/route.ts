@@ -34,17 +34,16 @@ const deleteUploadedFiles = (paths: string[]) => {
 
 const deleteReportFiles = (paths: string[]) => {
   paths.forEach((filePath) => {
-    const fullPath = path.join(process.cwd(), "public", filePath);
-    console.log(`Attempting to delete file: ${fullPath}`);
-    if (fs.existsSync(fullPath)) {
+    console.log(`Attempting to delete file: ${filePath}`);
+    if (fs.existsSync(filePath)) {
       try {
-        fs.unlinkSync(fullPath);
-        console.log(`Deleted file: ${fullPath}`);
+        fs.unlinkSync(filePath);
+        console.log(`Deleted file: ${filePath}`);
       } catch (error) {
-        console.error(`Failed to delete file: ${fullPath}`, error);
+        console.error(`Failed to delete file: ${filePath}`, error);
       }
     } else {
-      console.warn(`File not found: ${fullPath}`);
+      console.warn(`File not found: ${filePath}`);
     }
   });
 };
@@ -164,17 +163,16 @@ export async function DELETE(
 
     for (const report of relatedReports) {
       for (const contractReport of report.contractReports) {
-        if (contractReport.pdfPath)
-          pdfPaths.push(`reports/${contractReport.pdfPath}`);
+        if (contractReport.pdfPath) pdfPaths.push(`${contractReport.pdfPath}`);
         if (contractReport.excelPath)
-          excelPaths.push(`reports/${contractReport.excelPath}`);
+          excelPaths.push(`${contractReport.excelPath}`);
         reportIdsToDelete.add(contractReport.reportId);
       }
       for (const compensationReport of report.compensationReports) {
         if (compensationReport.pdfPath)
-          pdfPaths.push(`reports/${compensationReport.pdfPath}`);
+          pdfPaths.push(`${compensationReport.pdfPath}`);
         if (compensationReport.excelPath)
-          excelPaths.push(`reports/${compensationReport.excelPath}`);
+          excelPaths.push(`${compensationReport.excelPath}`);
         reportIdsToDelete.add(compensationReport.reportId);
       }
     }

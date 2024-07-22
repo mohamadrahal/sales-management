@@ -107,3 +107,51 @@ export async function DELETE(
     );
   }
 }
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const token = request.headers.get("Authorization")?.split(" ")[1];
+
+  if (!token) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const decoded = verifyToken(token);
+
+  if (!decoded) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { role: userRole } = decoded as {
+    role: string;
+  };
+
+  const { id } = params;
+  const userId = parseInt(id);
+
+  if (isNaN(userId) || userId <= 0) {
+    return NextResponse.json(
+      { error: "Invalid or missing user ID" },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const userData = await request.json();
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: userData,
+    });
+
+    return NextResponse.json(updatedUser, { status: 200 });
+  } catch (error) {
+    console.error("Error occurred while updating user:", error);
+    return NextResponse.json(
+      { error: "An error occurred while updating the user" },
+      { status: 500 }
+    );
+  }
+}
